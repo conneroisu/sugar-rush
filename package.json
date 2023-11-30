@@ -8,7 +8,7 @@
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": ['sugar', 'sugar-rush', 'obsidian', 'plugin', 'file system', 'file', 'vim', 'nvim'],
+	"keywords": [],
 	"author": "Conner Ohnesorge",
 	"license": "MIT",
 	"devDependencies": {
