@@ -1,15 +1,15 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "sugar-rush",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "A oil/vinegar-like plugin allowing for the modification of the file system within a buffer inside of Obsidian",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": ['sugar', 'sugar-rush', 'obsidian', 'plugin', 'file system', 'file', 'vim', 'nvim'],
+	"author": "Conner Ohnesorge",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",
