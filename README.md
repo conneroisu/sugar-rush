@@ -1,20 +1,23 @@
-# Obsidian Sugar Rush
+# Sugar Rush
 
-![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22sugar%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
 <a name="readme-top"></a>[![contributors](https://img.shields.io/github/contributors/conneroisu/sugar.svg?style=for-the-badge)](https://github.com/conneroisu/sugar/graphs/contributors)[![forks](https://img.shields.io/github/forks/conneroisu/sugar.svg?style=for-the-badge)](https://github.com/conneroisu/sugar/network/members)[![stargazers](https://img.shields.io/github/stars/conneroisu/sugar.svg?style=for-the-badge)](https://github.com/conneroisu/sugar/stargazers)[![license](https://img.shields.io/github/license/conneroisu/sugar.svg?style=for-the-badge)](https://github.com/conneroisu/sugar/blob/master/LICENSE)[![issues](https://img.shields.io/github/issues/conneroisu/sugar.svg?style=for-the-badge)](https://github.com/conneroisu/sugar/issues)
+![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22sugar%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
 
 
 <div align="center"> <img src="src/asssets/sugar-rush-logo.jpg" alt="Logo" width="80" height="80"> <h3 align="center">Auto-GPT-Obsidian</h3> <p align="center"> A <a href="https://github.com/tpope/vim-vinegar">vim-vinegar</a> or <a href="https://github.com/stevearc/oil.nvim">oil</a> like file explorer that lets you edit your filesystem like a normal Vim buffer in Obsidian. </p> </div>
 
 
-<details><summary>Table of Contents</summary><ol>
+<details>
+<summary>Table of Contents</summary>
+<ol>
     <li><a href="#details">Details</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#use-cases">Use Cases</a> </li>
     <li><a href="#commands">Commands</a></li>
     <li><a href="#contribution">Contribution</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
-</ol></details>
+</ol>
+</details>
 
 
 ## Introduction
@@ -54,15 +57,13 @@ Wanting to use `g<C-a>`? I would recommend using an [specific increment map]() w
 ## Contribution
 
 
-Conner Ohnesorge
-[funding](https://ko-fi.com/connero)
+Conner Ohnesorge [funding](https://ko-fi.com/connero)
 
 
 ## FAQ
 
 
 Q: Why "sugar"?
-
 
 From [oil](https://github.com/stevearc/oil.nvim)&[vinegar ](https://github.com/tpope/vim-vinegar) readme:
 Split windows and the project drawer go together like oil and vinegar. I don't mean to say that you can combine them to create a delicious salad dressing. I mean that they don't mix well!
