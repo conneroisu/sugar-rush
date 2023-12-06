@@ -3,6 +3,7 @@ import { SugarRushSettingTab } from "./settings/SettingsPage";
 import { SugarRushPluginSettings } from "./settings/PluginSettings";
 import { DEFAULT_SETTINGS } from "./settings/DefaultSettings";
 import { open_sugar_file } from "./utils/OpenSugarFile";
+import { populateTrie } from "./trie";
 
 export default class SugarRushPlugin extends Plugin {
 	settings!: SugarRushPluginSettings;
@@ -48,3 +49,4 @@ export default class SugarRushPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 }
+		await populateTrie(this.app);
