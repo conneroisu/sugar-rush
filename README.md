@@ -4,7 +4,7 @@
 ![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22sugar-rush%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
 
 
-<div align="center"> <img src="/logo.jpg" alt="Logo" width="80" height="80"> <h3 align="center">Auto-GPT-Obsidian</h3> <p align="center"> A <a href="https://github.com/tpope/vim-vinegar">vim-vinegar</a> or <a href="https://github.com/stevearc/oil.nvim">oil</a> like file explorer that lets you edit your filesystem like a normal Vim buffer in Obsidian. </p> </div>
+<div align="center"> <img src="/logo.jpeg" alt="Logo" width="80" height="80"> <h3 align="center">Auto-GPT-Obsidian</h3> <p align="center"> A <a href="https://github.com/tpope/vim-vinegar">vim-vinegar</a> or <a href="https://github.com/stevearc/oil.nvim">oil</a> like file explorer that lets you edit your filesystem like a normal Vim buffer in Obsidian. </p> </div>
 
 
 <details>
@@ -25,6 +25,8 @@
 
 The goals of this plugin are to provide full control over the file system within your vault using a note as an interaction surface. 
 Notes created with this plugin are hidden from searches within your vault to allow for a faultless adoption.
+
+One can read more by going to the [wiki](https://github.com/conneroisu/sugar-rush/wiki)
 
 
 ## Warning of Use
