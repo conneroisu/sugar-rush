@@ -55,5 +55,20 @@ export class SugarRushSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
+
+		new Setting(containerEl)
+			.setName("Show File Size")
+			.setDesc(
+				"Do you want to show file size? (A Restart is Required to See Changes)"
+			)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.showFileSize)
+					.onChange(async (value) => {
+						this.plugin.settings.showFileSize = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
 	}
 }

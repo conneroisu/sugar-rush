@@ -1,9 +1,9 @@
 import { Plugin } from "obsidian";
-import { SugarRushSettingTab } from "./settings/SettingsPage";
-import { SugarRushPluginSettings } from "./settings/PluginSettings";
-import { DEFAULT_SETTINGS } from "./settings/DefaultSettings";
 import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushRibbonHandler from "./handlerRibbon";
+import { SugarRushSettingTab } from "./settings/SettingsPage";
+import { DEFAULT_SETTINGS } from "./settings/DefaultSettings";
+import type { SugarRushPluginSettings } from "./settings/PluginSettings";
 
 export default class SugarRushPlugin extends Plugin {
 	settings!: SugarRushPluginSettings;

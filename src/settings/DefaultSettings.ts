@@ -6,4 +6,5 @@ import type { SugarRushPluginSettings } from "./PluginSettings";
 export const DEFAULT_SETTINGS: SugarRushPluginSettings = {
 	showRibbonIcon: true,
 	showHiddenFiles: true,
+	showFileSize: false,
 };
