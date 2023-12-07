@@ -59,6 +59,11 @@ Wanting to use `g<C-a>`? I would recommend using an [specific increment map]() w
 -   [ ] Cross-Directory Actions within buffer
 
 
+## Developing
+
+Looking to develop **sugar-rush** further? Checkout [Developing](https://github.com/conneroisu/sugar-rush/wiki/Development)
+
+
 ## Contribution
 
 

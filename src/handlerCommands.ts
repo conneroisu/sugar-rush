@@ -6,16 +6,16 @@ export default class SugarRushCommandHandler {
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
-		onload();
+		this.addCommands();
 	}
 
 	
-	async onload() {
+	async addCommands() {
 		this.plugin.addCommand({
 			id: "rush-to-sugar-view",
 			name: "Rush To Sugar View",
 			callback: () => {
-				open_sugar_file(this);
+				open_sugar_file(this.plugin);
 			},
 		});
 	}

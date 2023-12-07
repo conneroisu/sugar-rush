@@ -3,9 +3,12 @@ import SugarRushPlugin from "./main";
 
 export default class SugarRushRibbonHandler {
 	plugin: SugarRushPlugin;
+	
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
-		this.addRibbonIcon();
+		if (this.plugin.settings.showRibbonIcon) {
+			this.addRibbonIcon();
+		}
 	}
 
 	addRibbonIcon() {
