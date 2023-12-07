@@ -20,3 +20,16 @@ data.json
 
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
+
+# Exclude macOS Thumbnail
+._*
+
+# Exclude Windows Thumbs.db
+Thumbs.db
+
+# Exclude Windows Desktop.ini
+Desktop.ini
+
+# Exclude Windows Recycle Bin
+$RECYCLE.BIN/
+
