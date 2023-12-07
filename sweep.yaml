@@ -17,7 +17,7 @@ gha_enabled: True
 # Example:
 #
 # description: sweepai/sweep is a python project. The main api endpoints are in sweepai/api.py. Write code that adheres to PEP8.
-description: ''
+description: 'Obsidian Plugin that allows for the management of the file system in a vault using a buffer.'
 
 # This sets whether to create pull requests as drafts. If this is set to True, then all pull requests will be created as drafts and GitHub Actions will not be triggered.
 draft: False
@@ -31,7 +31,10 @@ blocked_dirs: []
 #
 # docs:
 #   - PyGitHub: ["https://pygithub.readthedocs.io/en/latest/", "We use pygithub to interact with the GitHub API"]
-docs: []
+docs: [
+  - Obsidian: ["https://obsidian.md/", "We use Obsidian to manage our notes."],
+  - Obsidian Developer Documentation: ["https://docs.obsidian.md/Home", "Obsidian Api Documentation"],
+]
 
 # Sandbox executes commands in a sandboxed environment to validate code changes after every edit to guarantee pristine code. For more details, see the [Sandbox](./sandbox) page.
 sandbox:
