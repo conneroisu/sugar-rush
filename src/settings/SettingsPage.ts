@@ -58,9 +58,7 @@ export class SugarRushSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Show File Size")
-			.setDesc(
-				"Do you want to show file size? (A Restart is Required to See Changes)"
-			)
+			.setDesc("Do you want to show file size?")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.showFileSize)
@@ -70,5 +68,28 @@ export class SugarRushSettingTab extends PluginSettingTab {
 					})
 			);
 
+		new Setting(containerEl)
+			.setName("Show File Modified Time")
+			.setDesc("Do you want to show file modified time?")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.showFileModifiedTime)
+					.onChange(async (value) => {
+						this.plugin.settings.showFileModifiedTime = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Show File Created Time")
+			.setDesc("Do you want to show file created time?")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.showFileCreatedTime)
+					.onChange(async (value) => {
+						this.plugin.settings.showFileCreatedTime = value;
+						await this.plugin.saveSettings();
+					})
+			);
 	}
 }

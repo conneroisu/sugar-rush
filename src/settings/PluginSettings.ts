@@ -5,4 +5,6 @@ export interface SugarRushPluginSettings {
 	showRibbonIcon: boolean;
 	showHiddenFiles: boolean;
 	showFileSize: boolean;
+	showFileModifiedTime: boolean;
+	showFileCreatedTime: boolean;
 }
