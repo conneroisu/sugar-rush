@@ -1,5 +1,7 @@
+/**
+ * Represents the settings for the Sugar Rush plugin.
+ */
 export interface SugarRushPluginSettings {
-	mySetting: string;
 	showRibbonIcon: boolean;
 	showHiddenFiles: boolean;
 }

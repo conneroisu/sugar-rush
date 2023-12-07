@@ -1,7 +1,9 @@
-import { SugarRushPluginSettings } from "./PluginSettings";
+import type { SugarRushPluginSettings } from "./PluginSettings";
 
+/**
+ * Default settings for the SugarRushPlugin.
+ */
 export const DEFAULT_SETTINGS: SugarRushPluginSettings = {
-	mySetting: "default",
 	showRibbonIcon: true,
 	showHiddenFiles: true,
 };
