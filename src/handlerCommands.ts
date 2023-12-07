@@ -1,4 +1,3 @@
-import { Notice } from "obsidian";
 import SugarRushPlugin from "./main";
 import commandRushToSugarView from "./commands/commandRushToSugarView";
 
