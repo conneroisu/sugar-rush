@@ -1,5 +1,6 @@
 import { Notice } from "obsidian";
 import SugarRushPlugin from "./main";
+import commandRushToSugarView from "./commands/commandRushToSugarView";
 
 /**
  * Represents a command handler for the Sugar Rush plugin.
@@ -16,13 +17,7 @@ export default class SugarRushCommandHandler {
 	 * Adds the commands to the plugin.
 	 */
 	async addCommands() {
-		this.plugin.addCommand({
-			id: "rush-to-sugar-view",
-			name: "Rush To Sugar View",
-			callback: () => {
-				new Notice("This is a notice!");
-			},
-		});
+		this.plugin.addCommand(new commandRushToSugarView());
 
 		this.plugin.addCommand({
 			id: "toggle-hidden-files-in-sugar",
