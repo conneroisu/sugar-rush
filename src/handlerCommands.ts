@@ -1,5 +1,6 @@
 import SugarRushPlugin from "./main";
 import commandRushToSugarView from "./commands/commandRushToSugarView";
+import commandToggleHiddenFiles from "./commands/commandToggleHiddenFiles";
 
 /**
  * Represents a command handler for the Sugar Rush plugin.
@@ -17,14 +18,6 @@ export default class SugarRushCommandHandler {
 	 */
 	async addCommands() {
 		this.plugin.addCommand(new commandRushToSugarView());
-
-		this.plugin.addCommand({
-			id: "toggle-hidden-files-in-sugar",
-			name: "Toggle Hidden Files In Sugar Views",
-			callback: () => {
-				this.plugin.settings.showHiddenFiles =
-					!this.plugin.settings.showHiddenFiles;
-			},
-		});
+		this.plugin.addCommand(new commandToggleHiddenFiles(this.plugin));
 	}
 }
