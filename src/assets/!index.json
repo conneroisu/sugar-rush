@@ -1,0 +1,24 @@
+{
+	"extension-associations": [
+		{
+			"name": "ruby",
+			"extensions": ["rb"]
+		}, 
+		{
+			"name": "dart",
+			"extensions": ["dart"]
+		}, 
+		{
+			"name": "kotlin",
+			"extensions": ["kt"]
+		}, 
+		{
+			"name": "lisp",
+			"extensions": ["lisp"]
+		}, 
+		{
+			"name": "lua",
+			"extensions": ["lua"]
+		}
+	]
+}
