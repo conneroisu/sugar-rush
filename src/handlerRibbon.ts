@@ -24,7 +24,7 @@ export default class SugarRushRibbonHandler {
 	addRibbonIcon() {
 		this.plugin.addRibbonIcon(
 			"glass-water",
-			"Sugar Rush",
+			"Sugar Rush : Rush To Sugar View",
 			(evt: MouseEvent) => {
 				// Called when the user clicks the icon.
 				new Notice("This is a notice!");

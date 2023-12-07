@@ -13,5 +13,6 @@ export default class commandRushToSugarView implements Command {
 	checkCallback?: () => boolean | void = () => {
 		this.plugin.settings.showHiddenFiles =
 			!this.plugin.settings.showHiddenFiles;
+		this.plugin.saveSettings();
 	};
 }
