@@ -70,10 +70,4 @@ Looking to develop **sugar-rush** further? Checkout [Developing](https://github.
 Conner Ohnesorge [funding](https://ko-fi.com/connero)
 
 
-## FAQ
 
-
-Q: Why "sugar"?
-
-From [oil](https://github.com/stevearc/oil.nvim)&[vinegar ](https://github.com/tpope/vim-vinegar) readme:
-Split windows and the project drawer go together like oil and vinegar. I don't mean to say that you can combine them to create a delicious salad dressing. I mean that they don't mix well!
