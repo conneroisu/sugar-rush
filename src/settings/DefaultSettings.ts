@@ -4,6 +4,7 @@ import type { SugarRushPluginSettings } from "./PluginSettings";
  * Default settings for the SugarRushPlugin.
  */
 export const DEFAULT_SETTINGS: SugarRushPluginSettings = {
+	debug: false,
 	showRibbonIcon: true,
 	showHiddenFiles: true,
 	showFileSize: false,

@@ -26,6 +26,18 @@ export class SugarRushSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
+			.setName("Debug Mode")
+			.setDesc("Do you want to enable debug mode?")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.debug)
+					.onChange(async (value) => {
+						this.plugin.settings.debug = value;
+						await this.plugin.saveSettings();
+					})
+			);
+		
+		new Setting(containerEl)
 			.setName("Show Ribbon Icon")
 			.setDesc(
 				"Do you want to show the ribbon icon? (A Restart is Required to See Changes)"
