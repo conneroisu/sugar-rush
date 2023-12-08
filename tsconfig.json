@@ -5,6 +5,7 @@
       "svelte",
       "node"
     ],
+    "resolveJsonModule": true,
     "baseUrl": ".",
     "inlineSources": true,
     "module": "ESNext",

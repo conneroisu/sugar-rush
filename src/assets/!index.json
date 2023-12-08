@@ -3,22 +3,42 @@
 		{
 			"name": "ruby",
 			"extensions": ["rb"]
-		}, 
+		},
 		{
 			"name": "dart",
 			"extensions": ["dart"]
-		}, 
+		},
 		{
 			"name": "kotlin",
 			"extensions": ["kt"]
-		}, 
+		},
 		{
 			"name": "lisp",
 			"extensions": ["lisp"]
-		}, 
+		},
 		{
 			"name": "lua",
 			"extensions": ["lua"]
+		},
+		{
+			"name": "c_sharp",
+			"extensions": ["cs"]
+		},
+		{
+			"name": "markdown",
+			"extensions": ["md"]
+		},
+		{
+			"name": "python",
+			"extensions": ["py"]
+		},
+		{
+			"name": "typescript",
+			"extensions": ["ts"]
+		},
+		{
+			"name": "go",
+			"extensions": ["go"]
 		}
 	]
 }
