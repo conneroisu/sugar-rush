@@ -1,3 +1,4 @@
+import { type Command } from "obsidian";
 import commandRushToSugarView from "./commands/commandRushToSugarView";
 import commandToggleHiddenFiles from "./commands/commandToggleHiddenFiles";
 import SugarRushPlugin from "./main";
@@ -6,8 +7,10 @@ import SugarRushPlugin from "./main";
  * Represents a command handler for the Sugar Rush plugin.
  **/
 export default class SugarRushCommandHandler {
+
 	// The plugin that this command handler belongs to.
 	private plugin: SugarRushPlugin;
+	private commands: Command[] = [];
 
 	/**
 	 * Creates a new command handler for the Sugar Rush plugin.
@@ -15,14 +18,24 @@ export default class SugarRushCommandHandler {
 	 **/
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
+		this.collectCommands();
 		this.addCommands();
 	}
 
 	/**
-	 * Adds the commands to the plugin.
+	 * Collects the commands for the plugin.
+	 **/
+	async collectCommands() {
+		this.commands.push(new commandRushToSugarView(this.plugin));
+		this.commands.push(new commandToggleHiddenFiles(this.plugin));
+	}
+
+	/**
+	 * Adds the commands to the plugin from the commands array.
 	 **/
 	async addCommands() {
-		this.plugin.addCommand(new commandRushToSugarView(this.plugin));
-		this.plugin.addCommand(new commandToggleHiddenFiles(this.plugin));
+		for (const command of this.commands) {
+			this.plugin.addCommand(command);
+		}
 	}
 }
