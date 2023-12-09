@@ -13,9 +13,8 @@ export default class commandToggleHiddenFiles implements Command {
 		this.plugin = plugin;
 	}
 
-	checkCallback?: () => boolean | void = () => {
-		this.plugin.settings.showHiddenFiles =
-			!this.plugin.settings.showHiddenFiles;
+	editorCheckCallback: (checking: boolean) => boolean | void = () => {
+		this.plugin.settings.showHiddenFiles = !this.plugin.settings.showHiddenFiles;
 		this.plugin.saveSettings();
 	};
 }
