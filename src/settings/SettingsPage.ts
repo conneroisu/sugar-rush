@@ -2,8 +2,9 @@ import { App, PluginSettingTab, Setting } from "obsidian";
 import SugarRushPlugin from "src/main";
 
 /**
- * Represents the settings page for the Sugar Rush plugin.
- */
+ * @name SugarRushSettingTab
+ * @description Represents the settings page for the Sugar Rush plugin.
+ **/
 export class SugarRushSettingTab extends PluginSettingTab {
 	plugin: SugarRushPlugin;
 
@@ -33,6 +34,20 @@ export class SugarRushSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.debug)
 					.onChange(async (value) => {
 						this.plugin.settings.debug = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Hide Sugar Folder")
+			.setDesc(
+				"Do you want to hide the Sugar folder? (A Restart is Required to See Changes)"
+			)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.hideSugarFolder)
+					.onChange(async (value) => {
+						this.plugin.settings.hideSugarFolder = value;
 						await this.plugin.saveSettings();
 					})
 			);

@@ -3,6 +3,7 @@
  */
 export interface SugarRushPluginSettings {
 	debug: boolean;
+	hideSugarFolder: boolean;
 	showRibbonIcon: boolean;
 	showHiddenFiles: boolean;
 	showFileSize: boolean;

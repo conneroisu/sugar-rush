@@ -40,7 +40,6 @@ This plugin are not to be held responsible for the side effects that may incur d
 
 ## Details
 
-
 ### Leader Commands?
 
 Wanting to use the leader key to trigger commands for the plugin? I recommend [tgrosinger's leader-hotkeys-obsidian](https://github.com/tgrosinger/leader-hotkeys-obsidian).
@@ -54,15 +53,17 @@ Wanting to use `g<C-a>`? I would recommend using an [specific increment map]() w
 
 ## Features
 
-
 -   [ ] Edit your filesystem like a buffer (allows for creating, renaming, deleting, and moving)
 -   [ ] Renaming of files hooks into actions inside of Obsidian so that plugins can readjust the links to and from a file.
--   [ ] Cross-Directory Actions within buffer
-
+-   [ ] Cross-Directory Actions
 
 ## Developing
 
+### Core Plugin Development
+
 Looking to develop **sugar-rush** further? Checkout [Developing](https://github.com/conneroisu/sugar-rush/wiki/Development)
+
+### Expansive Plugin Development
 
 
 ## Contribution
