@@ -1,7 +1,7 @@
 {
 	"name": "sugar-rush",
 	"version": "1.0.0",
-	"description": "A oil/vinegar-like plugin allowing for the modification of the file system within a buffer inside of Obsidian.",
+	"description": "A oil/vinegar-like plugin allowing for the modification of the file system within a buffer inside of Obsidian (Vim Mode Recommended).",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
