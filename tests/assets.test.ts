@@ -29,3 +29,24 @@ fs.readdirSync("src/assets").forEach((file: string) => {
 		).toBe(true);
 	});
 });
+
+// Test that the size of each file is equal to 48x48
+fs.readdirSync("src/assets").forEach((file: string) => {
+	if (file === "!index.json") return;
+	const fileName = file.split(".")[0];
+	test(`Name ${fileName} is 48x48`, () => {
+		const file = fs.readFileSync(`src/assets/${fileName}.svg`, "utf-8");
+		// foreach line in file print line
+		const lines = file.split("\n");
+		for (let i = 0; i < lines.length; i++) {
+			const line = lines[i];
+			if (line.includes("svg")) {
+				const width = line.split("width=")[1].split('"')[1];
+				const height = line.split("height=")[1].split('"')[1];
+				expect(width).toBe("48px");
+				expect(height).toBe("48px");
+				return;
+			}
+		}
+	});
+});
