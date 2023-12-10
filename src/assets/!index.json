@@ -33,10 +33,6 @@
 			"extensions": ["py"]
 		},
 		{
-			"name": "typescript",
-			"extensions": ["ts"]
-		},
-		{
 			"name": "go",
 			"extensions": ["go"]
 		}
