@@ -2,7 +2,6 @@
 
 <a name="readme-top"></a>
 [![contributors](https://img.shields.io/github/contributors/conneroisu/sugar-rush.svg?style=for-the-badge)](https://github.com/conneroisu/sugar-rush/graphs/contributors)[![forks](https://img.shields.io/github/forks/conneroisu/sugar-rush.svg?style=for-the-badge)](https://github.com/conneroisu/sugar-rush/network/members)[![stargazers](https://img.shields.io/github/stars/conneroisu/sugar-rush.svg?style=for-the-badge)](https://github.com/conneroisu/sugar-rush/stargazers)[![license](https://img.shields.io/github/license/conneroisu/sugar-rush.svg?style=for-the-badge)](https://github.com/conneroisu/sugar-rush/blob/master/LICENSE)[![issues](https://img.shields.io/github/issues/conneroisu/sugar-rush.svg?style=for-the-badge)](https://github.com/conneroisu/sugar/issues)
-[![branches](https://img.shields.io/github/branches/conneroisu/sugar-rush.svg?style=for-the-badge)]
 ![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22sugar-rush%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
 [![Tests](https://github.com/conneroisu/sugar-rush/actions/workflows/test-push-brach.yml/badge.svg)](https://github.com/conneroisu/sugar-rush/actions/workflows/test-push-brach.yml)
 [![CodeQL](https://github.com/conneroisu/sugar-rush/actions/workflows/codeql.yml/badge.svg)](https://github.com/conneroisu/sugar-rush/actions/workflows/codeql.yml)
