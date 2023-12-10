@@ -4,6 +4,7 @@ import { SugarRushSettingTab } from "./settings/SettingsPage";
 import { DEFAULT_SETTINGS } from "./settings/DefaultSettings";
 import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushRibbonHandler from "./handlerRibbon";
+import SugarRushIntervalHandler from "./handlerIntervals";
 
 /**
  * Represents the main class of the Plugin, Sugar-Rush.
@@ -14,6 +15,7 @@ export default class SugarRushPlugin extends Plugin {
 	settings!: SugarRushPluginSettings;
 	commandHandler!: SugarRushCommandHandler;
 	ribbonHandler!: SugarRushRibbonHandler;
+	intervalHandler!: SugarRushIntervalHandler;
 
 	/**
 	 * Loads the plugin settings, registers extensions, adds command and ribbon handlers,
@@ -28,6 +30,8 @@ export default class SugarRushPlugin extends Plugin {
 		this.commandHandler = new SugarRushCommandHandler(this);
 		// Add the ribbonHandler
 		this.ribbonHandler = new SugarRushRibbonHandler(this);
+		// Add the intervalHandler
+		this.intervalHandler = new SugarRushIntervalHandler(this);
 		// Add the settings tab
 		this.addSettingTab(new SugarRushSettingTab(this.app, this));
 	}

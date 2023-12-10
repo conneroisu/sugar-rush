@@ -39,6 +39,19 @@ export class SugarRushSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
+			.setName("Sugar Folder")
+			.setDesc(
+				"Where do you want to store your Sugar files? (A Restart is Required to See Changes)"
+			)
+			.addSearch((search) =>
+				search.setPlaceholder("example: folder1/folder2")
+					.setValue(this.plugin.settings.sugarFolder)
+					.onChange((new_folder) => {
+						this.plugin.settings.sugarFolder = new_folder;
+						this.plugin.saveSettings();
+					})
+			);
+		new Setting(containerEl)
 			.setName("Hide Sugar Folder")
 			.setDesc(
 				"Do you want to hide the Sugar folder? (A Restart is Required to See Changes)"
@@ -51,7 +64,7 @@ export class SugarRushSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
-		
+
 		new Setting(containerEl)
 			.setName("Show Ribbon Icon")
 			.setDesc(

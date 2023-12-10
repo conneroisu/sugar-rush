@@ -5,6 +5,7 @@ import type { SugarRushPluginSettings } from "./PluginSettings";
  */
 export const DEFAULT_SETTINGS: SugarRushPluginSettings = {
 	debug: false,
+	sugarFolder: "Sugar",
 	hideSugarFolder: false,
 	showRibbonIcon: true,
 	showHiddenFiles: true,

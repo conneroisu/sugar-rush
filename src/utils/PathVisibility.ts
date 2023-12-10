@@ -1,4 +1,4 @@
-export function changePathVisibility(path: string, hide: boolean) {
+function changePathVisibility(path: string, hide: boolean) {
 	const n = document.querySelector(`[data-path="${path}"]`);
 	if (!n) {
 		return;
@@ -12,3 +12,5 @@ export function changePathVisibility(path: string, hide: boolean) {
 		}
 	}
 }
+
+
