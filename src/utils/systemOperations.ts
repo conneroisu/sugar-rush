@@ -1,4 +1,7 @@
 
+// Use a Discriminated Union to define the types of operations that can be performed on the file system
+type SystemOperation = CreateOperation | DeleteOperation | RenameOperation | MoveOperation;
+
 // Defines the operations that can be performed on the file system (e.g. create, delete, rename, and move)
 class CreateOperation {
 	constructor(public path: string) {}
