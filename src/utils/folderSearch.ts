@@ -1,11 +1,11 @@
 import {TAbstractFile, TFolder} from "obsidian";
 import {type ISuggestOwner, Scope} from "obsidian";
-import {createPopper, Instance as PopperInstance} from "@popperjs/core";
+import {createPopper, type Instance as PopperInstance} from "@popperjs/core";
 
 export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
 	protected inputEl: HTMLInputElement | HTMLTextAreaElement;
 
-	private popper: PopperInstance;
+	private popper: PopperInstance | undefined;
 	private scope: Scope;
 	private suggestEl: HTMLElement;
 	private suggest: Suggest<T>;
