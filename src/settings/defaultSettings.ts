@@ -1,4 +1,4 @@
-import type { SugarRushPluginSettings } from "./PluginSettings";
+import type { SugarRushPluginSettings } from "./pluginSettings";
 
 /**
  * Default settings for the SugarRushPlugin.
