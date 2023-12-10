@@ -1,10 +1,11 @@
 import { Plugin } from "obsidian";
-import type { SugarRushPluginSettings } from "./settings/PluginSettings";
-import { SugarRushSettingTab } from "./settings/SettingsPage";
-import { DEFAULT_SETTINGS } from "./settings/DefaultSettings";
 import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushRibbonHandler from "./handlerRibbon";
 import SugarRushIntervalHandler from "./handlerIntervals";
+
+import type { SugarRushPluginSettings } from "./settings/pluginSettings";
+import { DEFAULT_SETTINGS } from "./settings/defaultSettings";
+import { SugarRushSettingTab } from "./settings/settingsPage";
 
 /**
  * Represents the main class of the Plugin, Sugar-Rush.
@@ -39,7 +40,7 @@ export default class SugarRushPlugin extends Plugin {
 	/**
 	 * Actions taken when unloading the plugin, Sugar-Rush.
 	 **/
-	onunload() {}
+	onunload() { }
 
 	/**
 	 * Loads the plugin settings.
