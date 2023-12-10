@@ -4,6 +4,7 @@
 
 ![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22sugar-rush%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
 [![Tests](https://github.com/conneroisu/sugar-rush/actions/workflows/test-push-brach.yml/badge.svg)](https://github.com/conneroisu/sugar-rush/actions/workflows/test-push-brach.yml)
+[![CodeQL](https://github.com/conneroisu/sugar-rush/actions/workflows/codeql.yml/badge.svg)](https://github.com/conneroisu/sugar-rush/actions/workflows/codeql.yml)
 
 <div align="center"> <img src="resources/logo.jpeg" alt="Logo" width="80" height="80"> <h3 align="center">Sugar-Rush</h3> <p align="center"> A <a href="https://github.com/tpope/vim-vinegar">vim-vinegar</a> or <a href="https://github.com/stevearc/oil.nvim">oil</a> like file explorer that lets you edit your filesystem like a normal note/buffer in Obsidian. </p> </div>
 
