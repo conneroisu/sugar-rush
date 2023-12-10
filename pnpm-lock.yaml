@@ -2252,12 +2252,17 @@ packages:
     dev: true
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   /vite-node@1.0.4(@types/node@20.10.3):
     resolution: {integrity: sha512-9xQQtHdsz5Qn8hqbV7UKqkm8YkJhzT/zr41Dmt5N7AlD8hJXw/Z7y0QiD5I8lnTthV9Rvcvi0QW7PI0Fq83ZPg==}
 =======
   /vite-node@1.0.1(@types/node@20.10.3):
     resolution: {integrity: sha512-Y2Jnz4cr2azsOMMYuVPrQkp3KMnS/0WV8ezZjCy4hU7O5mUHCAVOnFmoEvs1nvix/4mYm74Len8bYRWZJMNP6g==}
 >>>>>>> master
+=======
+  /vite-node@1.0.4(@types/node@20.10.3):
+    resolution: {integrity: sha512-9xQQtHdsz5Qn8hqbV7UKqkm8YkJhzT/zr41Dmt5N7AlD8hJXw/Z7y0QiD5I8lnTthV9Rvcvi0QW7PI0Fq83ZPg==}
+>>>>>>> c69bd4edce2a81ffd892700100fac1d0cdb32efc
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     dependencies:
