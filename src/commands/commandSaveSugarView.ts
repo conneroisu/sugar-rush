@@ -12,8 +12,8 @@ export default class commandSaveSugarView implements Command {
 	}
 
 	checkCallback?: () => boolean | void = () => {
-		// Check if there is a current file
-		new Notice("This is a notice!");
-		// Check if the extension of the current file is .sugar
+		// Check if the current file is a Sugar View
+		// If it is, return true
+		// Also, check each file in the sugar folder for operations that have been performed on it
 	};
 }

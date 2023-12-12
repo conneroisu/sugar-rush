@@ -1,4 +1,4 @@
-import { TFile, TFolder } from "obsidian";
+import { TAbstractFile, TFile, TFolder } from "obsidian";
 
 function GetParentChildren(file: TAbstractFile): TAbstractFile[] {
     if (file instanceof TFolder) {

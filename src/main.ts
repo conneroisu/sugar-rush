@@ -17,7 +17,7 @@ export default class SugarRushPlugin extends Plugin {
 	commandHandler!: SugarRushCommandHandler;
 	ribbonHandler!: SugarRushRibbonHandler;
 	intervalHandler!: SugarRushIntervalHandler;
-	abstractMap!: Map<string, TAbstractFile>;
+	abstractMap!: Map<number, TAbstractFile>;
 	app!: App;
 
 	/**
@@ -25,20 +25,26 @@ export default class SugarRushPlugin extends Plugin {
 	 * and adds the settings tab for the Sugar-Rush plugin.
 	 */
 	async onload() {
-		// Load the settings
 		await this.loadSettings();
+		
 		// Add the extension for `.sugar` files
 		this.registerExtensions(["sugar"], "markdown");
+		
 		// Add the commandHandler
 		this.commandHandler = new SugarRushCommandHandler(this);
+		
 		// Add the ribbonHandler
 		this.ribbonHandler = new SugarRushRibbonHandler(this);
+		
 		// Add the intervalHandler
 		this.intervalHandler = new SugarRushIntervalHandler(this);
+		
 		// Add the settings tab
 		this.addSettingTab(new SugarRushSettingTab(this));
+		
 		// Add the abstractMap
 		this.abstractMap = new Map();
+		
 		// Add the app reference
 		this.app = this.app;
 	}

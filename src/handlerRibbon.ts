@@ -6,7 +6,7 @@ import { addIcon } from "obsidian";
  * Represents a handler for the Sugar Rush ribbon.
  */
 export default class SugarRushRibbonHandler {
-	plugin: SugarRushPlugin;
+	private plugin: SugarRushPlugin;
 
 	/**
 	 * Creates an instance of SugarRushRibbonHandler.

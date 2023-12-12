@@ -1,9 +1,10 @@
 
-import { Notice, type Command } from "obsidian";
+import { Notice, type Command, Editor, MarkdownView, type MarkdownFileInfo } from "obsidian";
 import type SugarRushPlugin from "src/main";
+import { isSugarFile } from "src/utils/sugarCharacterizer";
 
 export default class commandRefreshSugarView implements Command {
-	plugin!: SugarRushPlugin;
+	private plugin!: SugarRushPlugin;
 	
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
@@ -11,8 +12,11 @@ export default class commandRefreshSugarView implements Command {
 
 	id: string = "refresh-sugar-view";
 	name: string = "Refresh Sugar View";
-	checkCallback?: () => boolean | void = () => {
-		// Check if there is a current file
+	editorCallback: ((editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) = (editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
+		if (isSugarFile(this.plugin.app.workspace.getActiveFile())) {
+			
+		}
 		new Notice("This is a notice!");
 	};
 }
+
