@@ -1,7 +1,7 @@
 import type SugarRushPlugin from "./main";
 
 export default class SugarRushIntervalHandler {
-	plugin: SugarRushPlugin;
+	private plugin: SugarRushPlugin;
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;

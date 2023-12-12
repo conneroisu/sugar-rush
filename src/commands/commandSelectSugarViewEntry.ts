@@ -1,5 +1,6 @@
 import type SugarRushPlugin from "src/main";
-import { TFile, type Command, Editor, MarkdownView, type MarkdownFileInfo, Notice } from "obsidian";
+import { type Command, Editor, Notice } from "obsidian";
+import { isSugarFile } from "src/utils/sugarCharacterizer";
 
 /**
  * @implements {Command} Command
@@ -23,28 +24,17 @@ export default class commandSelectSugarViewEntry implements Command {
 	 * @param editor The editor that the command was called from.
 	 * @param ctx The context that the command was called from.
 	 **/
-	editorCallback: ((editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) = (editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
+	editorCallback: ((editor: Editor) => boolean | void) = (editor: Editor) => {
 		if (isSugarFile(this.plugin.app.workspace.getActiveFile())) {
-			selectEntry(editor, ctx);
+			selectEntry(editor);
 		} else {
 			new Notice("This is not a Sugar File!");
 		}
 	};
 }
 
-/**
- * @description Checks if a file is a Sugar File.
- * @param file - The file to check.
- * @returns {boolean} Whether or not the file is a Sugar File.
- **/
-function isSugarFile(file: TFile | null): boolean {
-	if (file === null) {
-		return false;
-	}
-	return file.extension === "sugar";
-}
 
-function selectEntry(editor: Editor, view: MarkdownFileInfo | MarkdownView): void {
+function selectEntry(editor: Editor): void {
 	const cursor = editor.getCursor();
 	const line = editor.getLine(cursor.line);
 	const line_text = line.slice(0, undefined);
