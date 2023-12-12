@@ -13,8 +13,8 @@ export class SugarRushSettingTab extends PluginSettingTab {
 	 * @param app The application instance.
 	 * @param plugin The Sugar Rush plugin instance.
 	 */
-	constructor(app: App, plugin: SugarRushPlugin) {
-		super(app, plugin);
+	constructor(plugin: SugarRushPlugin) {
+		super(plugin.app, plugin);
 		this.plugin = plugin;
 	}
 

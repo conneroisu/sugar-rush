@@ -1,5 +1,5 @@
 import type SugarRushPlugin from "src/main";
-import { TFile, type Command } from "obsidian";
+import { TFile, type Command, Editor, MarkdownView, type MarkdownFileInfo, Notice } from "obsidian";
 
 /**
  * @implements {Command} Command
@@ -20,18 +20,15 @@ export default class commandSelectSugarViewEntry implements Command {
 
 	/**
 	 * @description Checks if the current file is a Sugar View selecting an entry if it is.
-	 * @param checking - Whether or not the editor is checking if the command can be run.
-	   * @returns {boolean | void} Whether or not the command can be run.
+	 * @param editor The editor that the command was called from.
+	 * @param ctx The context that the command was called from.
 	 **/
-	editorCheckCallback: (checking: boolean) => (boolean | void) = (checking: boolean): boolean | void => {
-		const isSugarView = isSugarFile(this.plugin.app.workspace.getActiveFile());
-		if (isSugarView) {
-			if (checking) {
-				selectEntry();
-			}
-			return true;
+	editorCallback: ((editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) = (editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
+		if (isSugarFile(this.plugin.app.workspace.getActiveFile())) {
+			selectEntry(editor, ctx);
+		} else {
+			new Notice("This is not a Sugar File!");
 		}
-		return false;
 	};
 }
 
@@ -47,7 +44,16 @@ function isSugarFile(file: TFile | null): boolean {
 	return file.extension === "sugar";
 }
 
-function selectEntry() {
-
+function selectEntry(editor: Editor, view: MarkdownFileInfo | MarkdownView): void {
+	const cursor = editor.getCursor();
+	const line = editor.getLine(cursor.line);
+	const line_text = line.slice(0, undefined);
+	const id = parse_id(line_text);
+	console.log("selected id: " + id);
 }
-
+/**
+ * Returns the id of a line in a sugar file (within the a href).
+ **/
+function parse_id(line: string): string {
+	return line.split("<a href=")[1].split(">")[0];
+}

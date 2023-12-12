@@ -1,7 +1,18 @@
+<!-- Description: Operation View Component Showing the Operation Details after a Sugar View is Saved -->
 <script lang="ts">
-	// Operation View Component Showing the Operation Details after a Sugar View is Saved
+	import { onMount } from 'svelte';
+
 	
 </script>
 
+<body>
+	<header>
+		
+	</header>
+	
+	<footer>
+		
+	</footer>
+</body>
 <style>
 </style>

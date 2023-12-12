@@ -1,6 +1,9 @@
-import { type Command } from "obsidian";
+import { App, type Command } from "obsidian";
 import commandRushToSugarView from "./commands/commandRushToSugarView";
 import commandToggleHiddenFiles from "./commands/commandToggleHiddenFiles";
+import commandSelectSugarViewEntry from "./commands/commandSelectSugarViewEntry";
+import commandSaveSugarView from "./commands/commandSaveSugarView";
+
 import SugarRushPlugin from "./main";
 
 /**
@@ -28,6 +31,8 @@ export default class SugarRushCommandHandler {
 	async collectCommands() {
 		this.commands.push(new commandRushToSugarView(this.plugin));
 		this.commands.push(new commandToggleHiddenFiles(this.plugin));
+		this.commands.push(new commandSelectSugarViewEntry(this.plugin));
+		this.commands.push(new commandSaveSugarView(this.plugin));
 	}
 
 	/**

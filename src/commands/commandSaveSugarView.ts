@@ -1,9 +1,16 @@
 
 import { Notice, type Command } from "obsidian";
+import type SugarRushPlugin from "src/main";
 
 export default class commandSaveSugarView implements Command {
 	id: string = "sugar-view-save";
 	name: string = "Save Sugar View";
+    plugin: SugarRushPlugin;
+
+	constructor(plugin: SugarRushPlugin) {
+		this.plugin = plugin;
+	}
+
 	checkCallback?: () => boolean | void = () => {
 		// Check if there is a current file
 		new Notice("This is a notice!");

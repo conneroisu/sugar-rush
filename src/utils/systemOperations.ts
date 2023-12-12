@@ -1,4 +1,6 @@
 
+import { TAbstractFile, FileManager } from "obsidian";
+
 // Use a Discriminated Union to define the types of operations that can be performed on the file system
 type SystemOperation = CreateOperation | DeleteOperation | RenameOperation | MoveOperation;
 
@@ -22,7 +24,7 @@ class DeleteOperation {
 }
 
 class RenameOperation {
-	constructor(public path: string, public newPath: string) {}
+	constructor(public abstractFile: TAbstractFile, public newPath: string) {}
 
 	// Renames the file or directory at the given path
 	perform() {

@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { App, Plugin, TAbstractFile } from "obsidian";
 import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushRibbonHandler from "./handlerRibbon";
 import SugarRushIntervalHandler from "./handlerIntervals";
@@ -17,6 +17,8 @@ export default class SugarRushPlugin extends Plugin {
 	commandHandler!: SugarRushCommandHandler;
 	ribbonHandler!: SugarRushRibbonHandler;
 	intervalHandler!: SugarRushIntervalHandler;
+	abstractMap!: Map<string, TAbstractFile>;
+	app!: App;
 
 	/**
 	 * Loads the plugin settings, registers extensions, adds command and ribbon handlers,
@@ -34,7 +36,11 @@ export default class SugarRushPlugin extends Plugin {
 		// Add the intervalHandler
 		this.intervalHandler = new SugarRushIntervalHandler(this);
 		// Add the settings tab
-		this.addSettingTab(new SugarRushSettingTab(this.app, this));
+		this.addSettingTab(new SugarRushSettingTab(this));
+		// Add the abstractMap
+		this.abstractMap = new Map();
+		// Add the app reference
+		this.app = this.app;
 	}
 
 	/**
