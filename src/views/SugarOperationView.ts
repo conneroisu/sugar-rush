@@ -8,6 +8,12 @@ export class SugarOperationModal extends Modal {
   onOpen() {
     let { contentEl } = this;
     contentEl.setText("Look at me, I'm a modal! 👀");
+		contentEl.createEl("h1", {text: "Hello World!"});
+		// create a button
+		const button = contentEl.createEl("button", {text: "Click Me!"});
+		button.addEventListener("click", () => {
+		this.close();
+		});
   }
 
   onClose() {
