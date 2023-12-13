@@ -1,5 +1,5 @@
 import { PluginSettingTab, Setting } from "obsidian";
-import SugarRushPlugin from "src/main";
+import SugarRushPlugin from "./../main";
 
 /**
  * @name SugarRushSettingTab

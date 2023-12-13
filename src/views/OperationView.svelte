@@ -8,6 +8,13 @@
 		<h1>Sugar Rush Operation View</h1>
 	</header>
 
+	<p>Operation View</p>
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum
+		obcaecati molestias non eaque dolores quos ipsa, nobis soluta nam
+		cupiditate laudantium accusantium accusamus est incidunt. Excepturi
+		blanditiis reiciendis nostrum veritatis?
+	</p>
 	<footer></footer>
 </body>
 

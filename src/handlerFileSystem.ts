@@ -33,7 +33,6 @@ export default class SugarRushFileSystemHandler {
 
 	async createSugarFile(activeFile: TFile): Promise<TFile> {
 		this.ensureSugarFolder();
-		let isExistingFile: boolean = false;
 		if (this.isSugarFile(activeFile)) {
 			// create the active files path 
 			return await this.vault.create(activeFile.path + 'adsfadsj.md', this.generateSugarFileContent(activeFile));

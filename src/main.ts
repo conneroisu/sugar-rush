@@ -40,9 +40,6 @@ export default class SugarRushPlugin extends Plugin {
 		// Add a new Sugar Rush File System Handler.
 		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
 
-		// Add the application reference.
-		this.app = this.app;
-
 		// Delete the Sugar Folder on Load.
 		this.fileSystemHandler.deleteSugarFolder();
 

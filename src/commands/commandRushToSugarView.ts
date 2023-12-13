@@ -1,11 +1,9 @@
-import type { assert } from "console";
 import {
 	type Command,
 	type MarkdownFileInfo,
 	MarkdownView,
 	Editor,
 	TFile,
-	WorkspaceLeaf,
 	TAbstractFile,
 } from "obsidian";
 import type SugarRushPlugin from "src/main";
@@ -35,8 +33,7 @@ export default class commandRushToSugarView implements Command {
 							this.plugin.fileSystemHandler.getSugarFilePath(
 								activeFile
 							);
-						let file: TFile | null | undefined | TAbstractFile;
-						file = this.plugin.app.vault.getAbstractFileByPath(
+						const file: TFile | null | undefined | TAbstractFile = this.plugin.app.vault.getAbstractFileByPath(
 							sugarFilePath
 						);
 						if (!file) {

@@ -1,6 +1,7 @@
 
-import { Notice, type Command } from "obsidian";
-import type SugarRushPlugin from "src/main";
+import { type Command } from "obsidian";
+import type SugarRushPlugin from "./../main";
+import { SugarOperationModal } from "./../views/SugarOperationView";
 
 export default class commandSaveSugarView implements Command {
 	id: string = "sugar-view-save";
@@ -11,9 +12,12 @@ export default class commandSaveSugarView implements Command {
 		this.plugin = plugin;
 	}
 
-	checkCallback?: () => boolean | void = () => {
-		// Check if the current file is a Sugar View
-		// If it is, return true
-		// Also, check each file in the sugar folder for operations that have been performed on it
+	checkCallback?: (checking:boolean) => boolean | void = (checking:boolean) => {
+		// open the view
+		if (checking){
+			return true;
+		}
+		new SugarOperationModal(this.plugin.app).open();
+		
 	};
 }
