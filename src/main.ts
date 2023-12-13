@@ -5,6 +5,8 @@ import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushRibbonHandler from "./handlerRibbon";
 import SugarRushIntervalHandler from "./handlerIntervals";
 import SugarRushFileSystemHandler from "./handlerFileSystem";
+import SugarRushIconHandler from "./handlerIcons";
+import { lineNumbersRelative } from "./extension";
 
 /**
  * Sugar Rush Plugin for Obsidian.
@@ -16,6 +18,7 @@ export default class SugarRushPlugin extends Plugin {
 	ribbonHandler!: SugarRushRibbonHandler;
 	intervalHandler!: SugarRushIntervalHandler;
 	fileSystemHandler!: SugarRushFileSystemHandler;
+	iconHandler!: SugarRushIconHandler;
 	app!: App;
 
 	/**
@@ -36,10 +39,18 @@ export default class SugarRushPlugin extends Plugin {
 		this.intervalHandler = new SugarRushIntervalHandler(this);
 		// Add a new Sugar Rush File System Handler.
 		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
+		// Add a new Sugar Rush Icon Handler.
+		this.iconHandler = new SugarRushIconHandler(this);
+
 		// Add the application reference.
 		this.app = this.app;
+		// Delete the Sugar Folder on Load.
+		this.fileSystemHandler.deleteSugarFolder();
 	}
 
+	activateIconExtension() {
+		this.registerEditorExtension(lineNumbersRelative());
+	}
 	/**
 	 * Actions taken when unloading the plugin, Sugar-Rush.
 	 **/

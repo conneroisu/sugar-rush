@@ -15,6 +15,7 @@ export default class SugarRushFileSystemHandler {
 
 	getSugarFilePath(activeFile: TFile): string {
 		if (activeFile.parent === null) {
+
 			return (
 				this.plugin.settings.sugarFolder +
 				"/" +
@@ -32,28 +33,38 @@ export default class SugarRushFileSystemHandler {
 		);
 	}
 
-	createSugarFile(activeFile: TFile, leaf: WorkspaceLeaf) {
+	async createSugarFile(activeFile: TFile): Promise<TFile> {
 		this.ensureSugarFolder();
+		let isExistingFile: boolean = false;
 		if (this.isSugarFile(activeFile)) {
 			// create the active files path 
+			return await this.vault.create(activeFile.path + 'adsfadsj.md', this.generateSugarFileContent(activeFile));
 
 		} else {
-			const file = this.vault.create(
+			return await this.vault.create(
 				this.getSugarFilePath(activeFile),
-				this.GetParentChildren(activeFile).map((file) => { return file.name; }).join("\n")
+				this.generateSugarFileContent(activeFile)
 			);
-			this.loadToActiveView(file, leaf);
 		}
 	}
 
-	private async loadToActiveView(file: Promise<TFile>, activeView: WorkspaceLeaf) {
-		const rfile = await file;
-		activeView.openFile(rfile);
+
+	private generateSugarFileContent(activeFile: TFile): string {
+		return this.GetParentChildren(activeFile).map((file) => {
+			return this.generate_prefix(file) + file.name;
+		}).join("\n")
 	}
 
 	private ensureSugarFolder() {
 		if (!this.vault.getAbstractFileByPath(this.plugin.settings.sugarFolder)) {
 			this.vault.createFolder(this.plugin.settings.sugarFolder);
+		}
+	}
+
+	deleteSugarFolder() {
+		const folder = this.vault.getAbstractFileByPath(this.plugin.settings.sugarFolder);
+		if (folder) {
+			this.vault.delete(folder, true);
 		}
 	}
 
@@ -70,7 +81,22 @@ export default class SugarRushFileSystemHandler {
 		return [];
 	}
 
-	generate_prefix(file: TFile): string {
+	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
+		leaf.openFile(file);
+		this.plugin.activateIconExtension();
+	}
+
+	generate_prefix(file: TAbstractFile): string {
+		if (file instanceof TFile) {
+
+			return (
+				this.plugin.iconHandler.getIconForFileExtension(file.extension) +
+				"<a href=" +
+				Math.random().toString(5).substring(2, 7) +
+				">" +
+				"</a>"
+			);
+		}
 		return (
 			"<a href=" +
 			Math.random().toString(5).substring(2, 7) +
