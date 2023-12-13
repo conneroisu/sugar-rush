@@ -35,6 +35,7 @@ export default class commandRushToSugarView implements Command {
 					// The file is at the root of the vault
 
 				}
+				return true;
 			}
 		}
 		return false;
