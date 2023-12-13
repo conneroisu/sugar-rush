@@ -1,5 +1,3 @@
-import type { SugarRushPluginSettings } from "./pluginSettings";
-
 /**
  * Default settings for the SugarRushPlugin.
  */
