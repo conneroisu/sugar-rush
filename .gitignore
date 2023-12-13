@@ -33,3 +33,9 @@ Desktop.ini
 # Exclude Windows Recycle Bin
 $RECYCLE.BIN/
 
+# PNPM store and lock and gen
+.pnpm-store
+.pnpm-lock.yaml
+.pnpmfile.cjs
+.pnpmfile.js
+
