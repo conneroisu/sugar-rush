@@ -2,7 +2,7 @@ import { type Extension } from "@codemirror/state";
 import { EditorView, ViewUpdate, gutter, lineNumbers, GutterMarker } from "@codemirror/view";
 import { Compartment, EditorState } from "@codemirror/state";
 
-let relativeIconGutter = new Compartment();
+let IconGutterCompartment = new Compartment();
 
 class Marker extends GutterMarker {
 	/** The text to render in gutter */
@@ -34,7 +34,7 @@ function relativeLineIcon(lineNo: number, state: EditorState) {
 }
 
 // This shows the numbers in the gutter
-const showLineNumbers = relativeIconGutter.of(
+const showLineNumbers = IconGutterCompartment.of(
 	lineNumbers({ formatNumber: relativeLineIcon })
 );
 
@@ -45,7 +45,7 @@ const lineNumbersUpdateListener = EditorView.updateListener.of(
 		if (viewUpdate.docChanged) {
 			console.log("lineNumbersUpdateListener");
 			viewUpdate.view.dispatch({
-				effects: relativeIconGutter.reconfigure(
+				effects: IconGutterCompartment.reconfigure(
 					lineNumbers({ formatNumber: relativeLineIcon })
 				),
 			});
