@@ -1,24 +1,69 @@
-import type SugarRushPlugin from "./main";
+import { type Extension } from "@codemirror/state";
+import { gutter, GutterMarker } from "@codemirror/view";
 import assets from "./assets/!index.json";
 
-export default class SugarRushIconHandler {
-	plugin!: SugarRushPlugin;
+function getIconForFileExtension(extension: string): string {
+	const icon = assets["extension-associations"].find((association) => {
+		return association.extensions.includes(extension);
+	});
+	if (icon) {
+		return icon.data;
+	}
+	return "";
+}
 
-	constructor(plugin: SugarRushPlugin) {
-		this.plugin = plugin;
+/**
+ * Represents a marker used in the gutter.
+ */
+class Marker extends GutterMarker {
+	extension: string;
+
+	/**
+	 * Creates a new Marker instance.
+	 * @param text - The extension of the marker.
+	 */
+	constructor(text: string) {
+		super();
+		this.extension = text;
 	}
 
 	/**
-	 * Gets an icon for the given file extension.
-	 **/
-	getIconForFileExtension(extension: string): string {
-		const icon = assets["extension-associations"].find((association) => {
-			return association.extensions.includes(extension);
+	 * Converts the marker to a DOM element.
+	 * @returns The DOM element representing the marker.
+	 */
+	toDOM() {
+		const icon = document.createElementNS(
+			"http://www.w3.org/2000/svg",
+			"svg"
+		);
+		icon.setAttrs({
+			width: "1em",
+			height: "1em",
+			viewBox: "0 0 1em 1em",
+			xmlns: "http://www.w3.org/2000/svg",
+			align: "center",
 		});
-		if (icon) {
-			// get the icons from devicons
-			return icon.data;
+		let innerHtml = getIconForFileExtension(this.extension);
+		if (innerHtml == "") {
+			innerHtml = getIconForFileExtension(innerHtml);
 		}
-		return "";
+		icon.innerHTML = innerHtml;
+		return icon;
 	}
+}
+
+const relativeLineIconGutter = gutter({
+	lineMarker: (view, line) => {
+		const ext = view.state.doc
+			.line(view.state.doc.lineAt(line.from).number)
+			.text.match(/(?<=\.)\w+$/);
+		if (ext !== null) {
+			return new Marker(ext[0]);
+		}
+		return null;
+	},
+});
+
+export default function iconGutter(): Extension {
+	return [relativeLineIconGutter];
 }

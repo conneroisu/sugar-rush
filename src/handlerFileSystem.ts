@@ -91,7 +91,6 @@ export default class SugarRushFileSystemHandler {
 		if (file instanceof TFile) {
 
 			return (
-				this.plugin.iconHandler.getIconForFileExtension(file.extension) +
 				"<a href=" +
 				Math.random().toString(5).substring(2, 7) +
 				">" +

@@ -8,7 +8,6 @@ export default class SugarRushIntervalHandler {
 	}
 
 	async addIntervals() {
-		// Add the interval for checking the current path
 		this.plugin.registerInterval(
 			window.setInterval(() => {
 				// this.checkPath();

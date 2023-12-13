@@ -5,8 +5,7 @@ import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushRibbonHandler from "./handlerRibbon";
 import SugarRushIntervalHandler from "./handlerIntervals";
 import SugarRushFileSystemHandler from "./handlerFileSystem";
-import SugarRushIconHandler from "./handlerIcons";
-import { iconGutter } from "./extension";
+import iconGutter from "./handlerIcons";
 import type { Extension } from "@codemirror/state";
 
 /**
@@ -19,9 +18,8 @@ export default class SugarRushPlugin extends Plugin {
 	ribbonHandler!: SugarRushRibbonHandler;
 	intervalHandler!: SugarRushIntervalHandler;
 	fileSystemHandler!: SugarRushFileSystemHandler;
-	iconHandler!: SugarRushIconHandler;
 	app!: App;
-    extension: Extension | null = null;
+	extension: Extension | null = null;
 
 	/**
 	 * Loads the Sugar Rush Plugin.
@@ -41,12 +39,10 @@ export default class SugarRushPlugin extends Plugin {
 		this.intervalHandler = new SugarRushIntervalHandler(this);
 		// Add a new Sugar Rush File System Handler.
 		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
-		// Add a new Sugar Rush Icon Handler.
-		this.iconHandler = new SugarRushIconHandler(this);
 
 		// Add the application reference.
 		this.app = this.app;
-		
+
 		// Delete the Sugar Folder on Load.
 		this.fileSystemHandler.deleteSugarFolder();
 
@@ -54,16 +50,16 @@ export default class SugarRushPlugin extends Plugin {
 			if (file) {
 				if (this.fileSystemHandler.isSugarFile(file)) {
 					this.activateIconExtension();
-				}else{
+				} else {
 					this.deactivateIconExtension();
 				}
 			}
 		});
 	}
-	
-    deactivateIconExtension() {
+
+	deactivateIconExtension() {
 		console.log("deactivate");
-    }
+	}
 
 	activateIconExtension() {
 		this.extension = iconGutter();
