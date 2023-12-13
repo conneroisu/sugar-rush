@@ -7,7 +7,6 @@ export default class SugarRushIntervalHandler {
 		this.plugin = plugin;
 	}
 
-	
 	async addIntervals() {
 		// Add the interval for checking the current path
 		this.plugin.registerInterval(
@@ -16,7 +15,4 @@ export default class SugarRushIntervalHandler {
 			}, 1000)
 		);
 	}
-		
-	
-	
 }

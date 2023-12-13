@@ -1,51 +1,42 @@
-import { App, Plugin, TAbstractFile } from "obsidian";
+import { App, Plugin } from "obsidian";
+import { DEFAULT_SETTINGS, type SugarRushPluginSettings } from "./settings/sugarSettings";
+import { SugarRushSettingTab } from "./settings/settingsPage";
 import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushRibbonHandler from "./handlerRibbon";
 import SugarRushIntervalHandler from "./handlerIntervals";
-
-import type { SugarRushPluginSettings } from "./settings/pluginSettings";
-import { DEFAULT_SETTINGS } from "./settings/defaultSettings";
-import { SugarRushSettingTab } from "./settings/settingsPage";
+import SugarRushFileSystemHandler from "./handlerFileSystem";
 
 /**
- * Represents the main class of the Plugin, Sugar-Rush.
- * This class extends the Plugin class and provides functionality for loading settings,
- * registering extensions, adding command and ribbon handlers, and managing settings tabs.
+ * Sugar Rush Plugin for Obsidian.
+ * contributors: @conneroisu
  **/
 export default class SugarRushPlugin extends Plugin {
 	settings!: SugarRushPluginSettings;
 	commandHandler!: SugarRushCommandHandler;
 	ribbonHandler!: SugarRushRibbonHandler;
 	intervalHandler!: SugarRushIntervalHandler;
-	abstractMap!: Map<number, TAbstractFile>;
+	fileSystemHandler!: SugarRushFileSystemHandler;
 	app!: App;
 
 	/**
-	 * Loads the plugin settings, registers extensions, adds command and ribbon handlers,
-	 * and adds the settings tab for the Sugar-Rush plugin.
+	 * Loads the Sugar Rush Plugin.
 	 */
 	async onload() {
 		await this.loadSettings();
-		
-		// Add the extension for `.sugar` files
+
+		// Register the extension for `.sugar` files as markdown.
 		this.registerExtensions(["sugar"], "markdown");
-		
-		// Add the commandHandler
-		this.commandHandler = new SugarRushCommandHandler(this);
-		
-		// Add the ribbonHandler
-		this.ribbonHandler = new SugarRushRibbonHandler(this);
-		
-		// Add the intervalHandler
-		this.intervalHandler = new SugarRushIntervalHandler(this);
-		
-		// Add the settings tab
+		// Add a new Sugar Rush Settings Tab.
 		this.addSettingTab(new SugarRushSettingTab(this));
-		
-		// Add the abstractMap
-		this.abstractMap = new Map();
-		
-		// Add the app reference
+		// Add a new Sugar Rush Command Handler.
+		this.commandHandler = new SugarRushCommandHandler(this);
+		// Add a new Sugar Rush Ribbon Handler.
+		this.ribbonHandler = new SugarRushRibbonHandler(this);
+		// Add a new Sugar Rush Interval Handler.
+		this.intervalHandler = new SugarRushIntervalHandler(this);
+		// Add a new Sugar Rush File System Handler.
+		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
+		// Add the application reference.
 		this.app = this.app;
 	}
 

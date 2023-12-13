@@ -1,9 +1,8 @@
+import { type Command, Editor, MarkdownView, type MarkdownFileInfo } from "obsidian";
 import type SugarRushPlugin from "src/main";
-import { type Command, Editor, Notice } from "obsidian";
-import { isSugarFile } from "src/utils/sugarCharacterizer";
 
 /**
- * @implements {Command} Command
+ * Sugar Rush Plugin Command: Select Sugar View Entry.
  * @description Represents a command to select @type {import("obsidian").TAbstractFile} in a Sugar View.
  **/
 export default class commandSelectSugarViewEntry implements Command {
@@ -11,25 +10,18 @@ export default class commandSelectSugarViewEntry implements Command {
 	name: string = "Select Sugar View Entry";
 	plugin!: SugarRushPlugin;
 
-	/**
-	 * Creates a new command to select @type {import("obsidian").TAbstractFile} in a Sugar View.
-	 * @param plugin The plugin that this command belongs to.
-	 **/
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
 	}
 
-	/**
-	 * @description Checks if the current file is a Sugar View selecting an entry if it is.
-	 * @param editor The editor that the command was called from.
-	 * @param ctx The context that the command was called from.
-	 **/
-	editorCallback: ((editor: Editor) => boolean | void) = (editor: Editor) => {
-		if (isSugarFile(this.plugin.app.workspace.getActiveFile())) {
-			selectEntry(editor);
-		} else {
-			new Notice("This is not a Sugar File!");
+	editorCheckCallback?: ((checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) | undefined = (checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
+		const activeFile = this.plugin.app.workspace.getActiveFile();
+		if (activeFile && this.plugin.fileSystemHandler.isSugarFile(activeFile)) {
+			const id = editor.getLine(editor.getCursor().line).split("<a href=")[1].split(">")[0];
+
+			return true;
 		}
+		return false;
 	};
 }
 

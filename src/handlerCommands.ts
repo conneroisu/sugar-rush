@@ -1,4 +1,4 @@
-import { App, type Command } from "obsidian";
+import { type Command } from "obsidian";
 import commandRushToSugarView from "./commands/commandRushToSugarView";
 import commandToggleHiddenFiles from "./commands/commandToggleHiddenFiles";
 import commandSelectSugarViewEntry from "./commands/commandSelectSugarViewEntry";

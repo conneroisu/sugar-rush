@@ -27,8 +27,5 @@
 		"tslib": "2.6.2",
 		"typescript": "5.3.3",
 		"vitest": "^1.0.4"
-	},
-	"dependencies": {
-		"@popperjs/core": "^2.11.8"
 	}
 }

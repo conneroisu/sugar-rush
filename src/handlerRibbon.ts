@@ -1,10 +1,9 @@
-import { Notice } from "obsidian";
+import { Notice, addIcon } from "obsidian";
 import SugarRushPlugin from "./main";
-import { addIcon } from "obsidian";
 
 /**
- * Represents a handler for the Sugar Rush ribbon.
- */
+ * Represents a ribbon handler for the Sugar Rush plugin.
+ **/
 export default class SugarRushRibbonHandler {
 	private plugin: SugarRushPlugin;
 
