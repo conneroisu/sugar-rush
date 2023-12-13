@@ -20,16 +20,14 @@ export default class SugarRushFileSystemHandler {
 				this.plugin.settings.sugarFolder +
 				"/" +
 				"root" +
-				".sugar" +
-				".md"
+				".sugar" 
 			);
 		}
 		return (
 			this.plugin.settings.sugarFolder +
 			"/" +
 			activeFile.parent.path.replace(sep, "-") +
-			".sugar" +
-			".md"
+			".sugar" 
 		);
 	}
 
@@ -84,6 +82,9 @@ export default class SugarRushFileSystemHandler {
 	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
 		leaf.openFile(file);
 		this.plugin.activateIconExtension();
+	}
+
+	checkFocusAway() {
 	}
 
 	generate_prefix(file: TAbstractFile): string {
