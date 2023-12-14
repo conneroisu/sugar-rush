@@ -1,6 +1,7 @@
 import { TFolder, type TAbstractFile, TFile, type Vault, WorkspaceLeaf } from "obsidian";
 import type SugarRushPlugin from "./main";
 import { sep } from "path";
+import iconGutter from "./handlerIcons";
 
 export default class SugarRushFileSystemHandler {
 	private vault: Vault;
@@ -45,6 +46,9 @@ export default class SugarRushFileSystemHandler {
 
 	private generateSugarFileContent(activeFile: TFile): string {
 		return this.GetParentChildren(activeFile).map((file) => {
+			if (file instanceof TFolder) {
+				return this.generate_prefix(file) + file.name + "/";
+			}
 			return this.generate_prefix(file) + file.name;
 		}).join("\n")
 	}
@@ -77,6 +81,7 @@ export default class SugarRushFileSystemHandler {
 
 	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
 		leaf.openFile(file);
+		this.plugin.extension = iconGutter();
 	}
 
 	generate_prefix(file: TAbstractFile): string {
