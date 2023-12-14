@@ -41,7 +41,8 @@ This plugin are not to be held responsible for the side effects that may incur d
 
 ### Leader Commands?
 
-Wanting to use the leader key to trigger commands for the plugin? I recommend [tgrosinger's leader-hotkeys-obsidian](https://github.com/tgrosinger/leader-hotkeys-obsidian).
+Wanting to use a leader key to trigger commands for the plugin? I recommend [tgrosinger's leader-hotkeys-obsidian](https://github.com/tgrosinger/leader-hotkeys-obsidian).
+One can check out the guide to do this in terms of this repository [here]()
 
 
 ### Increment Map

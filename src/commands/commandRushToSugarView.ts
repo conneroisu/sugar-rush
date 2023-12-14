@@ -21,7 +21,7 @@ export default class commandRushToSugarView implements Command {
 		this.plugin = plugin;
 	}
 
-	editorCheckCallback?: | ((checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) | undefined = (checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
+	editorCheckCallback?: | ((checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) | undefined = (checking: boolean) => {
 		const activeFile = this.plugin.app.workspace.getActiveFile();
 		const leaf = this.plugin.app.workspace.getMostRecentLeaf();
 		if (leaf) {
