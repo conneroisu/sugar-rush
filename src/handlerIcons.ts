@@ -2,14 +2,20 @@ import { type Extension } from "@codemirror/state";
 import { gutter, GutterMarker } from "@codemirror/view";
 import assets from "./assets/!index.json";
 
-function getIconForFileExtension(extension: string): string {
+function getIconForLineFileExtension(extension: string): string {
 	const icon = assets["extension-associations"].find((association) => {
 		return association.extensions.includes(extension);
 	});
-	if (icon) {
-		return icon.data;
+	if (icon === undefined) {
+		const defaultIcon = assets["extension-associations"].find((association) => { 
+			return association.extensions.includes("*") 
+		});
+		if (defaultIcon === undefined) {
+			return "";
+		}
+		return defaultIcon.data;
 	}
-	return "";
+	return icon.data;
 }
 
 /**
@@ -43,22 +49,22 @@ class Marker extends GutterMarker {
 			xmlns: "http://www.w3.org/2000/svg",
 			align: "center",
 		});
-		let innerHtml = getIconForFileExtension(this.extension);
-		if (innerHtml == "") {
-			innerHtml = getIconForFileExtension(innerHtml);
-		}
-		icon.innerHTML = innerHtml;
+		icon.innerHTML = getIconForLineFileExtension(this.extension);
 		return icon;
 	}
 }
 
-const relativeLineIconGutter = gutter({
+let relativeLineIconGutter = gutter({
 	lineMarker: (view, line) => {
-		const ext = view.state.doc
+		const lineFileExtension = view.state.doc
 			.line(view.state.doc.lineAt(line.from).number)
 			.text.match(/(?<=\.)\w+$/);
-		if (ext !== null) {
-			return new Marker(ext[0]);
+		if (lineFileExtension !== null) {
+			return new Marker(lineFileExtension[0]);
+		}
+		// if it is a folder aka ends with /
+		if (view.state.doc.lineAt(line.from).text.trim().endsWith("/")) {
+			return new Marker("/");
 		}
 		return null;
 	},

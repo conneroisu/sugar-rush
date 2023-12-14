@@ -1,4 +1,4 @@
-import { App, Plugin } from "obsidian";
+import { App, Plugin, TFile } from "obsidian";
 import { DEFAULT_SETTINGS, type SugarRushPluginSettings } from "./settings/sugarSettings";
 import { SugarRushSettingTab } from "./settings/settingsPage";
 import SugarRushCommandHandler from "./handlerCommands";
@@ -19,7 +19,7 @@ export default class SugarRushPlugin extends Plugin {
 	intervalHandler!: SugarRushIntervalHandler;
 	fileSystemHandler!: SugarRushFileSystemHandler;
 	app!: App;
-	extension: Extension | null = null;
+	extension: Extension  = iconGutter();
 
 	/**
 	 * Loads the Sugar Rush Plugin.
@@ -42,26 +42,17 @@ export default class SugarRushPlugin extends Plugin {
 
 		// Delete the Sugar Folder on Load.
 		this.fileSystemHandler.deleteSugarFolder();
-
-		this.app.workspace.on("file-open", (file) => {
-			if (file) {
-				if (this.fileSystemHandler.isSugarFile(file)) {
-					this.activateIconExtension();
-				} else {
-					this.deactivateIconExtension();
-				}
+		
+		this.registerEditorExtension(this.extension);
+		
+		this.app.workspace.on("file-open", (file: TFile | null) => {
+			if (file && !this.fileSystemHandler.isSugarFile(file)) {
+				this.extension = []
+				this.app.workspace.updateOptions();
 			}
 		});
 	}
 
-	deactivateIconExtension() {
-		console.log("deactivate");
-	}
-
-	activateIconExtension() {
-		this.extension = iconGutter();
-		this.registerEditorExtension(this.extension);
-	}
 	/**
 	 * Actions taken when unloading the plugin, Sugar-Rush.
 	 **/

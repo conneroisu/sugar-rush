@@ -27,12 +27,9 @@ export default class commandRushToSugarView implements Command {
 		if (leaf) {
 			if (activeFile) {
 				if (!checking) {
+					const sugarFilePath = this.plugin.fileSystemHandler.getSugarFilePath(activeFile);
 					if (activeFile.parent && activeFile.parent.name != "") {
 						// The file is not at the root and has a parent folder
-						const sugarFilePath =
-							this.plugin.fileSystemHandler.getSugarFilePath(
-								activeFile
-							);
 						const file: TFile | null | undefined | TAbstractFile = this.plugin.app.vault.getAbstractFileByPath(
 							sugarFilePath
 						);
@@ -46,8 +43,16 @@ export default class commandRushToSugarView implements Command {
 							}
 						}
 					} else {
-						// The file is at the root of the vault
-						console.log("file is at root");
+						const file: TFile | null | undefined | TAbstractFile = this.plugin.app.vault.getAbstractFileByPath(sugarFilePath);
+						if (!file) {
+							this.plugin.fileSystemHandler.createSugarFile(activeFile).then((file) => {
+								this.plugin.fileSystemHandler.loadSugarFile(file, leaf);
+							});
+						}else {
+							if (file instanceof TFile) {
+								this.plugin.fileSystemHandler.loadSugarFile(file, leaf);
+							}
+						}
 					}
 				}
 				return true;

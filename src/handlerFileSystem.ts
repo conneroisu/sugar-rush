@@ -15,28 +15,25 @@ export default class SugarRushFileSystemHandler {
 
 	getSugarFilePath(activeFile: TFile): string {
 		if (activeFile.parent === null) {
-
 			return (
 				this.plugin.settings.sugarFolder +
-				"/" +
+				sep +
 				"root" +
-				".sugar" 
+				".sugar"
 			);
 		}
 		return (
 			this.plugin.settings.sugarFolder +
-			"/" +
+			sep +
 			activeFile.parent.path.replace(sep, "-") +
-			".sugar" 
+			".sugar"
 		);
 	}
 
 	async createSugarFile(activeFile: TFile): Promise<TFile> {
 		this.ensureSugarFolder();
 		if (this.isSugarFile(activeFile)) {
-			// create the active files path 
 			return await this.vault.create(activeFile.path + 'adsfadsj.md', this.generateSugarFileContent(activeFile));
-
 		} else {
 			return await this.vault.create(
 				this.getSugarFilePath(activeFile),
@@ -80,10 +77,6 @@ export default class SugarRushFileSystemHandler {
 
 	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
 		leaf.openFile(file);
-		this.plugin.activateIconExtension();
-	}
-
-	checkFocusAway() {
 	}
 
 	generate_prefix(file: TAbstractFile): string {
