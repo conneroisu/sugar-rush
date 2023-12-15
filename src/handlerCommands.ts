@@ -10,10 +10,9 @@ import SugarRushPlugin from "./main";
  * Represents a command handler for the Sugar Rush plugin.
  **/
 export default class SugarRushCommandHandler {
-
 	// The plugin that this command handler belongs to.
 	private plugin: SugarRushPlugin;
-	private commands: Command[] = [];
+	commands: Command[] = [];
 
 	/**
 	 * Creates a new command handler for the Sugar Rush plugin.
