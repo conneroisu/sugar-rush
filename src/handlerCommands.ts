@@ -3,6 +3,7 @@ import commandRushToSugarView from "./commands/commandRushToSugarView";
 import commandToggleHiddenFiles from "./commands/commandToggleHiddenFiles";
 import commandSelectSugarViewEntry from "./commands/commandSelectSugarViewEntry";
 import commandSaveSugarView from "./commands/commandSaveSugarView";
+import commandRefreshSugarView from "./commands/commandRefreshSugarView";
 
 import SugarRushPlugin from "./main";
 
@@ -32,6 +33,7 @@ export default class SugarRushCommandHandler {
 		this.commands.push(new commandToggleHiddenFiles(this.plugin));
 		this.commands.push(new commandSelectSugarViewEntry(this.plugin));
 		this.commands.push(new commandSaveSugarView(this.plugin));
+		this.commands.push(new commandRefreshSugarView(this.plugin));
 	}
 
 	/**

@@ -1,7 +1,7 @@
 import { TFolder, type TAbstractFile, TFile, type Vault, WorkspaceLeaf } from "obsidian";
 import type SugarRushPlugin from "./main";
 import { sep } from "path";
-import iconGutter from "./handlerIcons";
+import iconGutter from "./extensionIcons";
 
 export default class SugarRushFileSystemHandler {
 	private vault: Vault;
@@ -20,18 +20,22 @@ export default class SugarRushFileSystemHandler {
 	 *  #return string the path of the sugar file
 	 **/
 	getSugarFilePath(activeFile: TFile): string {
-		if (activeFile.parent === null) {
+		if (this.isSugarFile(activeFile)) {
+			// return the path of a suar file in the parent parent folder
+			
+
+		}
+
+		if (activeFile.parent && activeFile.parent.path === "/" || activeFile.parent === null) {
 			return (
-				this.plugin.settings.sugarFolder +
-				sep +
 				"root" +
 				".sugar"
 			);
 		}
 		return (
-			this.plugin.settings.sugarFolder +
+			activeFile.parent.path +
 			sep +
-			activeFile.parent.path.replace(sep, "-") +
+			activeFile.parent.name.replace(sep, "-") +
 			".sugar"
 		);
 	}
@@ -44,15 +48,10 @@ export default class SugarRushFileSystemHandler {
 	async createSugarFile(activeFile: TFile): Promise<TFile> {
 		this.ensureSugarFolder();
 		if (this.isSugarFile(activeFile)) {
-			console.log("is sugar file");
-			console.log(activeFile);
-			console.log(this.getSugarFilePath(activeFile));
-			if(activeFile.parent === null) {
+			if (activeFile.parent === null) {
 				throw new Error("Cannot create a sugar file from a sugar file for the root folder");
 			}
-			console.log("parent of active note: " + activeFile.parent);
-			console.log("parent of active note: " + activeFile.parent.path);
-			if(activeFile.parent.path === this.plugin.settings.sugarFolder) {
+			if (activeFile.parent.path === this.plugin.settings.sugarFolder) {
 				throw new Error("Cannot create a sugar file from a sugar file for the sugar folder Yet: WIP");
 			}
 		}
@@ -60,7 +59,7 @@ export default class SugarRushFileSystemHandler {
 			this.getSugarFilePath(activeFile),
 			this.generateSugarFileContent(activeFile)
 		);
-		
+
 	}
 
 
@@ -70,6 +69,7 @@ export default class SugarRushFileSystemHandler {
 	* 	@return string the content of the sugar file
 	**/
 	private generateSugarFileContent(activeFile: TFile): string {
+		console.log("generateSugarFileContent: active file path: " + activeFile.path);
 		return this.GetParentChildren(activeFile).map((file) => {
 			if (file instanceof TFolder) {
 				return this.generate_prefix(file) + file.name + "/";
@@ -83,6 +83,7 @@ export default class SugarRushFileSystemHandler {
 	 * @return void
 	 **/
 	private ensureSugarFolder() {
+		console.log("ensureSugarFolder: sugar folder: " + this.plugin.settings.sugarFolder);
 		if (!this.vault.getAbstractFileByPath(this.plugin.settings.sugarFolder)) {
 			this.vault.createFolder(this.plugin.settings.sugarFolder);
 		}
@@ -93,6 +94,7 @@ export default class SugarRushFileSystemHandler {
 	 * 	@return void
 	 **/
 	deleteSugarFolder() {
+		console.log("deleteSugarFolder: sugar folder: " + this.plugin.settings.sugarFolder);
 		const folder = this.vault.getAbstractFileByPath(this.plugin.settings.sugarFolder);
 		if (folder) {
 			this.vault.delete(folder, true);
@@ -105,6 +107,7 @@ export default class SugarRushFileSystemHandler {
 	 * 	@return TAbstractFile[] the children of the parent of the active file
 	 **/
 	private GetParentChildren(file: TAbstractFile): TAbstractFile[] {
+		console.log("GetParentChildren: active file path: " + file.path);
 		if (file instanceof TFolder) {
 			return file.children;
 		} else if (file instanceof TFile) {
@@ -124,7 +127,7 @@ export default class SugarRushFileSystemHandler {
 	 * 	@return void
 	 **/
 	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
-		
+		console.log("loadSugarFile: active file path: " + file.path);
 		leaf.openFile(file);
 		this.plugin.extension = iconGutter();
 	}
@@ -137,8 +140,6 @@ export default class SugarRushFileSystemHandler {
 	generate_prefix(file: TAbstractFile): string {
 		const code = Math.random().toString(5).substring(2, 7);
 		this.abstractMap.set(parseInt(code), file);
-		console.log("Abstract Map:");
-		console.log(this.abstractMap);
 		if (file instanceof TFile) {
 			return (
 				"<a href=" +
@@ -161,7 +162,7 @@ export default class SugarRushFileSystemHandler {
 	* 	@return boolean true if the active file is a sugar file, false otherwise
 	**/
 	isSugarFile(activeFile: TFile): boolean {
-		if (activeFile.parent?.path === this.plugin.settings.sugarFolder) {
+		if (activeFile.extension === "sugar") {
 			return true;
 		}
 		return false;
