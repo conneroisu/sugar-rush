@@ -9,10 +9,6 @@ import SugarRushPlugin from "src/main";
 import manifest from "../manifest.json";
 import { fstat } from "fs";
 
-test("adds 1 + 2 to equal 3", () => {
-	expect(sum(1, 2)).toBe(3);
-});
-
 test("collects all the commands upon the creation of the SugarRushCommandHandler ", () => {
 	// get the costant id form the plugin manifest
 	const id = manifest.id;
