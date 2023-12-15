@@ -14,6 +14,9 @@ export default class SugarRushFileSystemHandler {
 		this.abstractMap = new Map();
 	}
 
+	/**
+	 *  gets a sugar file's path, the name of the activeFile's parent's folder path
+	 **/
 	getSugarFilePath(activeFile: TFile): string {
 		if (activeFile.parent === null) {
 			return (
@@ -34,13 +37,14 @@ export default class SugarRushFileSystemHandler {
 	async createSugarFile(activeFile: TFile): Promise<TFile> {
 		this.ensureSugarFolder();
 		if (this.isSugarFile(activeFile)) {
-			return await this.vault.create(activeFile.path + 'adsfadsj.md', this.generateSugarFileContent(activeFile));
-		} else {
-			return await this.vault.create(
-				this.getSugarFilePath(activeFile),
-				this.generateSugarFileContent(activeFile)
-			);
+			
+			
 		}
+		return await this.vault.create(
+			this.getSugarFilePath(activeFile),
+			this.generateSugarFileContent(activeFile)
+		);
+		
 	}
 
 
@@ -80,23 +84,27 @@ export default class SugarRushFileSystemHandler {
 	}
 
 	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
+		
 		leaf.openFile(file);
 		this.plugin.extension = iconGutter();
 	}
 
 	generate_prefix(file: TAbstractFile): string {
+		const code = Math.random().toString(5).substring(2, 7);
+		this.abstractMap.set(parseInt(code), file);
+		console.log("Abstract Map:");
+		console.log(this.abstractMap);
 		if (file instanceof TFile) {
-
 			return (
 				"<a href=" +
-				Math.random().toString(5).substring(2, 7) +
+				code +
 				">" +
 				"</a>"
 			);
 		}
 		return (
 			"<a href=" +
-			Math.random().toString(5).substring(2, 7) +
+			code +
 			">" +
 			"</a>"
 		);

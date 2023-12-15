@@ -1,11 +1,4 @@
-import {
-	type Command,
-	type MarkdownFileInfo,
-	MarkdownView,
-	Editor,
-	TFile,
-	TAbstractFile,
-} from "obsidian";
+import { type Command, type MarkdownFileInfo, MarkdownView, Editor, TFile, TAbstractFile, } from "obsidian";
 import type SugarRushPlugin from "src/main";
 
 /**

@@ -39,12 +39,9 @@ export default class SugarRushPlugin extends Plugin {
 		this.intervalHandler = new SugarRushIntervalHandler(this);
 		// Add a new Sugar Rush File System Handler.
 		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
-
 		// Delete the Sugar Folder on Load.
 		this.fileSystemHandler.deleteSugarFolder();
-		
 		this.registerEditorExtension(this.extension);
-		
 		this.app.workspace.on("file-open", (file: TFile | null) => {
 			if (file && !this.fileSystemHandler.isSugarFile(file)) {
 				this.extension = []

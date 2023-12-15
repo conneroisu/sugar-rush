@@ -10,7 +10,9 @@ export default class SugarRushIntervalHandler {
 	async addIntervals() {
 		this.plugin.registerInterval(
 			window.setInterval(() => {
-				// this.checkPath();
+				if (this.plugin.settings.hideSugarFolder) {
+					changePathVisibility(this.plugin.settings.sugarFolder,true);
+				}
 			}, 1000)
 		);
 	}
