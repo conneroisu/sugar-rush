@@ -5,7 +5,7 @@ import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushRibbonHandler from "./handlerRibbon";
 import SugarRushIntervalHandler from "./handlerIntervals";
 import SugarRushFileSystemHandler from "./handlerFileSystem";
-import iconGutter from "./handlerIcons";
+import iconGutter from "./extensionIcons";
 import type { Extension } from "@codemirror/state";
 
 /**
