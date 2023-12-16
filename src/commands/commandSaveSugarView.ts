@@ -15,9 +15,8 @@ export default class commandSaveSugarView implements Command {
 	checkCallback?: (checking:boolean) => boolean | void = (checking:boolean) => {
 		// open the view
 		if (checking){
-			return true;
+			return this.plugin.fileSystemHandler.areOperationsAvailable();
 		}
-		new SugarOperationModal(this.plugin.app).open();
-		
+		this.plugin.fileSystemHandler.openSugarOperationViewModal();
 	};
 }

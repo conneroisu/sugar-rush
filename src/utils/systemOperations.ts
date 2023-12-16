@@ -1,8 +1,16 @@
 
 import { TAbstractFile,  } from "obsidian";
 
-// Use a Discriminated Union to define the types of operations that can be performed on the file system
-// type SystemOperation = CreateOperation | DeleteOperation | RenameOperation | MoveOperation;
+const enum SystemOperationType {
+	Create,
+	Delete,
+	Rename,
+	Move
+}
+
+
+// Defines the type of operation that can be performed on the file SystemOperationType
+type SystemOperation = CreateOperation | DeleteOperation | RenameOperation | MoveOperation;
 
 // Defines the operations that can be performed on the file system (e.g. create, delete, rename, and move)
 class CreateOperation {

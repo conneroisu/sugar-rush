@@ -2,16 +2,35 @@ import { TFolder, type TAbstractFile, TFile, type Vault, WorkspaceLeaf } from "o
 import type SugarRushPlugin from "./main";
 import { sep } from "path";
 import iconGutter from "./extensionIcons";
+import type { AbstractOperation } from "./operations/AbstractOperation";
+import { SugarOperationModal } from "./views/SugarOperationView";
 
 export default class SugarRushFileSystemHandler {
 	private vault: Vault;
 	private plugin: SugarRushPlugin;
 	abstractMap!: Map<number, TAbstractFile>;
+	operationMap!: AbstractOperation[];
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
 		this.vault = plugin.app.vault;
 		this.abstractMap = new Map();
+	}
+
+	/**
+	 * 	Open Sugar Operation View Modal: opens the sugar operation view modal with the current operations
+	 * 	@return void
+	 **/
+	openSugarOperationViewModal() {
+		new SugarOperationModal(this.plugin.app, this.operationMap).open();
+	}
+
+	/**
+	 * Are Operations Available: checks if there are operations available
+	 * @return boolean true if there are operations available, false otherwise
+	 **/
+	areOperationsAvailable(): boolean {
+		return this.operationMap.length > 0;
 	}
 
 	/**
@@ -22,7 +41,7 @@ export default class SugarRushFileSystemHandler {
 	getSugarFilePath(activeFile: TFile): string {
 		if (this.isSugarFile(activeFile)) {
 			// return the path of a suar file in the parent parent folder
-			
+
 
 		}
 
@@ -167,4 +186,6 @@ export default class SugarRushFileSystemHandler {
 		}
 		return false;
 	}
+
+
 }
