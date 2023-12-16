@@ -1,7 +1,6 @@
 
 import { type Command } from "obsidian";
 import type SugarRushPlugin from "./../main";
-import { SugarOperationModal } from "./../views/SugarOperationView";
 
 export default class commandSaveSugarView implements Command {
 	id: string = "sugar-view-save";
