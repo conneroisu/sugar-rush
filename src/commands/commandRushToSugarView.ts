@@ -17,9 +17,9 @@ export default class commandRushToSugarView implements Command {
 	editorCheckCallback?: | ((checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) | undefined = (checking: boolean) => {
 		const activeFile = this.plugin.app.workspace.getActiveFile();
 		const leaf = this.plugin.app.workspace.getMostRecentLeaf();
-		if (leaf) {
-			if (activeFile) {
-				if (!checking) {
+		if (!checking) {
+			if (leaf) {
+				if (activeFile) {
 					const sugarFilePath = this.plugin.fileSystemHandler.getSugarFilePath(activeFile);
 					if (activeFile.parent && activeFile.parent.name != "") {
 						// The file is not at the root and has a parent folder
@@ -41,7 +41,7 @@ export default class commandRushToSugarView implements Command {
 							this.plugin.fileSystemHandler.createSugarFile(activeFile).then((file) => {
 								this.plugin.fileSystemHandler.loadSugarFile(file, leaf);
 							});
-						}else {
+						} else {
 							if (file instanceof TFile) {
 								this.plugin.fileSystemHandler.loadSugarFile(file, leaf);
 							}

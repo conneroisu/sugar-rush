@@ -1,4 +1,4 @@
-import { type Command, Editor, MarkdownView, type MarkdownFileInfo } from "obsidian";
+import { type Command, Editor, MarkdownView, type MarkdownFileInfo, TFile, TFolder } from "obsidian";
 import type SugarRushPlugin from "src/main";
 
 /**
@@ -16,10 +16,30 @@ export default class commandSelectSugarViewEntry implements Command {
 
 	editorCheckCallback?: ((checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) | undefined = (checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
 		const activeFile = this.plugin.app.workspace.getActiveFile();
+		const leaf = this.plugin.app.workspace.getMostRecentLeaf();
 		if (activeFile && this.plugin.fileSystemHandler.isSugarFile(activeFile)) {
 			const id = editor.getLine(editor.getCursor().line).split("<a href=")[1].split(">")[0];
+			const file = this.plugin.fileSystemHandler.abstractMap.get(parseInt(id));
+			if (!file || !leaf) {
+				return false;
+			}
+			if (file instanceof TFile) {
+				if (this.plugin.settings.debug) {
+					console.log("commandSelectSugarViewEntry.ts: selecting and opening TFile: " + file.path);
+				}
+				this.plugin.fileSystemHandler.loadRegularFile(file, leaf);
+			}
+			if (file instanceof TFolder) {
+				if (this.plugin.settings.debug) {
+					console.log("commandSelectSugarViewEntry.ts: selecting and opening TFolder: " + file.path);
+				}
+				// opena  asugar file for the folder selected
+			}
 
 			return true;
+		}
+		if (this.plugin.settings.debug) {
+			console.log("commandSelectSugarViewEntry.ts: not selecting anything | checking is ");
 		}
 		return false;
 	};
