@@ -1,9 +1,10 @@
 import { TFolder, type TAbstractFile, TFile, type Vault, WorkspaceLeaf } from "obsidian";
-import type SugarRushPlugin from "./main";
-import { sep } from "path";
-import iconGutter from "./extensionIcons";
 import type { AbstractOperation } from "./operations/AbstractOperation";
+import { sep } from "path";
 import { SugarOperationModal } from "./views/SugarOperationView";
+
+import type SugarRushPlugin from "./main";
+import iconGutter from "./extensionIcons";
 
 export default class SugarRushFileSystemHandler {
 	private vault: Vault;

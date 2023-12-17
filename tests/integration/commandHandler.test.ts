@@ -1,8 +1,7 @@
 import * as fs from "fs";
 import { expect, test } from 'vitest'
 
-// ensure each of the commands in the `./../src/commands/` directory are found in handlerCommands in the form of imports
-test("Commands", () => {
+test("Ensure Importing of all defined Commands", () => {
 	// parse the handlerCommands file 
 	const handlerCommands = fs.readFileSync("./src/handlerCommands.ts", "utf-8");
 	const handlerCommandsLines = handlerCommands.split("\n");
@@ -18,6 +17,4 @@ test("Commands", () => {
 			}
 		});
 	});
-			
-	
 });
