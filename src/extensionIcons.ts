@@ -54,7 +54,7 @@ export class Marker extends GutterMarker {
 	}
 }
 
-let relativeLineIconGutter = gutter({
+const relativeLineIconGutter = gutter({
 	lineMarker: (view, line) => {
 		const lineFileExtension = view.state.doc
 			.line(view.state.doc.lineAt(line.from).number)

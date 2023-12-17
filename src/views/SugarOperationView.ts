@@ -9,11 +9,11 @@ export class SugarOperationModal extends Modal {
 	}
 
 	onOpen() {
-		let { contentEl } = this;
+		const { contentEl } = this;
 		contentEl.createEl("h1", { text: "Operation View" });
 
 		// create a list of operations
-		for (let operation of this.operations) {
+		for (const operation of this.operations) {
 			contentEl.createEl("h2", { text: operation.name });
 			contentEl.createEl("p", { text: operation.description });
 		}
@@ -30,7 +30,7 @@ export class SugarOperationModal extends Modal {
 	}
 
 	onClose() {
-		let { contentEl } = this;
+		const { contentEl } = this;
 		contentEl.empty();
 	}
 }
