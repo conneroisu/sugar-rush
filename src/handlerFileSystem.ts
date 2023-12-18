@@ -10,7 +10,7 @@ export default class SugarRushFileSystemHandler {
 	private vault: Vault;
 	private plugin: SugarRushPlugin;
 	abstractMap!: Map<number, TAbstractFile>;
-	operationMap!: AbstractOperation[];
+	operations!: AbstractOperation[];
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
@@ -23,7 +23,7 @@ export default class SugarRushFileSystemHandler {
 	 * 	@return void
 	 **/
 	openSugarOperationViewModal() {
-		new SugarOperationModal(this.plugin.app, this.operationMap).open();
+		new SugarOperationModal(this.plugin.app, this.operations).open();
 	}
 
 	/**
@@ -31,7 +31,7 @@ export default class SugarRushFileSystemHandler {
 	 * @return boolean true if there are operations available, false otherwise
 	 **/
 	areOperationsAvailable(): boolean {
-		return this.operationMap.length > 0;
+		return this.operations.length > 0;
 	}
 
 	/**
