@@ -3,6 +3,13 @@
 	"version": "1.0.0",
 	"description": "A oil/vinegar-like plugin allowing for the modification of the file system within a buffer inside of Obsidian (Vim Mode Recommended).",
 	"main": "main.js",
+	"contributors": [
+		{
+			"name": "Conner Ohnesorge",
+			"email": "conneroisu@outlook.com",
+			"url": "conneroh.com"
+		}
+	],
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
