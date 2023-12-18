@@ -164,14 +164,6 @@ export default class SugarRushFileSystemHandler {
 	generate_prefix(file: TAbstractFile): string {
 		const code = Math.random().toString(5).substring(2, 7);
 		this.abstractMap.set(parseInt(code), file);
-		if (file instanceof TFile) {
-			return (
-				"<a href=" +
-				code +
-				">" +
-				"</a>"
-			);
-		}
 		return (
 			"<a href=" +
 			code +

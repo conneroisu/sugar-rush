@@ -7,8 +7,8 @@ export function getIconForLineFileExtension(extension: string): string {
 		return association.extensions.includes(extension);
 	});
 	if (icon === undefined) {
-		const defaultIcon = assets["extension-associations"].find((association) => { 
-			return association.extensions.includes("*") 
+		const defaultIcon = assets["extension-associations"].find((association) => {
+			return association.extensions.includes("*")
 		});
 		if (defaultIcon === undefined) {
 			return "";
@@ -68,7 +68,21 @@ const relativeLineIconGutter = gutter({
 		}
 		return null;
 	},
-});
+})
+
+const relativeEditorIconGutter = gutter({
+	lineMarker: (view, line) => {
+		const lineFileExtension = view.state.doc
+			.line(view.state.doc.lineAt(line.from).number)
+			.text
+
+
+		return null;
+	},
+
+})
+
+
 
 export default function iconGutter(): Extension {
 	return [relativeLineIconGutter];
