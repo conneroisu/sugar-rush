@@ -70,19 +70,6 @@ const relativeLineIconGutter = gutter({
 	},
 })
 
-const relativeEditorIconGutter = gutter({
-	lineMarker: (view, line) => {
-		const lineFileExtension = view.state.doc
-			.line(view.state.doc.lineAt(line.from).number)
-			.text
-
-
-		return null;
-	},
-
-})
-
-
 
 export default function iconGutter(): Extension {
 	return [relativeLineIconGutter];
