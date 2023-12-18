@@ -1,4 +1,11 @@
-import { type Command, type MarkdownFileInfo, MarkdownView, Editor, TFile, TAbstractFile, } from "obsidian";
+import {
+	type Command,
+	type MarkdownFileInfo,
+	MarkdownView,
+	Editor,
+	TFile,
+	TAbstractFile,
+} from "obsidian";
 import type SugarRushPlugin from "src/main";
 
 /**
@@ -14,43 +21,59 @@ export default class commandRushToSugarView implements Command {
 		this.plugin = plugin;
 	}
 
-	editorCheckCallback?: | ((checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) | undefined = (checking: boolean) => {
+	editorCheckCallback?:
+		| ((
+				checking: boolean,
+				editor: Editor,
+				ctx: MarkdownView | MarkdownFileInfo
+		  ) => boolean | void)
+		| undefined = (checking: boolean) => {
 		const activeFile = this.plugin.app.workspace.getActiveFile();
 		const leaf = this.plugin.app.workspace.getMostRecentLeaf();
-		if (!checking) {
-			if (leaf) {
-				if (activeFile) {
-					const sugarFilePath = this.plugin.fileSystemHandler.getSugarFilePath(activeFile);
-					if (activeFile.parent && activeFile.parent.name != "") {
-						// The file is not at the root and has a parent folder
-						const file: TFile | null | undefined | TAbstractFile = this.plugin.app.vault.getAbstractFileByPath(
-							sugarFilePath
-						);
-						if (!file) {
-							this.plugin.fileSystemHandler.createSugarFile(activeFile).then((file) => {
-								this.plugin.fileSystemHandler.loadSugarFile(file, leaf);
-							});
-						} else {
-							if (file instanceof TFile) {
-								this.plugin.fileSystemHandler.loadSugarFile(file, leaf);
-							}
-						}
-					} else {
-						const file: TFile | null | undefined | TAbstractFile = this.plugin.app.vault.getAbstractFileByPath(sugarFilePath);
-						if (!file) {
-							this.plugin.fileSystemHandler.createSugarFile(activeFile).then((file) => {
-								this.plugin.fileSystemHandler.loadSugarFile(file, leaf);
-							});
-						} else {
-							if (file instanceof TFile) {
-								this.plugin.fileSystemHandler.loadSugarFile(file, leaf);
-							}
-						}
+		if (!checking && activeFile && leaf) {
+			const sugarFilePath =
+				this.plugin.fileSystemHandler.getSugarFilePath(activeFile);
+			if (activeFile.parent && activeFile.parent.name != "") {
+				// The file is not at the root and has a parent folder
+				const file: TFile | null | undefined | TAbstractFile =
+					this.plugin.app.vault.getAbstractFileByPath(sugarFilePath);
+				if (!file) {
+					this.plugin.fileSystemHandler
+						.createSugarFile(activeFile)
+						.then((file) => {
+							this.plugin.fileSystemHandler.loadSugarFile(
+								file,
+								leaf
+							);
+						});
+				} else {
+					if (file instanceof TFile) {
+						this.plugin.fileSystemHandler.loadSugarFile(file, leaf);
 					}
 				}
+			} else {
+				const file: TFile | null | undefined | TAbstractFile =
+					this.plugin.app.vault.getAbstractFileByPath(sugarFilePath);
+				if (!file) {
+					this.plugin.fileSystemHandler
+						.createSugarFile(activeFile)
+						.then((file) => {
+							this.plugin.fileSystemHandler.loadSugarFile(
+								file,
+								leaf
+							);
+						});
+				} else {
+					if (file instanceof TFile) {
+						this.plugin.fileSystemHandler.loadSugarFile(file, leaf);
+					}
+				}
+			}
+		} else {
+			if (activeFile && leaf){
 				return true;
 			}
 		}
-		return false;
+		return true;
 	};
 }

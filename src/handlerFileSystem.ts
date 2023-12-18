@@ -1,7 +1,7 @@
 import { TFolder, type TAbstractFile, TFile, type Vault, WorkspaceLeaf } from "obsidian";
 import type { AbstractOperation } from "./operations/AbstractOperation";
-import { sep } from "path";
 import { SugarOperationModal } from "./views/SugarOperationView";
+import { sep } from "path";
 
 import type SugarRushPlugin from "./main";
 import iconGutter from "./extensionIcons";
@@ -18,6 +18,10 @@ export default class SugarRushFileSystemHandler {
 		this.abstractMap = new Map();
 	}
 
+	loadRegularFile(file: TFile, leaf: WorkspaceLeaf) {
+		leaf.openFile(file);
+		this.plugin.extension = [];
+	}
 	/**
 	 * 	Open Sugar Operation View Modal: opens the sugar operation view modal with the current operations
 	 * 	@return void
