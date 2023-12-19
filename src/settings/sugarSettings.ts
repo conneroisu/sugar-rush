@@ -3,8 +3,6 @@
  */
 export const DEFAULT_SETTINGS: SugarRushPluginSettings = {
 	debug: false,
-	sugarFolder: "Sugar",
-	hideSugarFolder: false,
 	showRibbonIcon: true,
 	showHiddenFiles: true,
 	showFileSize: false,
@@ -17,8 +15,6 @@ export const DEFAULT_SETTINGS: SugarRushPluginSettings = {
  */
 export interface SugarRushPluginSettings {
 	debug: boolean;
-	sugarFolder: string;
-	hideSugarFolder: boolean;
 	showRibbonIcon: boolean;
 	showHiddenFiles: boolean;
 	showFileSize: boolean;

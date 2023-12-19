@@ -1,26 +1,14 @@
 import { PluginSettingTab, Setting } from "obsidian";
 import SugarRushPlugin from "./../main";
 
-/**
- * @name SugarRushSettingTab
- * @description Represents the settings page for the Sugar Rush plugin.
- **/
 export class SugarRushSettingTab extends PluginSettingTab {
 	plugin: SugarRushPlugin;
 
-	/**
-	 * Creates an instance of SugarRushSettingTab.
-	 * @param app The application instance.
-	 * @param plugin The Sugar Rush plugin instance.
-	 */
 	constructor(plugin: SugarRushPlugin) {
 		super(plugin.app, plugin);
 		this.plugin = plugin;
 	}
 
-	/**
-	 * Displays the settings page.
-	 */
 	display(): void {
 		const { containerEl } = this;
 
@@ -35,34 +23,8 @@ export class SugarRushSettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						this.plugin.settings.debug = value;
 						await this.plugin.saveSettings();
-					})
-			);
-
-		new Setting(containerEl)
-			.setName("Sugar Folder")
-			.setDesc(
-				"Where do you want to store your Sugar files? (A Restart is Required to See Changes)"
-			)
-			.addSearch((search) =>
-				search.setPlaceholder("example: folder1/folder2")
-					.setValue(this.plugin.settings.sugarFolder)
-					.onChange((new_folder) => {
-						this.plugin.settings.sugarFolder = new_folder;
-						this.plugin.saveSettings();
-					})
-			);
-		new Setting(containerEl)
-			.setName("Hide Sugar Folder")
-			.setDesc(
-				"Do you want to hide the Sugar folder? (A Restart is Required to See Changes)"
-			)
-			.addToggle((toggle) =>
-				toggle
-					.setValue(this.plugin.settings.hideSugarFolder)
-					.onChange(async (value) => {
-						this.plugin.settings.hideSugarFolder = value;
-						await this.plugin.saveSettings();
-					})
+					}
+				)
 			);
 
 		new Setting(containerEl)

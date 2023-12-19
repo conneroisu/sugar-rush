@@ -30,14 +30,6 @@ Notes created with this plugin are hidden from searches within your vault to all
 One can read more by going to the [wiki](https://github.com/conneroisu/sugar-rush/wiki)
 
 
-## Warning-of-Use
-
-
-This plugin uses a specially hidden directory and files so that the sugar can house and hide the files the user interacts with. 
-Upon initialization, the files within the sugar directory are deleted to allow for new, updated versions of those files to be created. 
-This plugin are not to be held responsible for the side effects that may incur due to it's adoption and use.
-
-
 ## Details
 
 ### Leader Commands?

@@ -5,8 +5,8 @@
 
 import { Extension, StateField } from '@codemirror/state';
 import { EditorView, ViewPlugin } from '@codemirror/view';
-import * as CodeMirror from 'codemirror';
-import * as Moment from 'moment';
+import CodeMirror from 'codemirror';
+import Moment from 'moment';
 
 declare global {
     interface ObjectConstructor {

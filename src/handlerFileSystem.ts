@@ -9,17 +9,12 @@ import iconGutter from "./extensionIcons";
 export default class SugarRushFileSystemHandler {
 	private vault: Vault;
 	private plugin: SugarRushPlugin;
-	abstractMap!: Map<number, TAbstractFile>;
-	operations!: AbstractOperation[];
+	abstractMap: Map<number, TAbstractFile> = new Map();
+	operations: AbstractOperation[] = [];
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
 		this.vault = plugin.app.vault;
-		this.abstractMap = new Map();
-		const folder = this.vault.getAbstractFileByPath(this.plugin.settings.sugarFolder);
-		if (folder) {
-			this.vault.delete(folder, true);
-		}
 	}
 
 	loadRegularFile(file: TFile, leaf: WorkspaceLeaf) {
@@ -66,7 +61,6 @@ export default class SugarRushFileSystemHandler {
 	}
 
 	async createSugarFile(activeFile: TFile): Promise<TFile> {
-		this.ensureSugarFolder();
 		return await this.vault.create(
 			this.getSugarFilePath(activeFile),
 			this.generateSugarFileContent(activeFile)
@@ -85,12 +79,6 @@ export default class SugarRushFileSystemHandler {
 		}).join("\n")
 	}
 
-	private ensureSugarFolder() {
-		console.log("ensureSugarFolder: sugar folder: " + this.plugin.settings.sugarFolder);
-		if (!this.vault.getAbstractFileByPath(this.plugin.settings.sugarFolder)) {
-			this.vault.createFolder(this.plugin.settings.sugarFolder);
-		}
-	}
 
 	GetParentChildren(file: TAbstractFile): TAbstractFile[] {
 		console.log("GetParentChildren: active file path: " + file.path);

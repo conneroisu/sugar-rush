@@ -17,6 +17,9 @@ export default class commandSelectSugarViewEntry implements Command {
 	editorCheckCallback?: ((checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) | undefined = (checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
 		const activeFile = this.plugin.app.workspace.getActiveFile();
 		const leaf = this.plugin.app.workspace.getMostRecentLeaf();
+		if(checking) {
+			return true;
+		}
 		if (activeFile && this.plugin.fileSystemHandler.isSugarFile(activeFile)) {
 			const id = editor.getLine(editor.getCursor().line).split("<a href=")[1].split(">")[0];
 			const file = this.plugin.fileSystemHandler.abstractMap.get(parseInt(id));
@@ -33,7 +36,6 @@ export default class commandSelectSugarViewEntry implements Command {
 				if (this.plugin.settings.debug) {
 					console.log("commandSelectSugarViewEntry.ts: selecting and opening TFolder: " + file.path);
 				}
-				// opena  asugar file for the folder selected
 			}
 
 			return true;

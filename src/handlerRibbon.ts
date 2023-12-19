@@ -1,16 +1,9 @@
 import { Notice, addIcon } from "obsidian";
 import SugarRushPlugin from "./main";
 
-/**
- * Represents a ribbon handler for the Sugar Rush plugin.
- **/
 export default class SugarRushRibbonHandler {
 	private plugin: SugarRushPlugin;
 
-	/**
-	 * Creates an instance of SugarRushRibbonHandler.
-	 * @param plugin - The SugarRushPlugin instance.
-	 */
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
 		if (this.plugin.settings.showRibbonIcon) {
@@ -19,9 +12,6 @@ export default class SugarRushRibbonHandler {
 		}
 	}
 
-	/**
-	 * Adds the Sugar Rush ribbon icon for rushing to a sugar view.
-	 **/
 	addRibbonIcon() {
 		this.plugin.addRibbonIcon(
 			"sugar-rush",
