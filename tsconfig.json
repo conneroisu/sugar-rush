@@ -1,9 +1,6 @@
 {
 	"compilerOptions": {
-		"types": [
-			"svelte",
-			"node"
-		],
+		"types": [ "node" ],
 		"resolveJsonModule": true,
 		"baseUrl": ".",
 		"inlineSources": true,
