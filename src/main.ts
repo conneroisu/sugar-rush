@@ -1,6 +1,6 @@
 import { App, Plugin, TFile } from "obsidian";
 import { DEFAULT_SETTINGS, type SugarRushPluginSettings } from "./settings/sugarSettings";
-import { SugarRushSettingTab } from "./settings/settingsPage";
+import { SugarRushSettingTab } from "./views/settingsPage";
 import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushRibbonHandler from "./handlerRibbon";
 import SugarRushFileSystemHandler from "./handlerFileSystem";
