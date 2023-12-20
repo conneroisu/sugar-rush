@@ -65,7 +65,6 @@ export default class SugarRushFileSystemHandler {
 			this.getSugarFilePath(activeFile),
 			this.generateSugarFileContent(activeFile)
 		);
-
 	}
 
 

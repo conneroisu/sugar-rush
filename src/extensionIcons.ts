@@ -18,25 +18,14 @@ export function getIconForLineFileExtension(extension: string): string {
 	return icon.data;
 }
 
-/**
- * Represents a marker used in the gutter.
- */
 export class Marker extends GutterMarker {
 	extension: string;
 
-	/**
-	 * Creates a new Marker instance.
-	 * @param text - The extension of the marker.
-	 */
 	constructor(text: string) {
 		super();
 		this.extension = text;
 	}
 
-	/**
-	 * Converts the marker to a DOM element.
-	 * @returns The DOM element representing the marker.
-	 */
 	toDOM() {
 		const icon = document.createElementNS(
 			"http://www.w3.org/2000/svg",
@@ -54,7 +43,7 @@ export class Marker extends GutterMarker {
 	}
 }
 
-const relativeLineIconGutter = gutter({
+export const relativeLineIconGutter = gutter({
 	lineMarker: (view, line) => {
 		const lineFileExtension = view.state.doc
 			.line(view.state.doc.lineAt(line.from).number)
