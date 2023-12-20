@@ -1,10 +1,13 @@
-import { type Command, Editor, MarkdownView, type MarkdownFileInfo, TFile, TFolder } from "obsidian";
+import { 
+	type Command,
+	Editor,
+	MarkdownView,
+	type MarkdownFileInfo,
+	TFile,
+	TFolder
+} from "obsidian";
 import type SugarRushPlugin from "src/main";
 
-/**
- * Sugar Rush Plugin Command: Select Sugar View Entry.
- * @description Represents a command to select @type {import("obsidian").TAbstractFile} in a Sugar View.
- **/
 export default class commandSelectSugarViewEntry implements Command {
 	id: string = "sugar-view-entry-select";
 	name: string = "Select Sugar View Entry";

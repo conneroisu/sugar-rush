@@ -8,10 +8,6 @@ import {
 } from "obsidian";
 import type SugarRushPlugin from "src/main";
 
-/**
- * Sugar Rush Plugin Command: Rush to Sugar View.
- * @description: This command creates a new Sugar View file for the active file.
- **/
 export default class commandRushToSugarView implements Command {
 	plugin!: SugarRushPlugin;
 	id: string = "rush-to-sugar-view";

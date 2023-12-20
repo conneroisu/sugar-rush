@@ -1,10 +1,6 @@
 import { type Command } from "obsidian";
 import type SugarRushPlugin from "./../main";
 
-/**
- * commandSaveSugarView: saves the current sugar view
- * @param plugin the Sugar Rush Plugin that this command is associated with
- **/
 export default class commandSaveSugarView implements Command {
 	id: string = "sugar-view-save";
 	name: string = "Save Sugar View";

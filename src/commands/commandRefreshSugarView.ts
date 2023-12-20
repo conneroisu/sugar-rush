@@ -1,4 +1,10 @@
-import { Notice, type Command, Editor, MarkdownView, type MarkdownFileInfo } from "obsidian";
+import { 
+	Notice,
+	type Command,
+	Editor,
+	MarkdownView,
+	type MarkdownFileInfo
+} from "obsidian";
 import type SugarRushPlugin from "src/main";
 
 export default class commandRefreshSugarView implements Command {
