@@ -29,7 +29,6 @@ Notes created with this plugin are hidden from searches within your vault to all
 
 One can read more by going to the [wiki](https://github.com/conneroisu/sugar-rush/wiki)
 
-
 ## Details
 
 ### Leader Commands?

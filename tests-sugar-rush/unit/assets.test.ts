@@ -1,6 +1,6 @@
 
 import { describe, it, expect } from 'vitest';
-import asset from './../../src/assets/!index.json';
+import asset from '../../plugin-sugar-rush/!icons.json';
 import { assert } from 'console';
 
 // Test the assets structure

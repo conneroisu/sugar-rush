@@ -1,5 +1,5 @@
 import { App, Plugin, TFile } from "obsidian";
-import { DEFAULT_SETTINGS, type SugarRushPluginSettings } from "./settings/sugarSettings";
+import { DEFAULT_SETTINGS, type SugarRushPluginSettings } from "./sugarSettings";
 import { SugarRushSettingTab } from "./views/settingsPage";
 import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushRibbonHandler from "./handlerRibbon";
@@ -42,14 +42,8 @@ export default class SugarRushPlugin extends Plugin {
 		});
 	}
 
-	/**
-	 * Actions taken when unloading the plugin, Sugar-Rush.
-	 **/
 	onunload() { }
 
-	/**
-	 * Loads the plugin settings.
-	 **/
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},
@@ -58,9 +52,6 @@ export default class SugarRushPlugin extends Plugin {
 		);
 	}
 
-	/**
-	 * Saves the plugin settings.
-	 **/
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}

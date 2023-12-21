@@ -4,7 +4,6 @@ import { SugarOperationModal } from "./views/operationView";
 import { sep } from "path";
 
 import type SugarRushPlugin from "./main";
-import iconGutter from "./extensionIcons";
 
 export default class SugarRushFileSystemHandler {
 	private vault: Vault;
