@@ -39,3 +39,16 @@ $RECYCLE.BIN/
 .pnpmfile.cjs
 .pnpmfile.js
 
+
+# Exclude macOS Spotlight metadata
+.Spotlight-V100
+.Trashes
+
+
+# Exclude macOS Files
+
+# Exclude macOS Folder
+.AppleDouble
+.LSOverride
+.TemporaryItems
+
