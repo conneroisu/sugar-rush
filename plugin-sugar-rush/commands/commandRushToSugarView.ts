@@ -6,7 +6,7 @@ import {
 	TFile,
 	TAbstractFile,
 } from "obsidian";
-import type SugarRushPlugin from "src/main";
+import type SugarRushPlugin from "../main";
 
 export default class commandRushToSugarView implements Command {
 	plugin!: SugarRushPlugin;

@@ -5,7 +5,7 @@ import {
 	MarkdownView,
 	type MarkdownFileInfo
 } from "obsidian";
-import type SugarRushPlugin from "src/main";
+import type SugarRushPlugin from "../main";
 
 export default class commandRefreshSugarView implements Command {
 	private plugin!: SugarRushPlugin;

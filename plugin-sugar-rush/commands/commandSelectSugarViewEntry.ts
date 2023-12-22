@@ -6,7 +6,7 @@ import {
 	TFile,
 	TFolder
 } from "obsidian";
-import type SugarRushPlugin from "src/main";
+import type SugarRushPlugin from "../main";
 
 export default class commandSelectSugarViewEntry implements Command {
 	id: string = "sugar-view-entry-select";
