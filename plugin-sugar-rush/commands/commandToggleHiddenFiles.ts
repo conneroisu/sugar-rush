@@ -1,5 +1,5 @@
 import { type Command } from "obsidian";
-import type SugarRushPlugin from "src/main";
+import type SugarRushPlugin from "../main";
 
 export default class commandToggleHiddenFiles implements Command {
 	plugin!: SugarRushPlugin;
