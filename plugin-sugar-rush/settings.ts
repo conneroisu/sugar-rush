@@ -1,25 +1,16 @@
-
 import { PluginSettingTab, Setting } from "obsidian";
 import type SugarRushPlugin from "./main";
 
-/**
- * Default settings for the SugarRushPlugin.
- */
 export const DEFAULT_SETTINGS: SugarRushPluginSettings = {
 	debug: false,
-	showRibbonIcon: true,
 	showHiddenFiles: true,
 	showFileSize: false,
 	showFileModifiedTime: false,
 	showFileCreatedTime: false,
 };
 
-/**
- * Represents the settings for the Sugar Rush plugin.
- */
 export interface SugarRushPluginSettings {
 	debug: boolean;
-	showRibbonIcon: boolean;
 	showHiddenFiles: boolean;
 	showFileSize: boolean;
 	showFileModifiedTime: boolean;
@@ -42,33 +33,14 @@ export class SugarRushSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Debug Mode")
-			.setDesc("Do you want to enable debug mode?")
+			.setDesc("debug mode?")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.debug)
 					.onChange(async (value) => {
 						this.plugin.settings.debug = value;
 						await this.plugin.saveSettings();
-					}
-				)
-			);
-
-		new Setting(containerEl)
-			.setName("Show Ribbon Icon")
-			.setDesc(
-				"Do you want to show the ribbon icon? (A Restart is Required to See Changes)"
-			)
-			.addToggle((toggle) =>
-				toggle
-					.setValue(this.plugin.settings.showRibbonIcon)
-					.onChange(async (value) => {
-						this.plugin.settings.showRibbonIcon = value;
-						await this.plugin.saveSettings();
-						if (value) {
-							this.plugin.ribbonHandler.addRibbonIcon();
-						}
-					})
-			);
+					}));
 
 		new Setting(containerEl)
 			.setName("Show Hidden Files")

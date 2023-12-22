@@ -8,7 +8,7 @@ import {
 import type SugarRushPlugin from "../main";
 
 export default class commandRefreshSugarView implements Command {
-	private plugin!: SugarRushPlugin;
+	plugin!: SugarRushPlugin;
 	
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;

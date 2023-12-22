@@ -12,6 +12,3 @@ describe('Assets', () => {
 });
 
 
-// Test the assets has field: "extension-associations"
-
-

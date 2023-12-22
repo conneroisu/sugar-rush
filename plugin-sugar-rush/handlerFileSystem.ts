@@ -53,17 +53,9 @@ export default class SugarRushFileSystemHandler {
 			}
 
 		}
-		if (activeFile.parent === null) {
-			return (
-				"root" +
-				".sugar"
-			);
-		}
 		return (
-			activeFile.parent.path +
-			sep +
-			activeFile.parent.name.replace(sep, "-") +
-			".sugar"
+			activeFile.parent?.path + sep +
+			activeFile.parent?.name.replace(sep, "-") + ".sugar"
 		);
 	}
 
@@ -76,7 +68,6 @@ export default class SugarRushFileSystemHandler {
 
 
 	generateSugarFileContent(activeFile: TFile): string {
-		console.log("generateSugarFileContent: active file path: " + activeFile.path);
 		return this.GetParentChildren(activeFile).map((file) => {
 			if (file instanceof TFolder) {
 				return this.generate_prefix(file) + file.name + "/";
@@ -87,7 +78,6 @@ export default class SugarRushFileSystemHandler {
 
 
 	GetParentChildren(file: TAbstractFile): TAbstractFile[] {
-		console.log("GetParentChildren: active file path: " + file.path);
 		if (file instanceof TFolder) {
 			return file.children;
 		} else if (file instanceof TFile) {
