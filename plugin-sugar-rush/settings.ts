@@ -1,5 +1,31 @@
+
 import { PluginSettingTab, Setting } from "obsidian";
-import SugarRushPlugin from "./../main";
+import type SugarRushPlugin from "./main";
+
+/**
+ * Default settings for the SugarRushPlugin.
+ */
+export const DEFAULT_SETTINGS: SugarRushPluginSettings = {
+	debug: false,
+	showRibbonIcon: true,
+	showHiddenFiles: true,
+	showFileSize: false,
+	showFileModifiedTime: false,
+	showFileCreatedTime: false,
+};
+
+/**
+ * Represents the settings for the Sugar Rush plugin.
+ */
+export interface SugarRushPluginSettings {
+	debug: boolean;
+	showRibbonIcon: boolean;
+	showHiddenFiles: boolean;
+	showFileSize: boolean;
+	showFileModifiedTime: boolean;
+	showFileCreatedTime: boolean;
+}
+
 
 export class SugarRushSettingTab extends PluginSettingTab {
 	plugin: SugarRushPlugin;

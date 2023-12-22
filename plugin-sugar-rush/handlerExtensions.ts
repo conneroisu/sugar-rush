@@ -9,8 +9,13 @@ export default class SugarRushExtensionHandler {
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
 		this.collectExtensions();
+		this.plugin.registerEditorExtension([this.extensions]);
 	}
 	
+	clearExtensions() {
+		this.extensions = [];
+	}
+
     collectExtensions() {
 		this.extensions.push(relativeLineIconGutter);
     }

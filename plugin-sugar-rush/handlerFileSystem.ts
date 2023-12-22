@@ -1,13 +1,13 @@
 import { TFolder, type TAbstractFile, TFile, type Vault, WorkspaceLeaf } from "obsidian";
 import type { AbstractOperation } from "./operations/AbstractOperation";
-import { SugarOperationModal } from "./views/operationView";
+import { SugarOperationModal } from "./operationModal";
 import { sep } from "path";
 
 import type SugarRushPlugin from "./main";
 
 export default class SugarRushFileSystemHandler {
-	private vault: Vault;
-	private plugin: SugarRushPlugin;
+	vault: Vault;
+	plugin: SugarRushPlugin;
 	abstractMap: Map<number, TAbstractFile> = new Map();
 	operations: AbstractOperation[] = [];
 
@@ -18,7 +18,8 @@ export default class SugarRushFileSystemHandler {
 
 	loadRegularFile(file: TFile, leaf: WorkspaceLeaf) {
 		leaf.openFile(file);
-		this.plugin.extension = [];
+		this.plugin.extensionHandler.clearExtensions();
+		this.plugin.app.workspace.updateOptions();
 	}
 
 	openSugarOperationViewModal() {
@@ -67,7 +68,7 @@ export default class SugarRushFileSystemHandler {
 	}
 
 
-	private generateSugarFileContent(activeFile: TFile): string {
+	generateSugarFileContent(activeFile: TFile): string {
 		console.log("generateSugarFileContent: active file path: " + activeFile.path);
 		return this.GetParentChildren(activeFile).map((file) => {
 			if (file instanceof TFolder) {
@@ -95,7 +96,8 @@ export default class SugarRushFileSystemHandler {
 	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
 		console.log("loadSugarFile: active file path: " + file.path);
 		leaf.openFile(file);
-		this.plugin.extension = iconGutter();
+		this.plugin.extensionHandler.collectExtensions();
+		this.plugin.app.workspace.updateOptions();
 	}
 
 	generate_prefix(file: TAbstractFile): string {
