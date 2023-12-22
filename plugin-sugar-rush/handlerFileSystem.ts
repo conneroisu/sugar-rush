@@ -22,12 +22,19 @@ export default class SugarRushFileSystemHandler {
 		this.plugin.app.workspace.updateOptions();
 	}
 
+
+	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
+		console.log("loadSugarFile: active file path: " + file.path);
+		leaf.openFile(file);
+		this.plugin.extensionHandler.collectExtensions();
+		this.plugin.app.workspace.updateOptions();
+	}
+
 	openSugarOperationViewModal() {
 		new SugarOperationModal(this.plugin.app, this.operations).open();
 	}
 
 	getSugarFilePath(activeFile: TFile): string {
-
 		if (activeFile.parent && (activeFile.parent.path === "/" || activeFile.parent === null)) {
 			return (
 				"root" +
@@ -91,13 +98,6 @@ export default class SugarRushFileSystemHandler {
 			}
 		}
 		return [];
-	}
-
-	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
-		console.log("loadSugarFile: active file path: " + file.path);
-		leaf.openFile(file);
-		this.plugin.extensionHandler.collectExtensions();
-		this.plugin.app.workspace.updateOptions();
 	}
 
 	generate_prefix(file: TAbstractFile): string {

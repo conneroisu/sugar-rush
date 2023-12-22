@@ -6,7 +6,6 @@ import SugarRushRibbonHandler from "./handlerRibbon";
 import SugarRushFileSystemHandler from "./handlerFileSystem";
 import SugarRushOperationHandler from "./handlerOperations";
 import SugarRushExtensionHandler from "./handlerExtensions";
-import type { Extension } from "@codemirror/state";
 
 export default class SugarRushPlugin extends Plugin {
 	settings!:			SugarRushPluginSettings;
