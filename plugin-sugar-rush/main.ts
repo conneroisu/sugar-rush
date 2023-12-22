@@ -6,7 +6,6 @@ import SugarRushRibbonHandler from "./handlerRibbon";
 import SugarRushFileSystemHandler from "./handlerFileSystem";
 import SugarRushOperationHandler from "./handlerOperations";
 import SugarRushExtensionHandler from "./handlerExtensions";
-import iconGutter from "./extensionIcons";
 import type { Extension } from "@codemirror/state";
 
 export default class SugarRushPlugin extends Plugin {
@@ -18,7 +17,6 @@ export default class SugarRushPlugin extends Plugin {
 	extensionHandler!:  SugarRushExtensionHandler;
 	
 	app!: App;
-	extension: Extension  = iconGutter();
 
 	async onload() {
 		await this.loadSettings();
@@ -29,10 +27,9 @@ export default class SugarRushPlugin extends Plugin {
 		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
 		this.operationHandler = new SugarRushOperationHandler(this);
 		this.extensionHandler = new SugarRushExtensionHandler(this);
-		this.registerEditorExtension(this.extension);
 		this.app.workspace.on("file-open", (file: TFile | null) => {
 			if (file && !this.fileSystemHandler.isSugarFile(file)) {
-				this.extension = []
+				this.extensionHandler.collectExtensions();
 				this.app.workspace.updateOptions();
 			}else {
 				if (this.fileSystemHandler.operations.length > 0) {
