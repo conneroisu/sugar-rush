@@ -16,6 +16,14 @@ export default class SugarRushFileSystemHandler {
 		this.vault = plugin.app.vault;
 	}
 
+	deleteAllSugarFiles() {
+		this.vault.getFiles().forEach((file) => {
+			if (file.extension === "sugar") {
+				this.vault.delete(file);
+			}
+		});
+	}
+	
 	loadRegularFile(file: TFile, leaf: WorkspaceLeaf) {
 		leaf.openFile(file);
 		this.plugin.extensionHandler.clearExtensions();
