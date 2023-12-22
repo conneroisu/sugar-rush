@@ -2,7 +2,6 @@ import { App, Plugin, TFile } from "obsidian";
 import { DEFAULT_SETTINGS, type SugarRushPluginSettings } from "./settings";
 import { SugarRushSettingTab } from "./settings";
 import SugarRushCommandHandler from "./handlerCommands";
-import SugarRushRibbonHandler from "./handlerRibbon";
 import SugarRushFileSystemHandler from "./handlerFileSystem";
 import SugarRushOperationHandler from "./handlerOperations";
 import SugarRushExtensionHandler from "./handlerExtensions";
@@ -10,7 +9,6 @@ import SugarRushExtensionHandler from "./handlerExtensions";
 export default class SugarRushPlugin extends Plugin {
 	settings!:			SugarRushPluginSettings;
 	commandHandler!:	SugarRushCommandHandler;
-	ribbonHandler!:		SugarRushRibbonHandler;
 	fileSystemHandler!: SugarRushFileSystemHandler;
 	operationHandler!:  SugarRushOperationHandler;
 	extensionHandler!:  SugarRushExtensionHandler;
@@ -22,7 +20,6 @@ export default class SugarRushPlugin extends Plugin {
 		this.registerExtensions(["sugar"], "markdown");
 		this.addSettingTab(new SugarRushSettingTab(this));
 		this.commandHandler = new SugarRushCommandHandler(this);
-		this.ribbonHandler = new SugarRushRibbonHandler(this);
 		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
 		this.operationHandler = new SugarRushOperationHandler(this);
 		this.extensionHandler = new SugarRushExtensionHandler(this);
