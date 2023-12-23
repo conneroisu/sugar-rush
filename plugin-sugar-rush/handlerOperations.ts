@@ -20,7 +20,4 @@ export default class SugarRushOperationHandler {
 	popOperation() {
 		this.operations.pop()?.run();
 	}
-	
-
-	
 }
