@@ -28,7 +28,7 @@ export default class SugarRushPlugin extends Plugin {
 				this.extensionHandler.collectExtensions();
 				this.app.workspace.updateOptions();
 			}else {
-				if (this.fileSystemHandler.operations.length > 0) {
+				if (this.operationHandler.operations.length > 0) {
 					this.fileSystemHandler.openSugarOperationViewModal();
 				}
 			}

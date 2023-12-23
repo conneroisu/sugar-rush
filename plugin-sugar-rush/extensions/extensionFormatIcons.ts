@@ -1,7 +1,7 @@
 import { gutter, GutterMarker } from "@codemirror/view";
 import assets from "../!icons.json";
 
-function getIconForLineFileExtension(extension: string): string {
+export function getIconForLineFileExtension(extension: string): string {
 	const icon = assets["extension-associations"].find((association) => {
 		return association.extensions.includes(extension);
 	});
@@ -17,7 +17,7 @@ function getIconForLineFileExtension(extension: string): string {
 	return icon.data;
 }
 
-class Marker extends GutterMarker {
+export class Marker extends GutterMarker {
 	extension: string;
 
 	constructor(text: string) {

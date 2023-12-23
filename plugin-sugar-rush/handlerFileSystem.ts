@@ -1,4 +1,4 @@
-import { TFolder, type TAbstractFile, TFile, type Vault, WorkspaceLeaf } from "obsidian";
+import { TFolder, type TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
 import { SugarOperationModal } from "./operationModal";
 import { sep } from "path";
 
@@ -79,9 +79,8 @@ export default class SugarRushFileSystemHandler {
 
 
 	GetParentChildren(file: TAbstractFile): TAbstractFile[] {
-		if (file instanceof TFolder) {
-			return file.children;
-		} else if (file instanceof TFile) {
+		if (file instanceof TFolder) { return file.children; } 
+		if (file instanceof TFile) {
 			if (file.parent === null) {
 				return this.plugin.app.vault.getRoot().children;
 			} else {

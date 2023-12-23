@@ -1,6 +1,6 @@
 
 import { expect, test } from 'vitest'
-import { getIconForLineFileExtension, Marker } from "src/extensionIcons";
+import { getIconForLineFileExtension, Marker } from "plugin-sugar-rush/extensions/extensionFormatIcons";
 
 // test for getIconForLineFileExtension method
 
@@ -39,3 +39,8 @@ test("Marker class", () => {
 	})
 });
 
+
+// test the definition of the marker object
+test("Markder is defined"), () => {
+	expect(Marker).toBeDefined();
+}

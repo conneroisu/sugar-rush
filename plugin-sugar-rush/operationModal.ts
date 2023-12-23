@@ -1,8 +1,9 @@
 import { App, Modal } from "obsidian";
-import { type AbstractOperation } from "./operations/AbstractOperation";
+import { type AbstractOperation } from "./contracts/AbstractOperation";
 
 export class SugarOperationModal extends Modal {
 	operations: AbstractOperation[];
+	
 	constructor(app: App, operations: AbstractOperation[]) {
 		super(app);
 		this.operations = operations;
