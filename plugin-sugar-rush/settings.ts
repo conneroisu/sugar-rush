@@ -34,8 +34,7 @@ export class SugarRushSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Debug Mode")
 			.setDesc("debug mode?")
-			.addToggle((toggle) =>
-				toggle
+			.addToggle((toggle) => toggle
 					.setValue(this.plugin.settings.debug)
 					.onChange(async (value) => {
 						this.plugin.settings.debug = value;
@@ -44,52 +43,42 @@ export class SugarRushSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Show Hidden Files")
-			.setDesc(
-				"Do you want to show hidden files? (A Restart is Required to See Changes)"
-			)
-			.addToggle((toggle) =>
-				toggle
+			.setDesc("Display hidden files?")
+			.addToggle((toggle) => toggle
 					.setValue(this.plugin.settings.showHiddenFiles)
 					.onChange(async (value) => {
 						this.plugin.settings.showHiddenFiles = value;
 						await this.plugin.saveSettings();
-					})
-			);
-
+					}));
+		
 		new Setting(containerEl)
 			.setName("Show File Size")
 			.setDesc("Do you want to show file size?")
-			.addToggle((toggle) =>
-				toggle
+			.addToggle((toggle) => toggle
 					.setValue(this.plugin.settings.showFileSize)
 					.onChange(async (value) => {
 						this.plugin.settings.showFileSize = value;
 						await this.plugin.saveSettings();
-					})
-			);
+					}));
 
 		new Setting(containerEl)
 			.setName("Show File Modified Time")
 			.setDesc("Do you want to show file modified time?")
-			.addToggle((toggle) =>
-				toggle
+			.addToggle((toggle) => toggle
 					.setValue(this.plugin.settings.showFileModifiedTime)
 					.onChange(async (value) => {
 						this.plugin.settings.showFileModifiedTime = value;
 						await this.plugin.saveSettings();
-					})
-			);
+					}));
 
 		new Setting(containerEl)
 			.setName("Show File Created Time")
 			.setDesc("Do you want to show file created time?")
-			.addToggle((toggle) =>
-				toggle
+			.addToggle((toggle) => toggle
 					.setValue(this.plugin.settings.showFileCreatedTime)
 					.onChange(async (value) => {
 						this.plugin.settings.showFileCreatedTime = value;
 						await this.plugin.saveSettings();
-					})
-			);
+					}));
 	}
 }
