@@ -60,10 +60,9 @@ Looking to develop **sugar-rush** further? Checkout [Developing](https://github.
 Looking to develop **sugar-rush** to do something out of the project's scope of interacting with just the file system? Check out how you can expand this plugin with your own plugins here.
 
 
-## Contribution
+## Contributors
 
-
-Conner Ohnesorge [funding](https://ko-fi.com/connero)
+- Conner Ohnesorge [funding](https://ko-fi.com/connero)
 
 
 
