@@ -115,6 +115,4 @@ export default class SugarRushFileSystemHandler {
 		}
 		return false;
 	}
-
-
 }
