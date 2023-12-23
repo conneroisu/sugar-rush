@@ -17,9 +17,11 @@ export default class commandRefreshSugarView implements Command {
 	id: string = "refresh-sugar-view";
 	name: string = "Refresh Sugar View";
 	editorCallback: ((editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) = (editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
-		new Notice("Refresh Sugar View");
-		new Notice("Refresh Sugar View");
-		new Notice("Refresh Sugar View");
+		// delete all of the sugar files in the vault and then reload the current file
+		// delete all of the sugar files in the vault
+		this.plugin.fileSystemHandler.deleteAllSugarFiles();
+
+		// reload the current file
 	};
 }
 

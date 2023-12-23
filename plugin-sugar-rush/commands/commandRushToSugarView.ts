@@ -1,8 +1,5 @@
 import {
 	type Command,
-	type MarkdownFileInfo,
-	MarkdownView,
-	Editor,
 	TFile,
 	TAbstractFile,
 } from "obsidian";
@@ -17,13 +14,7 @@ export default class commandRushToSugarView implements Command {
 		this.plugin = plugin;
 	}
 
-	editorCheckCallback?:
-		| ((
-				checking: boolean,
-				editor: Editor,
-				ctx: MarkdownView | MarkdownFileInfo
-		  ) => boolean | void)
-		| undefined = (checking: boolean) => {
+	editorCheckCallback?: | ((checking: boolean) => boolean | void) | undefined = (checking: boolean) => {
 		const activeFile = this.plugin.app.workspace.getActiveFile();
 		const leaf = this.plugin.app.workspace.getMostRecentLeaf();
 		if (!checking && activeFile && leaf) {
@@ -66,7 +57,7 @@ export default class commandRushToSugarView implements Command {
 				}
 			}
 		} else {
-			if (activeFile && leaf){
+			if (activeFile && leaf) {
 				return true;
 			}
 		}
