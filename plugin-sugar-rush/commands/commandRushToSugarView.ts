@@ -18,8 +18,7 @@ export default class commandRushToSugarView implements Command {
 		const activeFile = this.plugin.app.workspace.getActiveFile();
 		const leaf = this.plugin.app.workspace.getMostRecentLeaf();
 		if (!checking && activeFile && leaf) {
-			const sugarFilePath =
-				this.plugin.fileSystemHandler.getSugarFilePath(activeFile);
+			const sugarFilePath = this.plugin.fileSystemHandler.getSugarFilePath(activeFile);
 			if (activeFile.parent && activeFile.parent.name != "") {
 				// The file is not at the root and has a parent folder
 				const file: TFile | null | undefined | TAbstractFile =
