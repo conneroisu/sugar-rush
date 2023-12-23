@@ -1,5 +1,5 @@
 import type { TAbstractFile } from "obsidian";
-import type { AbstractOperation } from "./AbstractOperation";
+import type { AbstractOperation } from "../contracts/AbstractOperation";
 
 
 class RenameOperation implements AbstractOperation {

@@ -62,7 +62,8 @@ Looking to develop **sugar-rush** to do something out of the project's scope of 
 
 ## Contributors
 
-- Conner Ohnesorge [funding](https://ko-fi.com/connero)
+Find contributors and thier information [here](https://github/com/conneroisu/sugar-rush/wiki/Contributors) at the wiki documentation.
+
 
 
 

@@ -1,5 +1,5 @@
 import type SugarRushPlugin from "./main";
-import type { AbstractOperation } from "./operations/AbstractOperation";
+import type { AbstractOperation } from "./contracts/AbstractOperation";
 
 export default class SugarRushOperationHandler {
 	plugin: SugarRushPlugin;

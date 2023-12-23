@@ -1,4 +1,4 @@
-import type { AbstractOperation } from "./AbstractOperation";
+import type { AbstractOperation } from "../contracts/AbstractOperation";
 
 
 class CreateOperation implements AbstractOperation {
