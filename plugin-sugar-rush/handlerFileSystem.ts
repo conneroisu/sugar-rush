@@ -1,29 +1,23 @@
 import { TFolder, type TAbstractFile, TFile, type Vault, WorkspaceLeaf } from "obsidian";
-import type { AbstractOperation } from "./operations/AbstractOperation";
 import { SugarOperationModal } from "./operationModal";
 import { sep } from "path";
 
 import type SugarRushPlugin from "./main";
 
 export default class SugarRushFileSystemHandler {
-	vault: Vault;
-	plugin: SugarRushPlugin;
-	abstractMap: Map<number, TAbstractFile> = new Map();
-	operations: AbstractOperation[] = [];
+	private plugin: SugarRushPlugin;
+	private abstractMap: Map<number, TAbstractFile> = new Map();
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
-		this.vault = plugin.app.vault;
 	}
 
 	deleteAllSugarFiles() {
-		this.vault.getFiles().forEach((file) => {
-			if (file.extension === "sugar") {
-				this.vault.delete(file);
-			}
+		this.plugin.app.vault.getFiles().forEach((file) => {
+			if (file.extension === "sugar") { this.plugin.app.vault.delete(file); }
 		});
 	}
-	
+
 	loadRegularFile(file: TFile, leaf: WorkspaceLeaf) {
 		leaf.openFile(file);
 		this.plugin.extensionHandler.clearExtensions();
@@ -32,14 +26,13 @@ export default class SugarRushFileSystemHandler {
 
 
 	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
-		console.log("loadSugarFile: active file path: " + file.path);
 		leaf.openFile(file);
 		this.plugin.extensionHandler.collectExtensions();
 		this.plugin.app.workspace.updateOptions();
 	}
 
 	openSugarOperationViewModal() {
-		new SugarOperationModal(this.plugin.app, this.operations).open();
+		new SugarOperationModal(this.plugin.app, this.plugin.operationHandler.operations).open();
 	}
 
 	getSugarFilePath(activeFile: TFile): string {
@@ -68,7 +61,7 @@ export default class SugarRushFileSystemHandler {
 	}
 
 	async createSugarFile(activeFile: TFile): Promise<TFile> {
-		return await this.vault.create(
+		return await this.plugin.app.vault.create(
 			this.getSugarFilePath(activeFile),
 			this.generateSugarFileContent(activeFile)
 		);
