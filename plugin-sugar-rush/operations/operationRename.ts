@@ -1,5 +1,5 @@
 import type { TAbstractFile } from "obsidian";
-import type { AbstractOperation } from "../contracts/AbstractOperation";
+import type { AbstractOperation } from "./AbstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 

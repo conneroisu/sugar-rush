@@ -1,5 +1,5 @@
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-import type { AbstractOperation } from "../contracts/AbstractOperation";
+import type { AbstractOperation } from "./AbstractOperation";
 
 
 export class CreateOperation implements AbstractOperation {
@@ -11,6 +11,5 @@ export class CreateOperation implements AbstractOperation {
     id: string = "create";
     run(): void {
 		this.plugin.app.vault.create(this.path, "");
-		
     }
 }
