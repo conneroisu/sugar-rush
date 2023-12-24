@@ -1,5 +1,5 @@
 import { App, Modal } from "obsidian";
-import { type AbstractOperation } from "./contracts/AbstractOperation";
+import { type AbstractOperation } from "../operations/AbstractOperation";
 
 export class SugarOperationModal extends Modal {
 	operations: AbstractOperation[];

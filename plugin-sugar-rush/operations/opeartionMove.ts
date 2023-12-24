@@ -1,6 +1,6 @@
 import type { AbstractOperation } from "../contracts/AbstractOperation";
 
-class MoveOperation implements AbstractOperation {
+export class MoveOperation implements AbstractOperation {
 	constructor(public path: string, public newPath: string) {}
     name: string = "Move";
     description: string = "Moves the file or directory at the given path to the new path";

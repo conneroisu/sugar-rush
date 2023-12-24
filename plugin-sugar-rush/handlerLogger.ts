@@ -1,5 +1,5 @@
 import type SugarRushPlugin from "./main";
-import { db } from "./db/schema";
+import { db, loggings } from "./db/schema";
 
 export default class SugarRushLoggerHandler {
 	private plugin: SugarRushPlugin;
