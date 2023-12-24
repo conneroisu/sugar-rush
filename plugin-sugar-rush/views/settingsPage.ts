@@ -1,9 +1,9 @@
 import { PluginSettingTab, Setting } from "obsidian";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-import { db, loggings } from "plugin-sugar-rush/basedata/schema";
 
 export class SugarRushSettingTab extends PluginSettingTab {
 	plugin: SugarRushPlugin;
+	extensionAnalyzer: any;
 
 	constructor(plugin: SugarRushPlugin) {
 		super(plugin.app, plugin);
@@ -25,9 +25,6 @@ export class SugarRushSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-		if (this.plugin.settings.debug) {
-			containerEl.createEl("h2", { text: "Debug Mode" });
-		}
 
 		new Setting(containerEl)
 			.setName("Show Hidden Files")
