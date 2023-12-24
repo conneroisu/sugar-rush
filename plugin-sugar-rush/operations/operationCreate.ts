@@ -1,13 +1,16 @@
+import type SugarRushPlugin from "plugin-sugar-rush/main";
 import type { AbstractOperation } from "../contracts/AbstractOperation";
 
 
-class CreateOperation implements AbstractOperation {
-	constructor(public path: string) {}
+export class CreateOperation implements AbstractOperation {
+	private plugin: SugarRushPlugin;
+	constructor(plugin: SugarRushPlugin, public path: string) {this.plugin = plugin;}
     name: string = "Create";
     description: string = "Creates a new file or directory at the given path";
     icon: string = "create";
     id: string = "create";
     run(): void {
-        throw new Error("Method not implemented.");
+		this.plugin.app.vault.create(this.path, "");
+		
     }
 }

@@ -56,5 +56,3 @@ export const relativeLineIconGutter = gutter({
 		return null;
 	},
 })
-
-
