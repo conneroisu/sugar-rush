@@ -14,7 +14,7 @@ export class ExceptionMarker extends GutterMarker {
 	}
 }
 
-class OperationExtension {
+class ExceptionExtension {
 	plugin: SugarRushPlugin;
 
 	constructor(plugin: SugarRushPlugin) {
@@ -29,6 +29,7 @@ class OperationExtension {
 			return new ExceptionMarker("Exception");
 		}
 	})
+
 
 	parse_id(line: string): string {
 		return line.split("<a href=")[1].split(">")[0];

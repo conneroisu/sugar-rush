@@ -1,6 +1,6 @@
-import type SugarRushPlugin from "./main";
+import type SugarRushPlugin from "../main";
 import { type Extension } from "@codemirror/state";
-import { formatGutter } from "./extensions/extensionFormat";
+import { formatGutter } from "../extensions/extensionFormat";
 
  /**
  * SugarRushExtensionHandler class manages the configuration of SugarRush plugins and its extensions.
@@ -19,8 +19,7 @@ import { formatGutter } from "./extensions/extensionFormat";
  * based on whether 'showFileIcons' setting is enabled for the plugin.
  * Returns the current set of extensions.
  */
-export
- default class SugarRushExtensionHandler {
+export default class SugarRushExtensionHandler {
     private readonly  plugin: SugarRushPlugin;
 	extensions!: Extension[];
 	
@@ -45,5 +44,17 @@ export
 		}
 		return this.extensions;
 	}
+}
 
+export abstract class AbstractExtension {
+	private plugin: SugarRushPlugin;
+	private extension!: Extension;
+
+	constructor(plugin: SugarRushPlugin) {
+		this.plugin = plugin;
+	}
+
+	getExtension(): Extension {
+		return this.extension;
+	}
 }
