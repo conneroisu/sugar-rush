@@ -1,4 +1,3 @@
-
 export const DEFAULT_SETTINGS: SugarRushPluginSettings = {
 	debug: false,
 	showHiddenFiles: true,
@@ -14,4 +13,3 @@ export interface SugarRushPluginSettings {
 	showFileSizes: boolean;
 	showModifiedTimes: boolean;
 }
-
