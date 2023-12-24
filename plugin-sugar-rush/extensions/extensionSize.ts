@@ -7,24 +7,21 @@ export function getSizeForAbstractFile(file: TFile | TFolder) {
 		return file.stat.size;
 	}
 
-	if (file instanceof TFolder) {
-		let sum = 0;
-		file.children.forEach((child) => {
-			if (child instanceof TFile) {
-				const res = getSizeForAbstractFile(child);
-				if (res) {
-					sum += res;
-				}
-			}else if (child instanceof TFolder) {
-				const res = getSizeForAbstractFile(child);
-				if (res) {
-					sum += res;
-				}
+	let sum = 0;
+	file.children.forEach((child) => {
+		if (child instanceof TFile) {
+			const res = getSizeForAbstractFile(child);
+			if (res) {
+				sum += res;
 			}
-		});
-		
-		return sum;
-	}
+		} else if (child instanceof TFolder) {
+			const res = getSizeForAbstractFile(child);
+			if (res) {
+				sum += res;
+			}
+		}
+	});
+	return sum;
 }
 
 

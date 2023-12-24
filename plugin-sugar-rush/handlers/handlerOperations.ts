@@ -1,6 +1,5 @@
 import type { TAbstractFile } from "obsidian";
-import type SugarRushPlugin from "./main";
-import type { AbstractOperation } from "./operations/AbstractOperation";
+import type SugarRushPlugin from "../main";
 
 export default class SugarRushOperationHandler {
 	private readonly  plugin: SugarRushPlugin;
@@ -26,3 +25,13 @@ export default class SugarRushOperationHandler {
 
 	
 }
+
+export abstract class AbstractOperation {
+	abstract name: string;
+	abstract description: string;
+	abstract icon: string;
+	abstract id: string;
+	abstract plugin: SugarRushPlugin;
+	abstract run(): void;
+}
+
