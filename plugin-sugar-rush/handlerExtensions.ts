@@ -1,6 +1,6 @@
 import type SugarRushPlugin from "./main";
 import { type Extension } from "@codemirror/state";
-import { relativeLineIconGutter } from "./extensions/extensionFormat";
+import { formatGutter } from "./extensions/extensionFormat";
 
 export default class SugarRushExtensionHandler {
     private plugin: SugarRushPlugin;
@@ -18,7 +18,9 @@ export default class SugarRushExtensionHandler {
 
 	getExtensions() {
 		this.extensions = [];
-		this.extensions.push(relativeLineIconGutter);
+		if(this.plugin.settings.showFileIcons) {
+			this.extensions.push(formatGutter);
+		}
 		return this.extensions;
 	}
 
