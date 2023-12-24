@@ -1,5 +1,5 @@
 import { TFolder, type TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
-import { SugarOperationModal } from "./views/operationModal";
+import { SugarOperationModal } from "./views/typescript/operationModal";
 import { sep } from "path";
 
 import type SugarRushPlugin from "./main";
@@ -66,9 +66,9 @@ export default class SugarRushFileSystemHandler {
 	generateSugarFileContent(activeFile: TFile): string {
 		return this.GetParentChildren(activeFile).map((file) => {
 			if (file instanceof TFolder) {
-				return this.generate_prefix(file) + file.name + "/";
+				return this.generateAbstractPrefix(file) + file.name + "/";
 			}
-			return this.generate_prefix(file) + file.name;
+			return this.generateAbstractPrefix(file) + file.name;
 		}).join("\n")
 	}
 
@@ -77,14 +77,13 @@ export default class SugarRushFileSystemHandler {
 		if (file instanceof TFile) {
 			if (file.parent === null) {
 				return this.plugin.app.vault.getRoot().children;
-			} else {
-				return file.parent.children;
 			}
+			return file.parent.children;
 		}
 		return [];
 	}
 
-	generate_prefix(file: TAbstractFile): string {
+	generateAbstractPrefix(file: TAbstractFile): string {
 		const code = Math.random().toString(5).substring(2, 7);
 		this.abstractMap.set(parseInt(code), file);
 		return ("<a href=" + code + ">" + "</a>");
