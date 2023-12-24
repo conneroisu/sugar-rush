@@ -1,8 +1,8 @@
-import commandRushToSugarView from "./commands/commandRushToSugarView";
-import commandToggleHiddenFiles from "./commands/commandToggleHiddenFiles";
-import commandSelectSugarViewEntry from "./commands/commandSelectSugarViewEntry";
-import commandSaveSugarView from "./commands/commandSaveSugarView";
-import commandRefreshSugarView from "./commands/commandRefreshSugarView";
+import commandRushToSugarView from "./commands/commandRush";
+import commandToggleHiddenFiles from "./commands/commandHidden";
+import commandSelectSugarViewEntry from "./commands/commandSelect";
+import commandSaveSugarView from "./commands/commandSave";
+import commandRefreshSugarView from "./commands/commandRefresh";
 
 import SugarRushPlugin from "./main";
 
