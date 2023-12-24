@@ -1,11 +1,11 @@
 import { TFolder, type TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
-import { SugarRushOperationView } from "./viewOperation";
+import { SugarRushOperationView } from "../views/viewOperation";
 import { sep } from "path";
 
-import type SugarRushPlugin from "./main";
+import type SugarRushPlugin from "../main";
 
 export default class SugarRushFileSystemHandler {
-	private plugin: SugarRushPlugin;
+	private readonly plugin: SugarRushPlugin;
 	abstractMap: Map<number, TAbstractFile> = new Map();
 
 	constructor(plugin: SugarRushPlugin) {
@@ -28,7 +28,9 @@ export default class SugarRushFileSystemHandler {
 	
 	deleteAllSugarFiles() {
 		this.getAllSugarFiles().forEach((file) => {
-			this.plugin.app.vault.delete(file);
+			this.plugin.app.vault.delete(file).then(r => {if(this.plugin.settings.debug){
+				console.log("Deleted file", file);
+			}});
 		});
 	}
 

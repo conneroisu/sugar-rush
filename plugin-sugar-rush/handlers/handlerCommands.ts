@@ -1,13 +1,13 @@
-import commandRushToSugarView from "./commands/commandRush";
-import commandToggleHiddenFiles from "./commands/commandHidden";
-import commandSelectSugarViewEntry from "./commands/commandSelect";
-import commandSaveSugarView from "./commands/commandSave";
-import commandRefreshSugarView from "./commands/commandRefresh";
+import commandRushToSugarView from "../commands/commandRush";
+import commandToggleHiddenFiles from "../commands/commandHidden";
+import commandSelectSugarViewEntry from "../commands/commandSelect";
+import commandSaveSugarView from "../commands/commandSave";
+import commandRefreshSugarView from "../commands/commandRefresh";
 
-import SugarRushPlugin from "./main";
+import SugarRushPlugin from "../main";
 
 export default class SugarRushCommandHandler {
-	private plugin: SugarRushPlugin;
+	private readonly plugin: SugarRushPlugin;
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;

@@ -3,7 +3,7 @@ import { type Extension } from "@codemirror/state";
 import { formatGutter } from "./extensions/extensionFormat";
 
 export default class SugarRushExtensionHandler {
-    private plugin: SugarRushPlugin;
+    private readonly  plugin: SugarRushPlugin;
 	extensions!: Extension[];
 	
 	constructor(plugin: SugarRushPlugin) {
