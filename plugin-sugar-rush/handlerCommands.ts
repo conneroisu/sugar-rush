@@ -13,21 +13,14 @@ export default class SugarRushCommandHandler {
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
-		this.collectCommands();
 		this.addCommands();
 	}
 
-	async collectCommands() {
-		this.commands.push(new commandRushToSugarView(this.plugin));
-		this.commands.push(new commandToggleHiddenFiles(this.plugin));
-		this.commands.push(new commandSelectSugarViewEntry(this.plugin));
-		this.commands.push(new commandSaveSugarView(this.plugin));
-		this.commands.push(new commandRefreshSugarView(this.plugin));
-	}
-
 	async addCommands() {
-		for (const command of this.commands) {
-			this.plugin.addCommand(command);
-		}
+		this.plugin.addCommand(new commandRushToSugarView(this.plugin));
+		this.plugin.addCommand(new commandToggleHiddenFiles(this.plugin));
+		this.plugin.addCommand(new commandSelectSugarViewEntry(this.plugin));
+		this.plugin.addCommand(new commandSaveSugarView(this.plugin));
+		this.plugin.addCommand(new commandRefreshSugarView(this.plugin));
 	}
 }
