@@ -3,12 +3,6 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
 import type { TAbstractFile } from "obsidian";
 import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extensionFormat";
 
-
-
-
-
-
-
 /**
  * Class `DeleteOperation` - representation of a delete operation.
  *
@@ -28,7 +22,6 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extens
  *
  * @method run(): void - The method that performs the delete operation.
  */
-
 export class DeleteOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	file!: TAbstractFile;
