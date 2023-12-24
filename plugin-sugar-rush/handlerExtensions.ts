@@ -16,6 +16,7 @@ export default class SugarRushExtensionHandler {
 	}
 
 	getExtensions() {
+		this.extensions = [];
 		this.extensions.push(relativeLineIconGutter);
 		return this.extensions;
 	}
