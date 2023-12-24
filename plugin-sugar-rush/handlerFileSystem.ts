@@ -6,7 +6,7 @@ import type SugarRushPlugin from "./main";
 
 export default class SugarRushFileSystemHandler {
 	private plugin: SugarRushPlugin;
-	private abstractMap: Map<number, TAbstractFile> = new Map();
+	abstractMap: Map<number, TAbstractFile> = new Map();
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;

@@ -1,3 +1,4 @@
+import type { TAbstractFile } from "obsidian";
 import type SugarRushPlugin from "./main";
 import type { AbstractOperation } from "./operations/AbstractOperation";
 
@@ -5,6 +6,7 @@ export default class SugarRushOperationHandler {
 	private plugin: SugarRushPlugin;
 	operations: AbstractOperation[] = [];
 	sugarReadings: string[] = [];
+	operationExceptions: TAbstractFile[] = [];
 	
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
@@ -21,4 +23,6 @@ export default class SugarRushOperationHandler {
 	popOperation() {
 		this.operations.pop()?.run();
 	}
+
+	
 }
