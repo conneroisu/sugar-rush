@@ -24,7 +24,7 @@ class OperationExtension {
 		lineMarker: (view, line) => {
 			const fileLine = view.state.doc.line(view.state.doc.lineAt(line.from).number);
 			// search the file ssytem's abstractMap for the code of the line
-			this.plugin.fileSystemHandler.abstractMap.get(parseInt(this.parse_id(fileLine.text)))
+			const result = this.plugin.fileSystemHandler.abstractMap.get(parseInt(this.parse_id(fileLine.text)))
 
 			return new ExceptionMarker("Exception");
 		}

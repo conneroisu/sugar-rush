@@ -4,7 +4,6 @@ import { expect, test } from 'vitest'
 
 import SugarRushCommandHandler from 'plugin-sugar-rush/handlerCommands';
 import { describe, it } from 'vitest';
-import asset from '../../plugin-sugar-rush/!icons.json';
 
 describe("SugarRushPlugin", () => {
   it("should be defined", () => {

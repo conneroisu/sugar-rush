@@ -1,5 +1,5 @@
 
-import {SugarRushSettingTab} from "plugin-sugar-rush/views/settingsPage"
+import {SugarRushSettingTab} from "plugin-sugar-rush/viewSettings"
 import { describe, it, expect } from 'vitest';
 
 describe("SugarRushPluginSettings", () => {
