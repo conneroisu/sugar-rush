@@ -4,11 +4,11 @@ import {
 	MarkdownView,
 	type MarkdownFileInfo
 } from "obsidian";
-
 import type SugarRushPlugin from "../main";
+
 /**
  * commandRefreshSugarView class.
- * This class implements the Command interface.
+ * @implements {Command}
  *
  * Instance properties:
  * @property {SugarRushPlugin} plugin - A mandatory property that must be an instance of SugarRushPlugin.
@@ -23,7 +23,7 @@ import type SugarRushPlugin from "../main";
  * @constructor
  * @param {SugarRushPlugin} plugin - An instance of SugarRushPlugin.
  **/
-class commandRefreshSugarView implements Command {
+export class commandRefreshSugarView implements Command {
 	plugin!: SugarRushPlugin;
 	
 	/**

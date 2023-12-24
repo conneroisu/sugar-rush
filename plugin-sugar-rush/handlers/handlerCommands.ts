@@ -3,7 +3,6 @@ import commandToggleHiddenFiles from "../commands/commandHidden";
 import commandSelectSugarViewEntry from "../commands/commandSelect";
 import commandSaveSugarView from "../commands/commandSave";
 import commandRefreshSugarView from "../commands/commandRefresh";
-
 import SugarRushPlugin from "../main";
 
 /**
