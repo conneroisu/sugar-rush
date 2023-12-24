@@ -9,18 +9,7 @@ export class ExceptionMarker extends GutterMarker {
 	}
 
 	toDOM() {
-		const icon = document.createElementNS(
-			"http://www.w3.org/2000/svg",
-			"svg"
-		);
-		icon.setAttrs({
-			width: "1em",
-			height: "1em",
-			viewBox: "0 0 1em 1em",
-			xmlns: "http://www.w3.org/2000/svg",
-			align: "center",
-		});
-		return icon;
+		return document.createTextNode(this.message);
 	}
 }
 
