@@ -36,7 +36,7 @@ export default class SugarRushPlugin extends Plugin {
 		});
 	}
 
-	onunload() { }
+	onunload() { this.fileSystemHandler.deleteAllSugarFiles(); }
 
 	async loadSettings() {
 		this.settings = Object.assign(
