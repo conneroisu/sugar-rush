@@ -12,7 +12,7 @@ export default class commandSaveSugarView implements Command {
 
 	checkCallback?: (checking: boolean) => boolean | void = (checking: boolean) => {
 		if (checking) {
-			return this.plugin.fileSystemHandler.operations.length > 0;
+			return this.plugin.operationHandler.operations.length > 0;
 		}
 		if(!checking){
 			this.plugin.fileSystemHandler.openSugarOperationViewModal();
