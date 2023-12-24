@@ -3,7 +3,7 @@ import type { AbstractOperation } from "../contracts/AbstractOperation";
 
 
 export class CreateOperation implements AbstractOperation {
-	private plugin: SugarRushPlugin;
+	plugin: SugarRushPlugin;
 	constructor(plugin: SugarRushPlugin, public path: string) {this.plugin = plugin;}
     name: string = "Create";
     description: string = "Creates a new file or directory at the given path";
