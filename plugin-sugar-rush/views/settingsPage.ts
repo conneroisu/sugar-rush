@@ -25,6 +25,10 @@ export class SugarRushSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+		if (this.plugin.settings.debug) {
+			containerEl.createEl("h2", { text: "Debug Mode" });
+		}
+
 		new Setting(containerEl)
 			.setName("Show Hidden Files")
 			.setDesc("Display hidden files?")

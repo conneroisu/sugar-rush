@@ -5,6 +5,7 @@ import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushFileSystemHandler from "./handlerFileSystem";
 import SugarRushOperationHandler from "./handlerOperations";
 import SugarRushExtensionHandler from "./handlerExtensions";
+import SugarRushLoggerHandler from "./handlerLogger";
 
 export default class SugarRushPlugin extends Plugin {
 	settings!: SugarRushPluginSettings;
@@ -12,6 +13,7 @@ export default class SugarRushPlugin extends Plugin {
 	fileSystemHandler!: SugarRushFileSystemHandler;
 	operationHandler!: SugarRushOperationHandler;
 	extensionHandler!: SugarRushExtensionHandler;
+	handlerLogger!: SugarRushLoggerHandler;
 
 	app!: App;
 
@@ -24,6 +26,7 @@ export default class SugarRushPlugin extends Plugin {
 		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
 		this.operationHandler = new SugarRushOperationHandler(this);
 		this.extensionHandler = new SugarRushExtensionHandler(this);
+		this.handlerLogger = new SugarRushLoggerHandler(this);
 		this.app.workspace.on("file-open", (file: TFile | null) => {
 			if (file && !this.fileSystemHandler.isSugarFile(file)) {
 				this.extensionHandler.getExtensions();

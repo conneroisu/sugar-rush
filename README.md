@@ -8,7 +8,7 @@
 [![CodeQL](https://github.com/conneroisu/sugar-rush/actions/workflows/codeql.yml/badge.svg)](https://github.com/conneroisu/sugar-rush/actions/workflows/codeql.yml)
 [![CodeFactor](https://www.codefactor.io/repository/github/conneroisu/sugar-rush/badge)](https://www.codefactor.io/repository/github/conneroisu/sugar-rush)
 
-<div align="center"> <img src="logo.jpeg" alt="Logo" width="80" height="80"> <h3 align="center">Sugar-Rush</h3> <p align="center"> A <a href="https://github.com/tpope/vim-vinegar">vim-vinegar</a> or <a href="https://github.com/stevearc/oil.nvim">oil</a> like file explorer that lets you edit your filesystem like a normal note/buffer in Obsidian. </p> </div>
+<div align="center"> <img src="./assets-sugar-rush/logo.jpeg" alt="Logo" width="80" height="80"> <h3 align="center">Sugar-Rush</h3> <p align="center"> A <a href="https://github.com/tpope/vim-vinegar">vim-vinegar</a> or <a href="https://github.com/stevearc/oil.nvim">oil</a> like file explorer that lets you edit your filesystem like a normal note/buffer in Obsidian. </p> </div>
 
 <details>
 <summary>Table of Contents</summary>
