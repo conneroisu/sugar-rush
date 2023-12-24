@@ -8,7 +8,6 @@ export default class SugarRushExtensionHandler {
 	
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
-		this.collectExtensions();
 		this.plugin.registerEditorExtension([this.extensions]);
 	}
 	
@@ -16,12 +15,8 @@ export default class SugarRushExtensionHandler {
 		this.extensions = [];
 	}
 
-    collectExtensions() {
-		this.extensions.push(relativeLineIconGutter);
-    }
-
 	getExtensions() {
-		// return a array of active extensions 
+		this.extensions.push(relativeLineIconGutter);
 		return this.extensions;
 	}
 

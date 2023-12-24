@@ -9,7 +9,7 @@ import SugarRushPlugin from "./main";
 
 export default class SugarRushCommandHandler {
 	private plugin: SugarRushPlugin;
-	private commands: Command[] = [];
+	commands: Command[] = [];
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;

@@ -25,7 +25,7 @@ export default class SugarRushPlugin extends Plugin {
 		this.extensionHandler = new SugarRushExtensionHandler(this);
 		this.app.workspace.on("file-open", (file: TFile | null) => {
 			if (file && !this.fileSystemHandler.isSugarFile(file)) {
-				this.extensionHandler.collectExtensions();
+				this.extensionHandler.getExtensions();
 				this.app.workspace.updateOptions();
 			}else {
 				if (this.operationHandler.operations.length > 0) {
