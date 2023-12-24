@@ -4,7 +4,7 @@ import { relativeLineIconGutter } from "./extensions/extensionFormatIcons";
 
 export default class SugarRushExtensionHandler {
     private plugin: SugarRushPlugin;
-	private extensions!: Extension[];
+	extensions!: Extension[];
 	
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
