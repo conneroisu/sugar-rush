@@ -8,6 +8,7 @@ export default class SugarRushExtensionHandler {
 	
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
+		this.extensions = this.getExtensions();
 		this.plugin.registerEditorExtension(this.extensions);
 	}
 	
