@@ -2,21 +2,23 @@ import type { FileStats, TFile, TFolder, Vault } from "obsidian";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 export class SugarFile implements TFile {
-	stat: FileStats;
-	basename: string;
 	extension: string = "sugar"
 	vault: Vault;
+	basename: string;
 	path: string;
 	name: string;
-	parent: TFolder | null;
+	parent: TFolder | null = null;
 	
-	constructor(plugin: SugarRushPlugin, public abstractFile: TFile) {
-		this.vault = plugin.app.vault;
-		this.path = abstractFile.path;
-		this.name = abstractFile.name;
-		this.basename = abstractFile.basename;
-		this.parent = abstractFile.parent;
-		this.stat = abstractFile.stat;
+	stat: FileStats = {
+		ctime: new Date().getTime(),
+		mtime: new Date().getTime(),
+		size: 0
 	}
+	
+	constructor(plugin: SugarRushPlugin, ) {
+		this.vault = plugin.app.vault;
+	}
+
+	
 
 }

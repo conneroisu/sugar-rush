@@ -24,16 +24,13 @@ export default class SugarRushFileSystemHandler {
 		this.plugin.app.workspace.updateOptions();
 	}
 
-
 	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
 		leaf.openFile(file);
 		this.plugin.extensionHandler.getExtensions();
 		this.plugin.app.workspace.updateOptions();
 	}
 
-	openSugarOperationViewModal() {
-		new SugarOperationModal(this.plugin.app, this.plugin.operationHandler.operations).open();
-	}
+	openSugarOperationViewModal() { new SugarOperationModal(this.plugin.app, this.plugin.operationHandler.operations).open(); }
 
 	getSugarFilePath(activeFile: TFile): string {
 		if (activeFile.parent && (activeFile.parent.path === "/" || activeFile.parent === null)) {
@@ -43,7 +40,7 @@ export default class SugarRushFileSystemHandler {
 			);
 		}
 		if (this.isSugarFile(activeFile)) {
-			// return the path of a suar file in the parent parent folder
+			// return the path of a sugar file in the parent parent folder
 			if (activeFile.parent?.parent?.path) {
 				return (
 					activeFile.parent?.parent?.path +
@@ -52,7 +49,6 @@ export default class SugarRushFileSystemHandler {
 					".sugar"
 				);
 			}
-
 		}
 		return (
 			activeFile.parent?.path + sep +
@@ -67,7 +63,6 @@ export default class SugarRushFileSystemHandler {
 		);
 	}
 
-
 	generateSugarFileContent(activeFile: TFile): string {
 		return this.GetParentChildren(activeFile).map((file) => {
 			if (file instanceof TFolder) {
@@ -77,9 +72,8 @@ export default class SugarRushFileSystemHandler {
 		}).join("\n")
 	}
 
-
 	GetParentChildren(file: TAbstractFile): TAbstractFile[] {
-		if (file instanceof TFolder) { return file.children; } 
+		if (file instanceof TFolder) { return file.children; }
 		if (file instanceof TFile) {
 			if (file.parent === null) {
 				return this.plugin.app.vault.getRoot().children;
@@ -93,18 +87,11 @@ export default class SugarRushFileSystemHandler {
 	generate_prefix(file: TAbstractFile): string {
 		const code = Math.random().toString(5).substring(2, 7);
 		this.abstractMap.set(parseInt(code), file);
-		return (
-			"<a href=" +
-			code +
-			">" +
-			"</a>"
-		);
+		return ("<a href=" + code + ">" + "</a>");
 	}
 
 	isSugarFile(activeFile: TFile): boolean {
-		if (activeFile.extension === "sugar") {
-			return true;
-		}
+		if (activeFile.extension === "sugar") { return true; }
 		return false;
 	}
 }
