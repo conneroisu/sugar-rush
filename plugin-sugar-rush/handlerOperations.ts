@@ -1,9 +1,10 @@
 import type SugarRushPlugin from "./main";
-import type { AbstractOperation } from "./contracts/AbstractOperation";
+import type { AbstractOperation } from "./operations/AbstractOperation";
 
 export default class SugarRushOperationHandler {
 	private plugin: SugarRushPlugin;
 	operations: AbstractOperation[] = [];
+	sugarReadings: string[] = [];
 	
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;

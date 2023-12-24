@@ -12,9 +12,23 @@ export default class SugarRushFileSystemHandler {
 		this.plugin = plugin;
 	}
 
-	deleteAllSugarFiles() {
+	openSugarOperationViewModal() {
+		new SugarOperationModal(this.plugin.app, this.plugin.operationHandler.operations).open();
+	}
+
+	getAllSugarFiles() {
+		let sugarFiles: TFile[] = [];
 		this.plugin.app.vault.getFiles().forEach((file) => {
-			if (file.extension === "sugar") { this.plugin.app.vault.delete(file); }
+			if (file.extension === "sugar") {
+				sugarFiles.push(file);
+			}
+		});
+		return sugarFiles;
+	}
+	
+	deleteAllSugarFiles() {
+		this.getAllSugarFiles().forEach((file) => {
+			this.plugin.app.vault.delete(file);
 		});
 	}
 
@@ -30,7 +44,6 @@ export default class SugarRushFileSystemHandler {
 		this.plugin.app.workspace.updateOptions();
 	}
 
-	openSugarOperationViewModal() { new SugarOperationModal(this.plugin.app, this.plugin.operationHandler.operations).open(); }
 
 	getSugarFilePath(activeFile: TFile): string {
 		if (activeFile.parent && (activeFile.parent.path === "/" || activeFile.parent === null)) {
@@ -38,17 +51,6 @@ export default class SugarRushFileSystemHandler {
 				"root" +
 				".sugar"
 			);
-		}
-		if (this.isSugarFile(activeFile)) {
-			// return the path of a sugar file in the parent parent folder
-			if (activeFile.parent?.parent?.path) {
-				return (
-					activeFile.parent?.parent?.path +
-					sep +
-					activeFile.parent?.parent?.name.replace(sep, "-") +
-					".sugar"
-				);
-			}
 		}
 		return (
 			activeFile.parent?.path + sep +
@@ -64,7 +66,7 @@ export default class SugarRushFileSystemHandler {
 	}
 
 	generateSugarFileContent(activeFile: TFile): string {
-		return this.GetParentChildren(activeFile).map((file) => {
+		return this.getParentChildren(activeFile).map((file) => {
 			if (file instanceof TFolder) {
 				return this.generateAbstractPrefix(file) + file.name + "/";
 			}
@@ -72,7 +74,7 @@ export default class SugarRushFileSystemHandler {
 		}).join("\n")
 	}
 
-	GetParentChildren(file: TAbstractFile): TAbstractFile[] {
+	getParentChildren(file: TAbstractFile): TAbstractFile[] {
 		if (file instanceof TFolder) { return file.children; }
 		if (file instanceof TFile) {
 			if (file.parent === null) {

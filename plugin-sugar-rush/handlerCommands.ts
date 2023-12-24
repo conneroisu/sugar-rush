@@ -11,6 +11,7 @@ export default class SugarRushCommandHandler {
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
+		// add commands of the sugar-rush plugin
 		this.plugin.addCommand(new commandRushToSugarView(this.plugin));
 		this.plugin.addCommand(new commandToggleHiddenFiles(this.plugin));
 		this.plugin.addCommand(new commandSelectSugarViewEntry(this.plugin));

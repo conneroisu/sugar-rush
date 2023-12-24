@@ -16,6 +16,6 @@ export class ExceptionMarker extends GutterMarker {
 export const relativeOperationExceptionGutter = gutter({
 	lineMarker: (view, line) => {
 		const fileLine = view.state.doc.line(view.state.doc.lineAt(line.from).number)
-		return new ExceptionMarker("f");
+		return new ExceptionMarker("Exception");
 	}
 })
