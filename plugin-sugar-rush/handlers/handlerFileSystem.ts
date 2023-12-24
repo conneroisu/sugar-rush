@@ -1,5 +1,5 @@
 import { TFolder, type TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
-import { SugarOperationModal } from "./viewOperation";
+import { SugarRushOperationView } from "./viewOperation";
 import { sep } from "path";
 
 import type SugarRushPlugin from "./main";
@@ -13,7 +13,7 @@ export default class SugarRushFileSystemHandler {
 	}
 
 	openSugarOperationViewModal() {
-		new SugarOperationModal(this.plugin.app, this.plugin.operationHandler.operations).open();
+		new SugarRushOperationView(this.plugin.app, this.plugin.operationHandler.operations).open();
 	}
 
 	getAllSugarFiles() {

@@ -1,7 +1,7 @@
 import { App, Modal } from "obsidian";
 import { type AbstractOperation } from "./operations/AbstractOperation";
 
-export class SugarOperationModal extends Modal {
+export class SugarRushOperationView extends Modal {
 	operations: AbstractOperation[];
 	
 	constructor(app: App, operations: AbstractOperation[]) {

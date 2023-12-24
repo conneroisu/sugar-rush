@@ -3,6 +3,7 @@ import {
 	TFile,
 	TAbstractFile,
 } from "obsidian";
+
 import type SugarRushPlugin from "../main";
 
 export default class commandRushToSugarView implements Command {

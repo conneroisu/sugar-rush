@@ -1,9 +1,9 @@
 import { PluginSettingTab, Setting } from "obsidian";
+
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
-export class SugarRushSettingTab extends PluginSettingTab {
+export class SugarRushSettingView extends PluginSettingTab {
 	plugin: SugarRushPlugin;
-	extensionAnalyzer: any;
 
 	constructor(plugin: SugarRushPlugin) {
 		super(plugin.app, plugin);
