@@ -8,8 +8,8 @@ import commandRefreshSugarView from "./commands/commandRefreshSugarView";
 import SugarRushPlugin from "./main";
 
 export default class SugarRushCommandHandler {
-	plugin: SugarRushPlugin;
-	commands: Command[] = [];
+	private plugin: SugarRushPlugin;
+	private commands: Command[] = [];
 
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;

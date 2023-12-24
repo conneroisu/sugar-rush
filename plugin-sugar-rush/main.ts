@@ -7,11 +7,11 @@ import SugarRushOperationHandler from "./handlerOperations";
 import SugarRushExtensionHandler from "./handlerExtensions";
 
 export default class SugarRushPlugin extends Plugin {
-	settings!:			SugarRushPluginSettings;
-	commandHandler!:	SugarRushCommandHandler;
-	fileSystemHandler!: SugarRushFileSystemHandler;
-	operationHandler!:  SugarRushOperationHandler;
-	extensionHandler!:  SugarRushExtensionHandler;
+	settings!:			    SugarRushPluginSettings;
+	commandHandler!:	    SugarRushCommandHandler;
+	fileSystemHandler!:     SugarRushFileSystemHandler;
+	operationHandler!:      SugarRushOperationHandler;
+	extensionHandler!:      SugarRushExtensionHandler;
 	
 	app!: App;
 

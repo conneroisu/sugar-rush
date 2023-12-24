@@ -6,7 +6,6 @@ export const DEFAULT_SETTINGS: SugarRushPluginSettings = {
 	showHiddenFiles: true,
 	showFileSize: false,
 	showFileModifiedTime: false,
-	showFileCreatedTime: false,
 };
 
 export interface SugarRushPluginSettings {
@@ -14,7 +13,6 @@ export interface SugarRushPluginSettings {
 	showHiddenFiles: boolean;
 	showFileSize: boolean;
 	showFileModifiedTime: boolean;
-	showFileCreatedTime: boolean;
 }
 
 
@@ -68,16 +66,6 @@ export class SugarRushSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.showFileModifiedTime)
 					.onChange(async (value) => {
 						this.plugin.settings.showFileModifiedTime = value;
-						await this.plugin.saveSettings();
-					}));
-
-		new Setting(containerEl)
-			.setName("Show File Created Time")
-			.setDesc("Do you want to show file created time?")
-			.addToggle((toggle) => toggle
-					.setValue(this.plugin.settings.showFileCreatedTime)
-					.onChange(async (value) => {
-						this.plugin.settings.showFileCreatedTime = value;
 						await this.plugin.saveSettings();
 					}));
 	}

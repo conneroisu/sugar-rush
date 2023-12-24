@@ -3,8 +3,8 @@ import { type Extension } from "@codemirror/state";
 import { relativeLineIconGutter } from "./extensions/extensionFormatIcons";
 
 export default class SugarRushExtensionHandler {
-    plugin: SugarRushPlugin;
-	extensions!: Extension[];
+    private plugin: SugarRushPlugin;
+	private extensions!: Extension[];
 	
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
