@@ -1,11 +1,4 @@
-import { 
-	type Command,
-	Editor,
-	MarkdownView,
-	type MarkdownFileInfo,
-	TFile,
-	TFolder
-} from "obsidian";
+import { type Command, Editor, MarkdownView, type MarkdownFileInfo, TFile, TFolder } from "obsidian";
 import type SugarRushPlugin from "../main";
 
 export default class commandSelectSugarViewEntry implements Command {
@@ -20,7 +13,7 @@ export default class commandSelectSugarViewEntry implements Command {
 	editorCheckCallback?: ((checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) | undefined = (checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
 		const activeFile = this.plugin.app.workspace.getActiveFile();
 		const leaf = this.plugin.app.workspace.getMostRecentLeaf();
-		if(checking) {
+		if (checking) {
 			return true;
 		}
 		if (activeFile && this.plugin.fileSystemHandler.isSugarFile(activeFile)) {
