@@ -1,5 +1,5 @@
 import { TFolder, type TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
-import { SugarOperationModal } from "./views/typescript/operationModal";
+import { SugarOperationModal } from "./views/operationModal";
 import { sep } from "path";
 
 import type SugarRushPlugin from "./main";

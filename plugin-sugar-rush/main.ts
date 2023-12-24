@@ -1,23 +1,23 @@
 import { App, Plugin, TFile } from "obsidian";
 import { DEFAULT_SETTINGS, type SugarRushPluginSettings } from "./settings";
-import { SugarRushSettingTab } from "./views/typescript/settingsPage";
+import { SugarRushSettingTab } from "./views/settingsPage";
 import SugarRushCommandHandler from "./handlerCommands";
 import SugarRushFileSystemHandler from "./handlerFileSystem";
 import SugarRushOperationHandler from "./handlerOperations";
 import SugarRushExtensionHandler from "./handlerExtensions";
 
 export default class SugarRushPlugin extends Plugin {
-	settings!:			    SugarRushPluginSettings;
-	commandHandler!:	    SugarRushCommandHandler;
-	fileSystemHandler!:     SugarRushFileSystemHandler;
-	operationHandler!:      SugarRushOperationHandler;
-	extensionHandler!:      SugarRushExtensionHandler;
-	
+	settings!: SugarRushPluginSettings;
+	commandHandler!: SugarRushCommandHandler;
+	fileSystemHandler!: SugarRushFileSystemHandler;
+	operationHandler!: SugarRushOperationHandler;
+	extensionHandler!: SugarRushExtensionHandler;
+
 	app!: App;
 
 	async onload() {
 		await this.loadSettings();
-		
+
 		this.registerExtensions(["sugar"], "markdown");
 		this.addSettingTab(new SugarRushSettingTab(this));
 		this.commandHandler = new SugarRushCommandHandler(this);
@@ -28,7 +28,7 @@ export default class SugarRushPlugin extends Plugin {
 			if (file && !this.fileSystemHandler.isSugarFile(file)) {
 				this.extensionHandler.getExtensions();
 				this.app.workspace.updateOptions();
-			}else {
+			} else {
 				if (this.operationHandler.operations.length > 0) {
 					this.fileSystemHandler.openSugarOperationViewModal();
 				}
