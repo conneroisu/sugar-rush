@@ -1,6 +1,4 @@
 
-
-
 import { DEFAULT_SETTINGS } from 'plugin-sugar-rush/settings';
 import { describe, it, expect } from 'vitest';
 

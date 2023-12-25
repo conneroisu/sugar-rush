@@ -17,7 +17,7 @@ export function getIconForLineFileExtension(extension: string): string {
 	return icon.data;
 }
 
-export class Marker extends GutterMarker {
+export class FormatMarker extends GutterMarker {
 	extension: string;
 
 	constructor(text: string) {
@@ -48,10 +48,10 @@ export const formatGutter = gutter({
 			.line(view.state.doc.lineAt(line.from).number)
 			.text.match(/(?<=\.)\w+$/);
 		if (lineFileExtension !== null) {
-			return new Marker(lineFileExtension[0]);
+			return new FormatMarker(lineFileExtension[0]);
 		}
 		if (view.state.doc.lineAt(line.from).text.trim().endsWith("/")) {
-			return new Marker("/");
+			return new FormatMarker("/");
 		}
 		return null;
 	},
