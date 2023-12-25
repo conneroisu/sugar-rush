@@ -1,3 +1,4 @@
+
 import type { TAbstractFile } from "obsidian";
 import { AbstractOperation } from "plugin-sugar-rush/handlers/handlerOperations";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
@@ -7,13 +8,12 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extens
  * Operation that renames an AbstractFile
  * @implements {AbstractOperation}
  **/
-export class RenameOperation implements AbstractOperation {
+export class DuplicateOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
-	name: string = "Rename";
-	description: string =
-		"Renames the file or directory at the given path to the new path";
-	icon: string = getIconForLineFileExtension("rename");
-	id: string = "rename";
+	name: string = "Duplicate";
+	description: string = "Duplicates the file or directory at the given path";
+	icon: string = getIconForLineFileExtension("duplicate");
+	id: string = "duplicate";
 
 	/**
 	 * Creates an instance of RenameOperation.
@@ -34,6 +34,6 @@ export class RenameOperation implements AbstractOperation {
 	 * @return {void}
 	 **/
 	run(): void {
-		this.plugin.app.vault.rename(this.abstractFile, this.newPath);
+		throw new Error("Method not implemented.");
 	}
 }
