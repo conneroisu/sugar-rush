@@ -16,6 +16,7 @@ export default class SugarRushPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+		this.fileSystemHandler.deleteAllSugarFiles();
 
 		this.registerExtensions(["sugar"], "markdown");
 		this.addSettingTab(new SugarRushSettingView(this));
