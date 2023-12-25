@@ -1,4 +1,4 @@
-import { type Command } from "obsidian";
+import { Notice, type Command } from "obsidian";
 import type SugarRushPlugin from "../main";
 
 /**
@@ -26,6 +26,9 @@ export default class commandToggleHiddenFiles implements Command {
 	}
 
 	editorCheckCallback: (checking: boolean) => boolean | void = () => {
+		if( this.plugin.operationHandler.operations.length > 0 )  {
+			new Notice("Cannot toggle hidden files while an operation is in progress.");:
+		};
 		this.plugin.settings.showHiddenFiles = !this.plugin.settings.showHiddenFiles;
 		this.plugin.saveSettings();
 	};
