@@ -1,5 +1,9 @@
 import { gutter } from "@codemirror/view";
 import assets from "../!icons.json";
+import { FormatMarker } from "./formatMarker";
+import { AbstractExtension } from "plugin-sugar-rush/handlers/handlerExtensions";
+import type { Extension } from "@codemirror/state";
+import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
  * Returns the icon that corresponds to the given file extension from the assets file.
@@ -19,9 +23,11 @@ export function getIconForLineFileExtension(extension: string): string {
 		return association.extensions.includes(extension);
 	});
 	if (icon === undefined) {
-		const defaultIcon = assets["extension-associations"].find((association) => {
-			return association.extensions.includes("*")
-		});
+		const defaultIcon = assets["extension-associations"].find(
+			(association) => {
+				return association.extensions.includes("*");
+			}
+		);
 		if (defaultIcon === undefined) {
 			return "";
 		}
@@ -30,18 +36,26 @@ export function getIconForLineFileExtension(extension: string): string {
 	return icon.data;
 }
 
-
-export const formatGutter = gutter({
-	lineMarker: (view, line) => {
-		const lineFileExtension = view.state.doc
-			.line(view.state.doc.lineAt(line.from).number)
-			.text.match(/(?<=\.)\w+$/);
-		if (lineFileExtension !== null) {
-			return new FormatMarker(lineFileExtension[0]);
-		}
-		if (view.state.doc.lineAt(line.from).text.trim().endsWith("/")) {
-			return new FormatMarker("/");
-		}
-		return null;
-	},
-})
+export default class FormatExtension extends AbstractExtension {
+	constructor(plugin: SugarRushPlugin) {
+		super(plugin);
+	}
+	getExtension(): Extension {
+		return gutter({
+			lineMarker: (view, line) => {
+				const lineFileExtension = view.state.doc
+					.line(view.state.doc.lineAt(line.from).number)
+					.text.match(/(?<=\.)\w+$/);
+				if (lineFileExtension !== null) {
+					return new FormatMarker(lineFileExtension[0]);
+				}
+				if (
+					view.state.doc.lineAt(line.from).text.trim().endsWith("/")
+				) {
+					return new FormatMarker("/");
+				}
+				return null;
+			},
+		});
+	}
+}

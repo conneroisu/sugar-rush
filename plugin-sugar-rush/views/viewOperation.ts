@@ -1,5 +1,5 @@
 import { App, Modal } from "obsidian";
-import { type AbstractOperation } from "./operations/AbstractOperation";
+import { AbstractOperation } from "plugin-sugar-rush/handlers/handlerOperations";
 
 export class SugarRushOperationView extends Modal {
 	operations: AbstractOperation[];

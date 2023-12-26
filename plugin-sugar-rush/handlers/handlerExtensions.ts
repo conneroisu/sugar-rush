@@ -1,6 +1,7 @@
 import type SugarRushPlugin from "../main";
 import { type Extension } from "@codemirror/state";
-import { formatGutter } from "../extensions/conflictMarker";
+import FormatExtension from "plugin-sugar-rush/extensions/formatExtension";
+import SizeExtension from "plugin-sugar-rush/extensions/sizeExtension";
 
 /**
  * SugarRushExtensionHandler class manages the configuration of SugarRush plugins and its extensions.
@@ -53,7 +54,8 @@ export default class SugarRushExtensionHandler {
 	getExtensions() {
 		this.extensions = [];
 		if (this.plugin.settings.showFileIcons) {
-			this.extensions.push(formatGutter);
+			this.extensions.push(new FormatExtension(this.plugin));
+			this.extensions.push(new SizeExtension(this.plugin));
 		}
 		return this.extensions;
 	}

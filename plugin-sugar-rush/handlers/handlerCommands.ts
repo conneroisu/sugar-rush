@@ -2,8 +2,9 @@ import commandRushToSugarView from "../commands/commandRush";
 import commandToggleHiddenFiles from "../commands/commandHidden";
 import commandSelectSugarViewEntry from "../commands/commandSelect";
 import commandSaveSugarView from "../commands/commandSave";
-import commandRefreshSugarView from "../commands/commandRefresh";
+
 import SugarRushPlugin from "../main";
+import { commandRefreshSugarView } from "plugin-sugar-rush/commands/commandRefresh";
 
 /**
  * Class representing a handler for SugarRush commands.

@@ -1,5 +1,5 @@
-import { gutter, GutterMarker } from "@codemirror/view";
-import { getIconForLineFileExtension } from "./conflictMarker";
+import { GutterMarker } from "@codemirror/view";
+import { getIconForLineFileExtension } from "./formatExtension";
 
 /**
  *
@@ -18,7 +18,6 @@ import { getIconForLineFileExtension } from "./conflictMarker";
  * @returns {HTMLElement} - Returns an SVG element with attached attributes and inner HTML derived from the
  * current extension via the getIconForLineFileExtension() function.
  */
-
 export class FormatMarker extends GutterMarker {
 	extension: string;
 

@@ -1,41 +1,14 @@
-import { gutter, GutterMarker } from "@codemirror/view";
+import { gutter } from "@codemirror/view";
+import { AbstractExtension } from "plugin-sugar-rush/handlers/handlerExtensions";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
+import { ExceptionMarker } from "./conflictMarker";
 
-/**
- * ExceptionMarker is a class that extends the GutterMarker class. 
- * It's used to indicate certain types of exceptions in the code.
- *
- * @property {string} message - This stores the text message of the exception to be displayed.
- *
- * @constructor
- * @param {string} text - The string value to be passed as the exception message.
- *
- * @method toDOM
- * Returns a Node object containing the text of the exception message.
- * This method can be used to display the exception message in the DOM.
- */
-export class ExceptionMarker extends GutterMarker {
-	message: string;
-
-	/** 
-	 * Creates a new Exception marker that holds a text node
-	 **/
-	constructor(text: string) {
-		super();
-		this.message = text;
-	}
-
-	toDOM() {
-		return document.createTextNode(this.message);
-	}
-}
-
-class ExceptionExtension {
-	plugin: SugarRushPlugin;
+export default class ExceptionExtension extends AbstractExtension {
 
 	constructor(plugin: SugarRushPlugin) {
-		this.plugin = plugin;
+		super(plugin);
 	}
+	
 	relativeOperationExceptionGutter = gutter({
 		lineMarker: (view, line) => {
 			const fileLine = view.state.doc.line(view.state.doc.lineAt(line.from).number);
