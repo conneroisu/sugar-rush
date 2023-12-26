@@ -10,6 +10,7 @@ export class SugarRushSettingView extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
+
 	display(): void {
 		const { containerEl } = this;
 

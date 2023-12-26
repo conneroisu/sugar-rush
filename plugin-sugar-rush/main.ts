@@ -78,6 +78,19 @@ class SugarRushPlugin extends Plugin {
 	*/
 	onunload() { this.fileSystemHandler.deleteAllSugarFiles(); }
 
+
+
+	/**
+	 * loadSettings Method:
+	 *
+	 * This asynchronous method is responsible for loading the settings of the SugarRushPlugin. It takes no parameters.
+	 * It employs `Object.assign` to merge the default settings (`DEFAULT_SETTINGS`) with any existing settings retrieved
+	 * from the storage via `this.loadData()` method. It then assigns this merged data to the `settings` property of the
+	 * SugarRushPlugin instance.
+	 *
+	 * Please note that this method does not return anything.
+	 */
+	
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},
