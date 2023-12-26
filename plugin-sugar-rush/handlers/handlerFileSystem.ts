@@ -31,7 +31,7 @@ export default class SugarRushFileSystemHandler {
 
 	deleteAllSugarFiles() {
 		this.getAllSugarFiles().forEach((file) => {
-			this.plugin.app.vault.delete(file).then((r) => {
+			this.plugin.app.vault.delete(file).then(() => {
 				if (this.plugin.settings.debug) {
 					console.log("Deleted file", file);
 				}

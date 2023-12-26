@@ -37,6 +37,16 @@ export class SugarRushSettingView extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+		new Setting(containerEl)
+			.setName("Show File Sizes")
+			.setDesc("Display file sizes?")
+			.addToggle((toggle) => toggle
+				.setValue(this.plugin.settings.showFileSizes)
+				.onChange(async (value) => {
+					this.plugin.settings.showFileSizes = value;
+					await this.plugin.saveSettings();
+				}));
+
 		// sqlite view of the logging table
 		// new Setting(containerEl)
 		// .setName("Visual Extensions")

@@ -31,7 +31,8 @@ export default class SugarRushExtensionHandler {
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
 		this.extensions = this.getExtensions();
-		this.plugin.registerEditorExtension(this.extensions);
+		this.plugin.registerEditorExtension([this.extensions]);
+		this.clearExtensions()
 	}
 
 	/**
@@ -55,6 +56,8 @@ export default class SugarRushExtensionHandler {
 		this.extensions = [];
 		if (this.plugin.settings.showFileIcons) {
 			this.extensions.push(new FormatExtension(this.plugin));
+		}
+		if (this.plugin.settings.showFileSizes) {
 			this.extensions.push(new SizeExtension(this.plugin));
 		}
 		return this.extensions;
