@@ -4,6 +4,7 @@ import { sep } from "path";
 
 import type SugarRushPlugin from "../main";
 
+
 export default class SugarRushFileSystemHandler {
 	private readonly plugin: SugarRushPlugin;
 	abstractMap: Map<number, TAbstractFile> = new Map();

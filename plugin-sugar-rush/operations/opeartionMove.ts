@@ -32,13 +32,16 @@ export class MoveOperation implements AbstractOperation {
 	icon: string = getIconForLineFileExtension("move");
 	originalPath: string;
 	movedPath: string;
+	newPath: string;
+	path: string;
 
-	constructor(
-		plugin: SugarRushPlugin,
-		public path: string,
-		public newPath: string
-	) {
+	/** 
+	 * Creates a new Move Operation.
+	 **/
+	constructor(plugin: SugarRushPlugin, path: string, newPath: string) {
 		this.plugin = plugin;
+		this.path = path;
+		this.newPath = newPath;
 		this.description = `Would move ${this.path} to ${this.newPath}`;
 		this.originalPath = this.path;
 		this.movedPath = this.newPath;
