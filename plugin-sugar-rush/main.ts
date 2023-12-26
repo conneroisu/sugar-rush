@@ -51,12 +51,12 @@ export default class SugarRushPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
-		this.fileSystemHandler.deleteAllSugarFiles();
 
 		this.registerExtensions(["sugar"], "markdown");
 		this.addSettingTab(new SugarRushSettingView(this));
 		this.commandHandler = new SugarRushCommandHandler(this);
 		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
+		this.fileSystemHandler.deleteAllSugarFiles();
 		this.operationHandler = new SugarRushOperationHandler(this);
 		this.extensionHandler = new SugarRushExtensionHandler(this);
 		this.app.workspace.on("file-open", (file: TFile | null) => {

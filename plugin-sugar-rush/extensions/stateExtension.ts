@@ -4,14 +4,14 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
 import { AbstractExtension } from "plugin-sugar-rush/handlers/handlerExtensions";
 import type { Extension } from "@codemirror/state";
 
-export default class IndicatorsExtension extends AbstractExtension {
+export default class IndicatorsExtension implements AbstractExtension {
+	plugin: SugarRushPlugin;
+	extension: Extension;
 	constructor(plugin: SugarRushPlugin) {
-		super(plugin);
+		this.plugin = plugin;
+		this.extension = gutter({});
 	}
-
 	getExtension(): Extension {
-		throw new Error("Method not implemented.");
+		return this.extension;
 	}
-
-	modifiedGutter = gutter({});
 }

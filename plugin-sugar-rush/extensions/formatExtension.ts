@@ -9,15 +9,9 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  * Returns the icon that corresponds to the given file extension from the assets file.
  * If no icon is associated with this extension, it will return the default icon instead.
  * If no icon is found including the default one, it will return an empty string.
- *
  * @param {string} extension - The string referencing the file extension for which an icon is to be retrieved.
- *
  * @return {string} - It returns the icon data string corresponding to the provided file extension.
- *
- * Note: The function specifically works on the 'extension-associations' section in the assets file,
- * where it looks at 'extensions' field for file extension and 'data' field for the corresponding icon.
  */
-
 export function getIconForLineFileExtension(extension: string): string {
 	const icon = assets["extension-associations"].find((association) => {
 		return association.extensions.includes(extension);
@@ -36,12 +30,12 @@ export function getIconForLineFileExtension(extension: string): string {
 	return icon.data;
 }
 
-export default class FormatExtension extends AbstractExtension {
+export default class FormatExtension implements AbstractExtension {
+	plugin: SugarRushPlugin;
+	extension: Extension;
 	constructor(plugin: SugarRushPlugin) {
-		super(plugin);
-	}
-	getExtension(): Extension {
-		return gutter({
+		this.plugin = plugin;
+		this.extension = gutter({
 			lineMarker: (view, line) => {
 				const lineFileExtension = view.state.doc
 					.line(view.state.doc.lineAt(line.from).number)
@@ -57,5 +51,8 @@ export default class FormatExtension extends AbstractExtension {
 				return null;
 			},
 		});
+	}
+	getExtension(): Extension {
+		return this.extension;
 	}
 }

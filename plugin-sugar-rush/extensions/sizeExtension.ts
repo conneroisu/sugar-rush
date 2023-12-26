@@ -57,10 +57,13 @@ export function getSizeForAbstractFile(file: TFile | TFolder) {
  *
  * Note: The actual implementation of the `lineMarker` method's logic is commented out in the provided snippet.
  */
-export default class SizeExtension extends AbstractExtension {
+export default class SizeExtension implements AbstractExtension {
 	constructor(plugin: SugarRushPlugin) {
-		super(plugin);
+		this.plugin = plugin;
+		this.extension = this.getExtension();
 	}
+	plugin: SugarRushPlugin;
+	extension: Extension;
 
 	getExtension(): Extension {
 		return gutter({
