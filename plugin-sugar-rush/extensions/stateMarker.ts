@@ -1,3 +1,5 @@
+import { gutter, GutterMarker } from "@codemirror/view";
+
 class IndicatorsGutterMarker extends GutterMarker {
 	lineString: string;
 	icon: string;
