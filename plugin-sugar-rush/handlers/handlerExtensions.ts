@@ -1,8 +1,8 @@
 import type SugarRushPlugin from "../main";
 import { type Extension } from "@codemirror/state";
-import { formatGutter } from "../extensions/extensionFormat";
+import { formatGutter } from "../extensions/conflictMarker";
 
- /**
+/**
  * SugarRushExtensionHandler class manages the configuration of SugarRush plugins and its extensions.
  *
  * @property {SugarRushPlugin} plugin - Stores the plugin that is currently being managed.
@@ -20,9 +20,9 @@ import { formatGutter } from "../extensions/extensionFormat";
  * Returns the current set of extensions.
  */
 export default class SugarRushExtensionHandler {
-    private readonly  plugin: SugarRushPlugin;
+	private readonly plugin: SugarRushPlugin;
 	extensions!: Extension[];
-	
+
 	/**
 	 * Creates a new extension handler for the Sugar Rush Plugin.
 	 * @param {SugarRushPlugin} plugin - Stores the plugin
@@ -32,7 +32,7 @@ export default class SugarRushExtensionHandler {
 		this.extensions = this.getExtensions();
 		this.plugin.registerEditorExtension(this.extensions);
 	}
-	
+
 	/**
 	 * The `clearExtensions` method is a member of the `SugarRushExtensionHandler` class.
 	 * It sets the value of the `extensions` property to an empty array.
@@ -52,7 +52,7 @@ export default class SugarRushExtensionHandler {
 
 	getExtensions() {
 		this.extensions = [];
-		if(this.plugin.settings.showFileIcons) {
+		if (this.plugin.settings.showFileIcons) {
 			this.extensions.push(formatGutter);
 		}
 		return this.extensions;
@@ -78,8 +78,6 @@ export abstract class AbstractExtension {
 	/**
 	 * This constructor for the SugarRushExtensionHandler class accepts a single argument.
 	 * @param {SugarRushPlugin} plugin - This is the plugin associated with the SugarRushExtensionHandler instance upon its creation.
-	 * The constructor assigns this plugin to the `plugin` property and initializes the `extensions` property by calling the `getExtensions` method.
-	 * The resulting set of extensions is then registered to the plugin by calling the `registerEditorExtension` method on the plugin instance with the extensions as an argument.
 	 */
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
@@ -87,11 +85,11 @@ export abstract class AbstractExtension {
 
 	/**
 	 * The `getExtension` method is a member of the `AbstractExtension` class and it is used to get the current extension stored
-	 * in the `extension` property. 
+	 * in the `extension` property.
 	 *
 	 * @returns {Extension} The current extension stored in the `extension` property.
 	 */
-	
+
 	getExtension(): Extension {
 		return this.extension;
 	}

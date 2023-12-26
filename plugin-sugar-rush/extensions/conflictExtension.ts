@@ -1,7 +1,6 @@
 import { gutter, GutterMarker } from "@codemirror/view";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
-
 /**
  * ExceptionMarker is a class that extends the GutterMarker class. 
  * It's used to indicate certain types of exceptions in the code.
@@ -15,10 +14,12 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  * Returns a Node object containing the text of the exception message.
  * This method can be used to display the exception message in the DOM.
  */
-
 export class ExceptionMarker extends GutterMarker {
 	message: string;
 
+	/** 
+	 * Creates a new Exception marker that holds a text node
+	 **/
 	constructor(text: string) {
 		super();
 		this.message = text;

@@ -4,12 +4,12 @@ import * as fs from "fs";
 
 /**
  * Returns the size of a file or sum of sizes of all files within a folder, recursively.
- * 
+ *
  * The function accepts as parameter an object of type TFile or TFolder.
  * When the passed object is of type TFile, it directly returns the size of the file, extracted as `file.stat.size`.
  * In case of a TFolder object, the method iteratively checks each child element of that folder.
  * For each child, it makes a recursive call to `getSizeForAbstractFile()` to calculate their respective sizes.
- * 
+ *
  * It utilizes recursion to calculate and aggregate sizes of files in nested directories.
  *
  * @param {TFile | TFolder} file - File or folder to get the size for.
@@ -38,22 +38,6 @@ export function getSizeForAbstractFile(file: TFile | TFolder) {
 	return sum;
 }
 
-
-/**
- * The `SizeMarker` class is an extension of the `GutterMarker` class from the @codemirror/view package.
- *
- * The class currently doesn't define any instance variables or methods of its own and
- * solely relies on those from the parent class `GutterMarker`.
- *
- * The provided `constructor` method, apart from calling the constructor of its parent class `GutterMarker`,
- * does not perform any additional operations.
- */
-
-export class SizeMarker extends GutterMarker {
-	constructor() {
-		super();
-	}
-
 /**
  * The `sizeGutter` constant is an instance of a "Gutter". It's constructed by calling the exported function `gutter()` from the
  * "@codemirror/view" package. It encapsulates the operations needed for marking lines in the codemirror view and is designed to
@@ -74,6 +58,5 @@ export const sizeGutter = gutter({
 	lineMarker: (view, line) => {
 		// const size = line.length;
 		// return size ? new SizeMarker() : null;
-
-	}
-})
+	},
+});
