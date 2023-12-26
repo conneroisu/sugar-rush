@@ -1,10 +1,5 @@
 import { App, Modal } from "obsidian";
-import { type AbstractOperation } from "./operations/AbstractOperation";
-
-export default class ViewPending extends Modal {
-	
-}
-
+import { type AbstractOperation } from "../handlers/handlerOperations";
 
 export class SugarRushPendingView extends Modal {
 	operations: AbstractOperation[];
@@ -16,21 +11,21 @@ export class SugarRushPendingView extends Modal {
 
 	onOpen() {
 		const { contentEl } = this;
-		contentEl.createEl("h1", { text: "Operation View" });
+		contentEl.createEl("h1", { text: "Pending Operations" });
 
-		// create a list of operations
 		for (const operation of this.operations) {
 			contentEl.createEl("h2", { text: operation.name });
 			contentEl.createEl("p", { text: operation.description });
 		}
 
-		const acceptButton = contentEl.createEl("button", { text: "Accept" });
+		const minimizeButton = contentEl.createEl("button", { text: "Minimize" });
 		const cancelButton = contentEl.createEl("button", { text: "Cancel" });
 
 		cancelButton.addEventListener("click", () => {
 			this.close();
 		});
-		acceptButton.addEventListener("click", () => {
+		
+		minimizeButton.addEventListener("click", () => {
 			this.close();
 		});
 	}
