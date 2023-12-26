@@ -53,9 +53,8 @@ export class SizeMarker extends GutterMarker {
 	constructor() {
 		super();
 	}
-}
 
-	   /**
+/**
  * The `sizeGutter` constant is an instance of a "Gutter". It's constructed by calling the exported function `gutter()` from the
  * "@codemirror/view" package. It encapsulates the operations needed for marking lines in the codemirror view and is designed to
  * add a gutter to the line numbers column, marking lines with a `SizeMarker` instance, or not marking them, based on certain conditions.
