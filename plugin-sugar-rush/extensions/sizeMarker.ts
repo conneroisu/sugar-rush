@@ -9,9 +9,15 @@ import { gutter, GutterMarker } from "@codemirror/view";
  * The provided `constructor` method, apart from calling the constructor of its parent class `GutterMarker`,
  * does not perform any additional operations.
  */
-
 export class SizeMarker extends GutterMarker {
-	constructor() {
+	message: string;
+
+	constructor(line: string) {
 		super();
+		this.message = line;
+	}
+
+	toDOM(): Text {
+		return document.createTextNode(this.message);
 	}
 }

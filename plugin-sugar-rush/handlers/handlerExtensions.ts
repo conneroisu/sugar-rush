@@ -72,8 +72,8 @@ export default class SugarRushExtensionHandler {
  */
 
 export abstract class AbstractExtension {
-	private plugin: SugarRushPlugin;
-	private extension!: Extension;
+	plugin: SugarRushPlugin;
+	extension!: Extension;
 
 	/**
 	 * This constructor for the SugarRushExtensionHandler class accepts a single argument.

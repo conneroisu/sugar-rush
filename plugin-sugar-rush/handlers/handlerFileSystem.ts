@@ -4,7 +4,6 @@ import { sep } from "path";
 
 import type SugarRushPlugin from "../main";
 
-
 export default class SugarRushFileSystemHandler {
 	private readonly plugin: SugarRushPlugin;
 	abstractMap: Map<number, TAbstractFile> = new Map();
@@ -14,7 +13,10 @@ export default class SugarRushFileSystemHandler {
 	}
 
 	openSugarOperationViewModal() {
-		new SugarRushOperationView(this.plugin.app, this.plugin.operationHandler.operations).open();
+		new SugarRushOperationView(
+			this.plugin.app,
+			this.plugin.operationHandler.operations
+		).open();
 	}
 
 	getAllSugarFiles() {
@@ -26,12 +28,14 @@ export default class SugarRushFileSystemHandler {
 		});
 		return sugarFiles;
 	}
-	
+
 	deleteAllSugarFiles() {
 		this.getAllSugarFiles().forEach((file) => {
-			this.plugin.app.vault.delete(file).then(r => {if(this.plugin.settings.debug){
-				console.log("Deleted file", file);
-			}});
+			this.plugin.app.vault.delete(file).then((r) => {
+				if (this.plugin.settings.debug) {
+					console.log("Deleted file", file);
+				}
+			});
 		});
 	}
 
@@ -47,17 +51,18 @@ export default class SugarRushFileSystemHandler {
 		this.plugin.app.workspace.updateOptions();
 	}
 
-
 	getSugarFilePath(activeFile: TFile): string {
-		if (activeFile.parent && (activeFile.parent.path === "/" || activeFile.parent === null)) {
-			return (
-				"root" +
-				".sugar"
-			);
+		if (
+			activeFile.parent &&
+			(activeFile.parent.path === "/" || activeFile.parent === null)
+		) {
+			return "root" + ".sugar";
 		}
 		return (
-			activeFile.parent?.path + sep +
-			activeFile.parent?.name.replace(sep, "-") + ".sugar"
+			activeFile.parent?.path +
+			sep +
+			activeFile.parent?.name.replace(sep, "-") +
+			".sugar"
 		);
 	}
 
@@ -69,16 +74,20 @@ export default class SugarRushFileSystemHandler {
 	}
 
 	generateSugarFileContent(activeFile: TFile): string {
-		return this.getParentChildren(activeFile).map((file) => {
-			if (file instanceof TFolder) {
-				return this.generateAbstractPrefix(file) + file.name + "/";
-			}
-			return this.generateAbstractPrefix(file) + file.name;
-		}).join("\n")
+		return this.getParentChildren(activeFile)
+			.map((file) => {
+				if (file instanceof TFolder) {
+					return this.generateAbstractPrefix(file) + file.name + "/";
+				}
+				return this.generateAbstractPrefix(file) + file.name;
+			})
+			.join("\n");
 	}
 
 	getParentChildren(file: TAbstractFile): TAbstractFile[] {
-		if (file instanceof TFolder) { return file.children; }
+		if (file instanceof TFolder) {
+			return file.children;
+		}
 		if (file instanceof TFile) {
 			if (file.parent === null) {
 				return this.plugin.app.vault.getRoot().children;
@@ -91,11 +100,19 @@ export default class SugarRushFileSystemHandler {
 	generateAbstractPrefix(file: TAbstractFile): string {
 		const code = Math.random().toString(5).substring(2, 7);
 		this.abstractMap.set(parseInt(code), file);
-		return ("<a href=" + code + ">" + "</a>");
+		return "<a href=" + code + ">" + "</a>";
+	}
+
+	parseAbstractPrefixForId(line: string): number {
+		const code = line.match(/(?<=href=)\w+/);
+		const id = parseInt(code?.toString() ?? "");
+		return id;
 	}
 
 	isSugarFile(activeFile: TFile): boolean {
-		if (activeFile.extension === "sugar") { return true; }
+		if (activeFile.extension === "sugar") {
+			return true;
+		}
 		return false;
 	}
 }

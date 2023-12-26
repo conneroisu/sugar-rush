@@ -1,9 +1,9 @@
 import { gutter, GutterMarker } from "@codemirror/view";
 import { TAbstractFile, TFile, TFolder } from "obsidian";
-import * as fs from "fs";
 import { AbstractExtension } from "plugin-sugar-rush/handlers/handlerExtensions";
 import type { Extension } from "@codemirror/state";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
+import { SizeMarker } from "./sizeMarker";
 
 /**
  * Returns the size of a file or sum of sizes of all files within a folder, recursively.
@@ -69,6 +69,11 @@ export default class SizeExtension extends AbstractExtension {
 				const lineForFile = view.state.doc.line(
 					view.state.doc.lineAt(line.from).number
 				);
+				const id =
+					this.plugin.fileSystemHandler.parseAbstractPrefixForId(
+						lineForFile.text
+					);
+				return new SizeMarker(id);
 			},
 		});
 	}
