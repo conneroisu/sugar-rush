@@ -1,11 +1,22 @@
 
 import { gutter, GutterMarker } from "@codemirror/view";
 
+/**
+ * Modifies the gutter marker to display modified indicator for Abstract files listed in the sugar view.
+ * @extends GutterMarker
+ * @method toDOM - Creates a DOM element to be used as the marker.
+ **/
 class ModifiedGutterMarker extends GutterMarker {
+	/**
+	 * Creates a DOM element to be used as the marker.
+	 **/
 	constructor() {
 		super();
 	}
 
+	/**
+	 * Creates a DOM element to be used as the marker.
+	 **/
 	toDOM() {
 		let element = document.createElement("div");
 		element.classList.add("sugar-rush-gutter-modified");
