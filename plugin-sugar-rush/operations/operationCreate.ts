@@ -20,7 +20,6 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extens
  * @method constructor(plugin: SugarRushPlugin, path: string): void - Class constructor that initializes the `CreateOperation`.
  * @method run(): void - The main method that performs the operation, i.e., creating a new file or directory at the specified path.
  **/
-
 export class CreateOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	name: string = "Create";
