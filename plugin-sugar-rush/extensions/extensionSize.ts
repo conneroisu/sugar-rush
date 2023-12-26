@@ -39,12 +39,38 @@ export function getSizeForAbstractFile(file: TFile | TFolder) {
 }
 
 
+/**
+ * The `SizeMarker` class is an extension of the `GutterMarker` class from the @codemirror/view package.
+ *
+ * The class currently doesn't define any instance variables or methods of its own and
+ * solely relies on those from the parent class `GutterMarker`.
+ *
+ * The provided `constructor` method, apart from calling the constructor of its parent class `GutterMarker`,
+ * does not perform any additional operations.
+ */
+
 export class SizeMarker extends GutterMarker {
 	constructor() {
 		super();
 	}
 }
 
+	   /**
+ * The `sizeGutter` constant is an instance of a "Gutter". It's constructed by calling the exported function `gutter()` from the
+ * "@codemirror/view" package. It encapsulates the operations needed for marking lines in the codemirror view and is designed to
+ * add a gutter to the line numbers column, marking lines with a `SizeMarker` instance, or not marking them, based on certain conditions.
+ *
+ * It's configured through an object passed to the `gutter()` function, containing a single method named `lineMarker`. This method is
+ * executed for every line in the editor, accepting two parameters:
+ * - `view` that represents the current editor view.
+ * - `line` which is the line object that is currently being processed.
+ *
+ * Inside the `lineMarker`, the size of the line (commented out in the given snippet) can be calculated by checking the `line.length`
+ * property or using any other operation. If the line's size meets certain conditions (also commented out), a new instance of `SizeMarker`
+ * is returned by the method. If not, `null` is returned, indicating that for the considered line, no marker is to be placed in the gutter.
+ *
+ * Note: The actual implementation of the `lineMarker` method's logic is commented out in the provided snippet.
+ */
 export const sizeGutter = gutter({
 	lineMarker: (view, line) => {
 		// const size = line.length;
