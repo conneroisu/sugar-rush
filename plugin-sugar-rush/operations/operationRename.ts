@@ -11,7 +11,7 @@ export class RenameOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	name: string = "Rename";
 	description: string =
-		"Renames the file or directory at the given path to the new path";
+		"Renames the abstract file at the given path to the new path. Moves the contents if it is a folder.";
 	icon: string = getIconForLineFileExtension("rename");
 	id: string = "rename";
 
