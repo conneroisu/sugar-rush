@@ -6,25 +6,27 @@ import SugarRushFileSystemHandler from "./handlers/handlerFileSystem";
 import SugarRushOperationHandler from "./handlers/handlerOperations";
 import SugarRushExtensionHandler from "./handlers/handlerExtensions";
 
-export default /**
+/**
  * The `SugarRushPlugin` class extends the `Plugin` base class to provide functionality related to handling sugar files in the Obsidian app.
  *
  * Attributes:
- * - `settings` : instance of SugarRushPluginSettings holds the settings for the plugin.
- * - `commandHandler` : instance of SugarRushCommandHandler manages command related operations for the plugin.
- * - `fileSystemHandler` : instance of SugarRushFileSystemHandler manages filesystem related operations for sugar files.
- * - `operationHandler` : instance of SugarRushOperationHandler manages operations for the plugin.
- * - `extensionHandler` : instance of SugarRushExtensionHandler manages extension related operations for the plugin.
- * - `app` : instance of the App class from Obsidian API.
+ * @attribute {SugarRushPluginSettings} settings - holds the settings for the plugin.
+ * @attribute {SugarRushCommandHandler} commandHandler - manages command related operations for the plugin.
+ * @attribute {SugarRushFileSystemHandler} fileSystemHandler - manages filesystem related operations for sugar files.
+ * @attribute {SugarRushOperationHandler} operationHandler - manages operations for the plugin.
+ * @attrubute {SugarRushExtensionHandler} extensionHandler - manages extension related operations for the plugin.
+ * @attribute {App} app - instance of the App class from Obsidian API.
  *
  * Methods:
- * - `onload`: This method is run when the plugin is loaded. It initialization events for extensions, settings tab, and handlers.
- * - `onunload`: This method is run when the plugin is unloaded. It deletes all sugar files with the help of file system handler.
- * - `loadSettings`: This method loads the settings for the plugin from the storage and merges it with default settings.
- * - `saveSettings`: This method saves the settings for the plugin to the storage.
- */
+ * @method {async loadSettings} - loads the settings for the plugin from the storage and merges it with default settings.
+ * @method {async saveSettings} - saves the settings for the plugin to the storage.
+ * @method {onload} - this method is run when the plugin is loaded. It initialization events for extensions, settings tab, and handlers.
+ * @method {onunload} - this method is run when the plugin is unloaded. It deletes all sugar files with the help of file system handler.
+ * @method {loadSettings} - this method loads the settings for the plugin from the storage and merges it with default settings.
+ * @method {saveSettings} - this method saves the settings for the plugin to the storage.
+ **/
 
-class SugarRushPlugin extends Plugin {
+export default class SugarRushPlugin extends Plugin {
 	settings!: SugarRushPluginSettings;
 	commandHandler!: SugarRushCommandHandler;
 	fileSystemHandler!: SugarRushFileSystemHandler;
@@ -70,15 +72,15 @@ class SugarRushPlugin extends Plugin {
 	}
 
 	/**
-	* onunload Method:
-	* This method is invoked when the plugin is unloaded from the workspace. Its function is to delete all Sugar Files from the file
-	* system. This is achieved by calling the deleteAllSugarFiles method of the fileSystemHandler.
-	*
-	* Please note that this method doesn't take any arguments and doesn't return anything.
-	*/
-	onunload() { this.fileSystemHandler.deleteAllSugarFiles(); }
-
-
+	 * onunload Method:
+	 * This method is invoked when the plugin is unloaded from the workspace. Its function is to delete all Sugar Files from the file
+	 * system. This is achieved by calling the deleteAllSugarFiles method of the fileSystemHandler.
+	 *
+	 * Please note that this method doesn't take any arguments and doesn't return anything.
+	 */
+	onunload() {
+		this.fileSystemHandler.deleteAllSugarFiles();
+	}
 
 	/**
 	 * loadSettings Method:
@@ -90,7 +92,7 @@ class SugarRushPlugin extends Plugin {
 	 *
 	 * Please note that this method does not return anything.
 	 */
-	
+
 	async loadSettings() {
 		this.settings = Object.assign(
 			{},
@@ -107,7 +109,7 @@ class SugarRushPlugin extends Plugin {
 	 *
 	 * Please note that the method does not return anything.
 	 */
-	
+
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
