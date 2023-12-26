@@ -1,4 +1,5 @@
 import { gutter, GutterMarker } from "@codemirror/view";
+import assets from "../!icons.json";
 
 class IndicatorsGutterMarker extends GutterMarker {
 	lineString: string;
@@ -8,7 +9,7 @@ class IndicatorsGutterMarker extends GutterMarker {
 		super();
 		this.lineString = line;
 		const tempIcon = assets["extension-associations"].find(
-			(association) => {
+			(association: { extensions: string | string[] }) => {
 				return association.extensions.includes("?");
 			}
 		);

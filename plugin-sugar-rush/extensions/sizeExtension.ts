@@ -1,6 +1,9 @@
 import { gutter, GutterMarker } from "@codemirror/view";
 import { TAbstractFile, TFile, TFolder } from "obsidian";
 import * as fs from "fs";
+import { AbstractExtension } from "plugin-sugar-rush/handlers/handlerExtensions";
+import type { Extension } from "@codemirror/state";
+import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
  * Returns the size of a file or sum of sizes of all files within a folder, recursively.
@@ -54,9 +57,26 @@ export function getSizeForAbstractFile(file: TFile | TFolder) {
  *
  * Note: The actual implementation of the `lineMarker` method's logic is commented out in the provided snippet.
  */
-export const sizeGutter = gutter({
-	lineMarker: (view, line) => {
-		// const size = line.length;
-		// return size ? new SizeMarker() : null;
-	},
-});
+export default class SizeExtension extends AbstractExtension {
+	constructor(plugin: SugarRushPlugin) {
+		super(plugin);
+	}
+
+	getExtension(): Extension {
+		return gutter({
+			lineMarker: (view, line) => {
+				// search the abstract map for the fileSystemHandler
+				const lineForFile = view.state.doc.line(
+					view.state.doc.lineAt(line.from).number
+				);
+			},
+		});
+	}
+
+	// export const sizeGutter = gutter({
+	//     lineMarker: (view, line) => {
+	//         // const size = line.length;
+	//         // return size ? new SizeMarker() : null;
+	//     },
+	// });
+}
