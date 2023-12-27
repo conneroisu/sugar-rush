@@ -3,21 +3,10 @@ import type SugarRushPlugin from "../main";
 
 /**
  * The `commandSelectSugarViewEntry` class implements the Command interface.
- * It is specifically designed for selection of entries within a Sugar View.
- *
- * Properties:
- * - `id: string` - the identifier of the command, set to "sugar-view-entry-select".
- * - `name: string` - the name of the command, set to "Select Sugar View Entry".
- * - `plugin: SugarRushPlugin` - the plugin instance to be utilized in command execution.
- *
- * Methods:
- * - `constructor(plugin: SugarRushPlugin)` - Constructs an instance of the command by taking a plugin instance.
- *
- * Callbacks:
- * - `editorCheckCallback: ((checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) | undefined` - It takes
- * three arguments, a boolean indicating if it's checking, an instance of an editor, and an instance of MarkdownView or MarkdownFileInfo.
- * It returns a boolean indicating if an active file is a Sugar File, then based on the type of the file `TFile` or `TFolder`, makes appropriate
- * operations. Returns false otherwise.
+ * @property id - The id of the command.
+ * @property name - The name of the command.
+ * @property plugin - The instance of the plugin.
+ * @method editorCheckCallback - The callback that is called when the command is executed.
  **/
 export default class commandSelectSugarViewEntry implements Command {
 	id: string = "sugar-view-entry-select";

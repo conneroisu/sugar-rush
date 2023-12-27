@@ -3,17 +3,9 @@ import type SugarRushPlugin from "./../main";
 
 /**
  * The class commandSaveSugarView implements the Command object.
- *
- * Properties of the class include:
- * id: "sugar-view-save" - string identifier of the command.
- * name: "Save Sugar View" - name of the command.
- * plugin: Instance of SugarRushPlugin which is assigned upon object creation through the constructor.
- *
- * The class has a constructor that takes a SugarRushPlugin object as a parameter and assigns it to the plugin property.
- *
- * It also has a checkCallback property which is defined as a method that takes a boolean value 'checking', and returns a boolean or void.
- * When 'checking' is true, it checks if there are any ongoing operations in the SugarRushPlugin instance.
- * If 'checking' is false, it opens the Sugar Operation View modal in the SugarRushPlugin instance.
+ * @property id - The id of the command.
+ * @property name - The name of the command.
+ * @property plugin - The instance of the plugin.
  **/
 export default class commandSaveSugarView implements Command {
 	id: string = "sugar-view-save";
@@ -22,6 +14,7 @@ export default class commandSaveSugarView implements Command {
 
 	/**
 	 * Creates a new Save teh sugar view(s) command
+	 * @[aram plugin - The instance of the plugin, SUgar Rsuh.
 	 **/
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
