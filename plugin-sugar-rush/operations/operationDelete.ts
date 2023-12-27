@@ -5,30 +5,25 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extens
 
 /**
  * Class `DeleteOperation` - representation of a delete operation.
- *
- * Implements the `AbstractOperation` interface. 
+ * Implements the `AbstractOperation` interface.
  * Provides methods for deleting a file or directory at a specified path.
- *
  * @property {SugarRushPlugin} plugin - The instance of the plugin where the operation will be performed.
  * @property {TAbstractFile} file - The abstract representation of the file or directory to be deleted.
  * @property {string} name - The name of operation.
  * @property {string} description - The description of operation.
  * @property {string} icon - The icon for the operation given by the file extension
  * @property {string} id - The identifier for the operation.
- *
  * @constructor
  * @param {SugarRushPlugin} plugin - The plugin where the operation will be performed.
  * @param {string} path - The path to the file or directory that should be deleted.
- *
  * @method run(): void - The method that performs the delete operation.
- */
+ **/
 export class DeleteOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	file!: TAbstractFile;
 	name: string = "Delete";
 	description: string = "Deletes the file or directory at the given path";
 	icon: string = getIconForLineFileExtension("delete");
-	id: string = "delete";
 
 	/**
 	 * Creates an instance of delete operation.
@@ -43,7 +38,7 @@ export class DeleteOperation implements AbstractOperation {
 		}
 	}
 	/**
-	 * Runs the operation
+	 * Runs the operation, Delete.
 	 * @return {void}
 	 **/
 	run(): void {

@@ -30,14 +30,14 @@ export class DuplicateOperation implements AbstractOperation {
 	 **/
 	constructor(
 		plugin: SugarRushPlugin,
-		public abstractFile: TAbstractFile,
-		public newPath: string
+		abstractFile: TAbstractFile,
+		newPath: string
 	) {
 		this.plugin = plugin;
 	}
 
 	/**
-	 * Runs the operation
+	 * Runs the operation, Delete.
 	 * @return {void}
 	 **/
 	run(): void {

@@ -6,17 +6,17 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extens
 /**
  * Operation that renames an AbstractFile to a new given path.
  * @implements {AbstractOperation}
- * @property plugin - The plugin instance.
- * @property name - The name of the operation, Rename.
- * @property description - The description of the operation, Rename,
- * @property icon - The icon of the operation, Rename.
- * @method run - Runs the operation, Rename.
+ * @property {SugarRushPlugin} plugin - The instance of the plugin where the operation will be performed.
+ * @property {TAbstractFile} file - The abstract representation of the file or directory to be deleted.
+ * @property {string} name - The name of operation.
+ * @property {string} description - The description of operation.
+ * @property {string} icon - The icon for the operation given by the file extension
  **/
 export class RenameOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	name: string = "Rename";
 	description: string =
-		"Renames the abstract file at the given path to the new path. Moves the contents if it is a folder.";
+		"Renames the abstract file at the given path to the new path. ";
 	icon: string = getIconForLineFileExtension("rename");
 
 	/**

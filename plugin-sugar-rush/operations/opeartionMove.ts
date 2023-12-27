@@ -1,14 +1,14 @@
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-import type { AbstractOperation } from "./AbstractOperation";
-import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extensionFormat";
+import { AbstractOperation } from "plugin-sugar-rush/handlers/handlerOperations";
+import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/formatExtension";
 
 /**
  * The `MoveOperation` class implements `AbstractOperation` interface to represent an operation that essentially moves files
  * within the SugarRush development plugin.
- * 
+ *
  * @class
  * @implements {AbstractOperation}
- * 
+ *
  * @property {SugarRushPlugin} plugin - The plugin that this move operation is a part of.
  * @property {string} name - The name of the operation. Defaults to "Move".
  * @property {string} id - An identifier for the operation. Defaults to "move".
@@ -16,18 +16,17 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extens
  * @property {string} icon - The icon associated with the move operation. Retrieved using the `getIconForLineFileExtension` function.
  * @property {string} originalPath - The original path from where a file or folder will be moved.
  * @property {string} movedPath - The new path where the file or folder is moved to.
- * 
+ *
  * @param {SugarRushPlugin} plugin - The plugin that this move operation is a part of.
  * @param {string} path - The original path from where a file or folder will be moved.
  * @param {string} newPath - The new path where the file or folder is moved to.
- * 
+ *
  * @method run - Method to execute the move operation. Currently throws an "Error: Method not implemented" exception.
  */
 
 export class MoveOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	name: string = "Move";
-	id: string = "move";
 	description: string;
 	icon: string = getIconForLineFileExtension("move");
 	originalPath: string;
@@ -35,7 +34,7 @@ export class MoveOperation implements AbstractOperation {
 	newPath: string;
 	path: string;
 
-	/** 
+	/**
 	 * Creates a new Move Operation.
 	 **/
 	constructor(plugin: SugarRushPlugin, path: string, newPath: string) {
