@@ -12,7 +12,7 @@ import { FormatMarker } from "./formatMarker";
  * Returns a Node object containing the text of the exception message.
  * This method can be used to display the exception message in the DOM.
  */
-export default class ExceptionMarker extends GutterMarker {
+export default class ConflictMarker extends GutterMarker {
 	message: string;
 
 	/** 

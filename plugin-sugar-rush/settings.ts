@@ -1,3 +1,4 @@
+
 /**
  * `DEFAULT_SETTINGS` is a constant object that defines the default settings for the SugarRush plugin.
  * Each property corresponds to a configuration setting.
