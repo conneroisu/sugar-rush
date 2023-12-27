@@ -12,7 +12,7 @@ import SizeExtension from "plugin-sugar-rush/extensions/sizeExtension";
  * @method clearExtensions() - Reinitializes the 'extensions' property to an empty array, effectively clearing all extensions.
  * @method getExtensions() - Reinitializes and updates the 'extensions' property
  * based on whether 'showFileIcons' setting is enabled for the plugin.
- */
+ **/
 export default class SugarRushExtensionHandler {
 	private readonly plugin: SugarRushPlugin;
 	extensions!: Extension[];
@@ -32,8 +32,7 @@ export default class SugarRushExtensionHandler {
 	 * The `clearExtensions` method is a member of the `SugarRushExtensionHandler` class.
 	 * It sets the value of the `extensions` property to an empty array.
 	 * This effectively clears the extensions array connected with the current plugin in the `SugarRushExtensionHandler` instance.
-	 */
-
+	 **/
 	clearExtensions() {
 		this.extensions = [];
 	}
