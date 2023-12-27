@@ -1,10 +1,16 @@
 import { gutter, GutterMarker } from "@codemirror/view";
 import assets from "../!icons.json";
 
+/**
+ *
+ **/
 class IndicatorsGutterMarker extends GutterMarker {
 	lineString: string;
 	icon!: string;
 
+	/** 
+	 * Creates a new IndicatorsGutterMarker 
+	 **/
 	constructor(line: string) {
 		super();
 		this.lineString = line;
@@ -18,6 +24,9 @@ class IndicatorsGutterMarker extends GutterMarker {
 		}
 	}
 
+	/** 
+	 * Renders the marker to the dom.
+	 **/
 	toDOM(): Text {
 		return document.createTextNode(this.lineString);
 	}

@@ -7,10 +7,6 @@ import SizeExtension from "plugin-sugar-rush/extensions/sizeExtension";
  * SugarRushExtensionHandler class manages the configuration of SugarRush plugins and its extensions.
  * @property {SugarRushPlugin} plugin - Stores the plugin that is currently being managed.
  * @property {Extension[]} extensions - Stores the set of extensions that are associated with the current plugin.
- * @constructor
- * @param {SugarRushPlugin} plugin - Accepts a SugarRushPlugin object to initialize the 'plugin' property.
- * Upon instantiation, the constructor also initializes the 'extensions' property
- * and registers this set of extensions to the plugin.
  * @method clearExtensions() - Reinitializes the 'extensions' property to an empty array, effectively clearing all extensions.
  * @method getExtensions() - Reinitializes and updates the 'extensions' property
  * based on whether 'showFileIcons' setting is enabled for the plugin.
@@ -43,11 +39,9 @@ export default class SugarRushExtensionHandler {
 
 	/**
 	 * The `getExtensions` method belongs to the `SugarRushExtensionHandler` class.
-	 * It first clears the `extensions` array and then checks if the 'showFileIcons' setting is enabled for the plugin.
-	 * In case the setting is enabled, it pushes the `formatGutter` extension into the `extensions` array.
-	 * Finally, it returns the `extensions` array.
+	 * It first clears the `extensions` array and then checks the settings of the plugin 
+	 * to determine which extensions to add.
 	 **/
-
 	getExtensions() {
 		this.extensions = [];
 		if (this.plugin.settings.showFileIcons) {

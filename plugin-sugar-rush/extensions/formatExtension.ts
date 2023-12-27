@@ -8,7 +8,6 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
 /**
  * Returns the icon that corresponds to the given file extension from the assets file.
  * If no icon is associated with this extension, it will return the default icon instead.
- * If no icon is found including the default one, it will return an empty string.
  * @param {string} extension - The string referencing the file extension for which an icon is to be retrieved.
  * @return {string} - It returns the icon data string corresponding to the provided file extension.
  */
