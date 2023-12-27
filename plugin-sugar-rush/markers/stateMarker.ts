@@ -2,7 +2,7 @@ import { gutter, GutterMarker } from "@codemirror/view";
 import assets from "../!icons.json";
 
 /**
- *
+ * Indicates changes in the 
  **/
 class IndicatorsGutterMarker extends GutterMarker {
 	lineString: string;

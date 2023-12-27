@@ -1,5 +1,5 @@
 import { GutterMarker } from "@codemirror/view";
-import { getIconForLineFileExtension } from "./formatExtension";
+import { getIconForLineFileExtension } from "../extensions/formatExtension";
 
 /**
  * The FormatMarker class, a subclass of GutterMarker, represents a format indicator in file with associated icons.

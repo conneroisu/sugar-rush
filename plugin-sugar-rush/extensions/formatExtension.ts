@@ -1,9 +1,9 @@
 import { gutter } from "@codemirror/view";
-import assets from "../!icons.json";
-import { FormatMarker } from "./formatMarker";
-import { AbstractExtension } from "plugin-sugar-rush/handlers/handlerExtensions";
 import type { Extension } from "@codemirror/state";
+import { FormatMarker } from "plugin-sugar-rush/markers/formatMarker";
+import { AbstractExtension } from "plugin-sugar-rush/contracts/AbstractExtension";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
+import assets from "../!icons.json";
 
 /**
  * Returns the icon that corresponds to the given file extension from the assets file.
@@ -29,9 +29,16 @@ export function getIconForLineFileExtension(extension: string): string {
 	return icon.data;
 }
 
+/** 
+ * Extension that shows the format of a file
+ **/
 export default class FormatExtension implements AbstractExtension {
 	plugin: SugarRushPlugin;
 	extension: Extension;
+	
+	/** 
+	 * Creates a new FormatExtension that shows the format of a file
+	 **/
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
 		this.extension = gutter({
@@ -51,6 +58,10 @@ export default class FormatExtension implements AbstractExtension {
 			},
 		});
 	}
+	
+	/** 
+	 * Returns the extension
+	 **/
 	getExtension(): Extension {
 		return this.extension;
 	}

@@ -1,7 +1,7 @@
-import { gutter, GutterMarker } from "@codemirror/view";
-import type SugarRushPlugin from "plugin-sugar-rush/main";
-import { AbstractExtension } from "plugin-sugar-rush/handlers/handlerExtensions";
+import { gutter } from "@codemirror/view";
 import type { Extension } from "@codemirror/state";
+import { AbstractExtension } from "plugin-sugar-rush/contracts/AbstractExtension";
+import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /** 
  * Extension that shows midifications to a suar file 

@@ -1,5 +1,5 @@
 import { gutter } from "@codemirror/view";
-import { AbstractExtension } from "plugin-sugar-rush/handlers/handlerExtensions";
+import {AbstractExtension} from "../contracts/AbstractExtension";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 import ConflictMarker from "./conflictMarker";
 import type { Extension } from "@codemirror/state";

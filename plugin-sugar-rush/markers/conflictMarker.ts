@@ -1,7 +1,5 @@
-import { gutter, GutterMarker } from "@codemirror/view";
+import { GutterMarker } from "@codemirror/view";
 import assets from "../!icons.json";
-import { FormatMarker } from "./formatMarker";
-
 
 /**
  * ExceptionMarker is a class that extends the GutterMarker class. 
@@ -23,6 +21,9 @@ export default class ConflictMarker extends GutterMarker {
 		this.message = text;
 	}
 
+	/**
+	 * Renders the marker to teh dom.
+	 * */
 	toDOM() {
 		return document.createTextNode(this.message);
 	}
