@@ -9,12 +9,9 @@ import { commandRefreshSugarView } from "plugin-sugar-rush/commands/commandRefre
 /**
  * Class representing a handler for SugarRush commands.
  * @class SugarRushCommandHandler
- *
  * This handler is responsible for registering SugarRush commands to the SugarRushPlugin.
  * Note: Each new command is a unique implementation and needs to be manually added to this handler.
- *
  * @property {SugarRushPlugin} plugin - An instance of the SugarRushPlugin that this handler will register callbacks for.
- *
  * @constructor
  * @param {SugarRushPlugin} plugin - An instance of SugarRushPlugin to attach the commands.
  **/

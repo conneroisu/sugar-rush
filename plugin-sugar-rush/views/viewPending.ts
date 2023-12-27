@@ -6,19 +6,15 @@ import { type AbstractOperation } from "../handlers/handlerOperations";
 /**
  * SugarRushPendingView class inherits from Modal.
  * This class is responsible for creating and managing a Pending Operations modal view.
- *
  * @class
  * @extends Modal
  * @property {AbstractOperation[]} operations - An array of AbstractOperation.
- *
  * @constructor
  * @param {App} app - The Obsidian application object.
  * @param {AbstractOperation[]} operations - An array of operations to be displayed in the modal view.
- *
  * @method onOpen - Overrides Modal's onOpen method.
  * It populates the contentEl of the modal with HTML elements representing the pending operations.
  * It also creates "Minimize" and "Cancel" buttons with listeners that call the close method.
- *
  * @method onClose - Overrides Modal's onClose method.
  * It clears the contentEl of the modal.
  */
@@ -58,6 +54,8 @@ export class SugarRushPendingView extends Modal {
 
 		const minimizeButton = contentEl.createEl("button", { text: "Minimize" });
 		const cancelButton = contentEl.createEl("button", { text: "Cancel" });
+
+		// proress bar
 
 		cancelButton.addEventListener("click", () => {
 			this.close();
