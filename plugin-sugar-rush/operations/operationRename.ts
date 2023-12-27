@@ -11,6 +11,7 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extens
  * @property {string} name - The name of operation.
  * @property {string} description - The description of operation.
  * @property {string} icon - The icon for the operation given by the file extension
+ * @method run - void
  **/
 export class RenameOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;

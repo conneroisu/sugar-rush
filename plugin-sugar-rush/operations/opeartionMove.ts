@@ -5,10 +5,8 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/format
 /**
  * The `MoveOperation` class implements `AbstractOperation` interface to represent an operation that essentially moves files
  * within the SugarRush development plugin.
- *
  * @class
  * @implements {AbstractOperation}
- *
  * @property {SugarRushPlugin} plugin - The plugin that this move operation is a part of.
  * @property {string} name - The name of the operation. Defaults to "Move".
  * @property {string} id - An identifier for the operation. Defaults to "move".
@@ -16,11 +14,9 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/format
  * @property {string} icon - The icon associated with the move operation. Retrieved using the `getIconForLineFileExtension` function.
  * @property {string} originalPath - The original path from where a file or folder will be moved.
  * @property {string} movedPath - The new path where the file or folder is moved to.
- *
  * @param {SugarRushPlugin} plugin - The plugin that this move operation is a part of.
  * @param {string} path - The original path from where a file or folder will be moved.
  * @param {string} newPath - The new path where the file or folder is moved to.
- *
  * @method run - Method to execute the move operation. Currently throws an "Error: Method not implemented" exception.
  */
 
