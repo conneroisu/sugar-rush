@@ -32,16 +32,7 @@ export default class SugarRushPlugin extends Plugin {
 	app!: App;
 
 	/**
-	 * onLoad Method:
-	 * This method is invoked async when the plugin is loaded to the workspace. It performs several initialization tasks:
-	 * - Load settings using the loadSettings method.
-	 * - Delete all Sugar Files in the file system.
-	 * - Register the sugar file extension as markdown.
-	 * - Add a new settings tab with a SugarRushSettingsView instance.
-	 * - Instantiate commandHandler, fileSystemHandler, operationHandler, and extensionHandler.
-	 * - Attach an event handler to the workspace to handle file-opening events. If the opened file is not a sugar file,
-	 *   update the workspace options and get sugar file extensions. If it's a sugar file and there are operations in the
-	 *   queue, open the SugarOperationView modal.
+	 * Asyncronously invokes when the plugin is loaded to the workspace.
 	 **/
 	async onload() {
 		await this.loadSettings();
@@ -67,19 +58,13 @@ export default class SugarRushPlugin extends Plugin {
 
 	/**
 	 * Unloads the plugin, sugar-rush, from the workspace.
-	 * This method is invoked when the plugin is unloaded from the workspace. Its function is to delete all Sugar Files from the file
-	 * system. This is achieved by calling the deleteAllSugarFiles method of the fileSystemHandler.
 	 **/
 	onunload() {
 		this.fileSystemHandler.deleteAllSugarFiles();
 	}
 
 	/**
-	 * loads the settings for the plugin from the storage and merges it with default settings.
-	 * This asynchronous method is responsible for loading the settings of the SugarRushPlugin. It takes no parameters.
-	 * It employs `Object.assign` to merge the default settings (`DEFAULT_SETTINGS`) with any existing settings retrieved
-	 * from the storage via `this.loadData()` method. It then assigns this merged data to the `settings` property of the
-	 * SugarRushPlugin instance.
+	 * Asynchronously loads the settings for the plugin from the storage and merges it with default settings.
 	 **/
 	async loadSettings() {
 		this.settings = Object.assign(

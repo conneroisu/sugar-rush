@@ -34,7 +34,7 @@ export default class SugarRushFileSystemHandler {
 	 *
 	 **/
 	getAllSugarFiles() {
-		let sugarFiles: TFile[] = [];
+		const sugarFiles: TFile[] = [];
 		this.plugin.app.vault.getFiles().forEach((file) => {
 			if (file.extension === "sugar") {
 				sugarFiles.push(file);
