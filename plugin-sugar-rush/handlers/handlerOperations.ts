@@ -41,7 +41,6 @@ export default class SugarRushOperationHandler {
 	 * @param {AbstractOperation} operation - The operation to remove from the operations array
 	 * @returns {void}
 	 **/
-
 	removeOperation(operation: AbstractOperation): void {
 		this.operations = this.operations.filter((op) => op !== operation);
 	}
@@ -52,7 +51,6 @@ export default class SugarRushOperationHandler {
 	 * If there exists an operation to be popped, the 'run' method of this operation is executed immediately after it's detachment.
 	 * @returns {void}
 	 **/
-	
 	popOperation(): void {
 		this.operations.pop()?.run();
 	}

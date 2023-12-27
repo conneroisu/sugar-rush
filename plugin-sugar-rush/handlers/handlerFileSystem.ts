@@ -21,7 +21,6 @@ import { sep } from "path";
  * @method generateAbstractPrefix - Generates an abstract prefix for the given file.
  * @method parseAbstractPrefixForId - Parses the abstract prefix for the id of the file.
  * @method isSugarFile - Returns true if the given file is a sugar file.
- *
  **/
 export default class SugarRushFileSystemHandler {
 	private readonly plugin: SugarRushPlugin;
