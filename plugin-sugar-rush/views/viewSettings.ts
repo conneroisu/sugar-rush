@@ -23,9 +23,15 @@ export class SugarRushSettingView extends PluginSettingTab {
 				.setValue(this.plugin.settings.debug)
 				.onChange(async (value) => {
 					this.plugin.settings.debug = value;
+					if (this.plugin.settings.debug) {
+						el.style.visibility = "visible";
+					}else{
+						el.style.visibility = "hidden";
+					}
 					await this.plugin.saveSettings();
 				}));
 
+		const el = containerEl.createEl("h2", { text: "File System Settings" });
 
 		new Setting(containerEl)
 			.setName("Show Hidden Files")
