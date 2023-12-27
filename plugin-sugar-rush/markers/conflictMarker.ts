@@ -4,12 +4,8 @@ import assets from "../!icons.json";
 /**
  * ExceptionMarker is a class that extends the GutterMarker class. 
  * @property {string} message - This stores the text message of the exception to be displayed.
- * @constructor
- * @param {string} text - The string value to be passed as the exception message.
- * @method toDOM
- * Returns a Node object containing the text of the exception message.
- * This method can be used to display the exception message in the DOM.
- */
+ * @method toDOM - This method overrides the toDOM method of the GutterMarker class.
+ **/
 export default class ConflictMarker extends GutterMarker {
 	message: string;
 

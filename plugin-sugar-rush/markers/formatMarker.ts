@@ -9,22 +9,25 @@ import { getIconForLineFileExtension } from "../extensions/formatExtension";
  * @property {string} extension - Denotes the file extension associated with the FormatMarker instance.
  * The constructor takes an input text value which it uses to set the 'extension' property of the instance.
  * It extends the GutterMarker class and inherits all its methods and properties.
- * @constructor
- * @param {string} text - A string that is utilized to set the 'extension' property of an instance.
- * The toDOM() method creates and styles an SVG element, then assigns it an icon that matches the current 'extension'. The SVG
- * is then returned as a DOM element.
- * @method
+ * @method toDOM - Overrides the toDOM method of the GutterMarker class.
  * @returns {HTMLElement} - Returns an SVG element with attached attributes and inner HTML derived from the
  * current extension via the getIconForLineFileExtension() function.
- */
+ **/
 export class FormatMarker extends GutterMarker {
 	extension: string;
 
+	/**
+	 * Creates a new FormatMarker that holds a text node
+	 * @param {string} text - The text to be displayed in the marker.
+	 **/
 	constructor(text: string) {
 		super();
 		this.extension = text;
 	}
 
+	/**
+	* Renders the marker to the dom.
+	**/
 	toDOM() {
 		const icon = document.createElementNS(
 			"http://www.w3.org/2000/svg",
