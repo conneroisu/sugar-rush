@@ -3,7 +3,6 @@ import type SugarRushPlugin from "../main";
 
 /**
  * A handler class that manages, organizes and manipulates operations in the SugarRush Plugin environment.
- * It adds, removes and pops off the operations in the operations' stack.
  * @property {SugarRushPlugin} plugin - A read-only property defining the SugarRush plugin instance this handler is associated with
  * @property {AbstractOperation[]} operations - An array holding the operations which this handler is currently managing
  * @property {string[]} sugarReadings - An array holding the sugar readings
@@ -20,8 +19,7 @@ export default class SugarRushOperationHandler {
 	operationExceptions: TAbstractFile[] = [];
 	
 	/**
-	 * Constructor for the SugarRushOperationHandler class.
-	 * Takes in a SugarRushPlugin instance and assigns it to the internal 'plugin' property of the class.
+	 * Creates a SugarRushOperationHandler class.
 	 * @param {SugarRushPlugin} plugin - An instance of SugarRushPlugin to associate with the SugarRushOperationHandler
 	 */
 
@@ -34,7 +32,7 @@ export default class SugarRushOperationHandler {
 	 * @param {AbstractOperation} operation - The operation to add to the operations array
 	 * @returns {void}
 	 */
-	addOperation(operation: AbstractOperation) {
+	addOperation(operation: AbstractOperation): void {
 		this.operations.push(operation);
 	}
 
@@ -45,7 +43,7 @@ export default class SugarRushOperationHandler {
 	 * @returns {void}
 	 */
 
-	removeOperation(operation: AbstractOperation) {
+	removeOperation(operation: AbstractOperation): void {
 		this.operations = this.operations.filter((op) => op !== operation);
 	}
 
@@ -56,7 +54,7 @@ export default class SugarRushOperationHandler {
 	 * @returns {void}
 	 */
 	
-	popOperation() {
+	popOperation(): void {
 		this.operations.pop()?.run();
 	}
 }

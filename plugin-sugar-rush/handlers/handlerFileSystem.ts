@@ -23,7 +23,7 @@ export default class SugarRushFileSystemHandler {
 	/** 
 	 *
 	 **/
-	openSugarOperationViewModal() {
+	openSugarOperationViewModal(): void {
 		new SugarRushOperationView(
 			this.plugin.app,
 			this.plugin.operationHandler.operations
@@ -59,7 +59,7 @@ export default class SugarRushFileSystemHandler {
 	/** 
 	 *
 	 **/
-	loadRegularFile(file: TFile, leaf: WorkspaceLeaf) {
+	loadRegularFile(file: TFile, leaf: WorkspaceLeaf): void {
 		leaf.openFile(file);
 		this.plugin.extensionHandler.clearExtensions();
 		this.plugin.app.workspace.updateOptions();
@@ -68,7 +68,7 @@ export default class SugarRushFileSystemHandler {
 	/** 
 	 *
 	 **/
-	loadSugarFile(file: TFile, leaf: WorkspaceLeaf) {
+	loadSugarFile(file: TFile, leaf: WorkspaceLeaf): void {
 		leaf.openFile(file);
 		this.plugin.extensionHandler.getExtensions();
 		this.plugin.app.workspace.updateOptions();
@@ -78,10 +78,7 @@ export default class SugarRushFileSystemHandler {
 	 *
 	 **/
 	getSugarFilePath(activeFile: TFile): string {
-		if (
-			activeFile.parent &&
-			(activeFile.parent.path === "/" || activeFile.parent === null)
-		) {
+		if (activeFile.parent && (activeFile.parent.path === "/" || activeFile.parent === null)) {
 			return "root" + ".sugar";
 		}
 		return (
