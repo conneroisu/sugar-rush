@@ -3,7 +3,7 @@ import assets from "../!icons.json";
 
 class IndicatorsGutterMarker extends GutterMarker {
 	lineString: string;
-	icon: string;
+	icon!: string;
 
 	constructor(line: string) {
 		super();
