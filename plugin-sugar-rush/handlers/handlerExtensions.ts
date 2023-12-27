@@ -5,17 +5,13 @@ import SizeExtension from "plugin-sugar-rush/extensions/sizeExtension";
 
 /**
  * SugarRushExtensionHandler class manages the configuration of SugarRush plugins and its extensions.
- *
  * @property {SugarRushPlugin} plugin - Stores the plugin that is currently being managed.
  * @property {Extension[]} extensions - Stores the set of extensions that are associated with the current plugin.
- *
  * @constructor
  * @param {SugarRushPlugin} plugin - Accepts a SugarRushPlugin object to initialize the 'plugin' property.
  * Upon instantiation, the constructor also initializes the 'extensions' property
  * and registers this set of extensions to the plugin.
- *
  * @method clearExtensions() - Reinitializes the 'extensions' property to an empty array, effectively clearing all extensions.
- *
  * @method getExtensions() - Reinitializes and updates the 'extensions' property
  * based on whether 'showFileIcons' setting is enabled for the plugin.
  * Returns the current set of extensions.
@@ -78,7 +74,6 @@ export default class SugarRushExtensionHandler {
 
 export abstract class AbstractExtension {
 	plugin: SugarRushPlugin;
-	extension!: Extension;
 
 	/**
 	 * This constructor for the SugarRushExtensionHandler class accepts a single argument.
@@ -91,11 +86,10 @@ export abstract class AbstractExtension {
 	/**
 	 * The `getExtension` method is a member of the `AbstractExtension` class and it is used to get the current extension stored
 	 * in the `extension` property.
-	 *
-	 * @returns {Extension} The current extension stored in the `extension` property.
+	 * @throws {Error} - This method is abstract and should be implemented by the derived classes.
 	 */
 
 	getExtension(): Extension {
-		return this.extension;
+		throw new Error("Method not implemented.");
 	}
 }

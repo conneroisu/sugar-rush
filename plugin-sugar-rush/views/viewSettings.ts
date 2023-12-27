@@ -31,7 +31,7 @@ export class SugarRushSettingView extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-		const el = containerEl.createEl("h2", { text: "File System Settings" });
+		const el = containerEl.createEl("h2", { text: "Debug Logs" });
 
 		new Setting(containerEl)
 			.setName("Show Hidden Files")
