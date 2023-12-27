@@ -1,10 +1,10 @@
 import type { TAbstractFile } from "obsidian";
+import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/formatExtension";
 import { AbstractOperation } from "plugin-sugar-rush/handlers/handlerOperations";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extensionFormat";
 
 /**
- * Operation that renames an AbstractFile
+ * Operation that duplicates an AbstractFile to a new given path.
  * @implements {AbstractOperation}
  * @property {SugarRushPlugin} plugin - The instance of the plugin where the operation will be performed.
  * @property {TAbstractFile} file - The abstract representation of the file or directory to be deleted.
