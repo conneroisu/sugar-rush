@@ -21,8 +21,7 @@ export default class SugarRushOperationHandler {
 	/**
 	 * Creates a SugarRushOperationHandler class.
 	 * @param {SugarRushPlugin} plugin - An instance of SugarRushPlugin to associate with the SugarRushOperationHandler
-	 */
-
+	 **/
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
 	}
@@ -31,7 +30,7 @@ export default class SugarRushOperationHandler {
 	 * The addOperation method accepts an object of type AbstractOperation and adds it to the operations array defined in the SugarRushOperationHandler class.
 	 * @param {AbstractOperation} operation - The operation to add to the operations array
 	 * @returns {void}
-	 */
+	 **/
 	addOperation(operation: AbstractOperation): void {
 		this.operations.push(operation);
 	}
@@ -41,7 +40,7 @@ export default class SugarRushOperationHandler {
 	 * It does this by filtering out the operation to be removed from the current operations array
 	 * @param {AbstractOperation} operation - The operation to remove from the operations array
 	 * @returns {void}
-	 */
+	 **/
 
 	removeOperation(operation: AbstractOperation): void {
 		this.operations = this.operations.filter((op) => op !== operation);
@@ -52,7 +51,7 @@ export default class SugarRushOperationHandler {
 	 * provided by the SugarRushOperationHandler class.
 	 * If there exists an operation to be popped, the 'run' method of this operation is executed immediately after it's detachment.
 	 * @returns {void}
-	 */
+	 **/
 	
 	popOperation(): void {
 		this.operations.pop()?.run();

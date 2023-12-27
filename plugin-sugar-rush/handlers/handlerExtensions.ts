@@ -5,6 +5,7 @@ import SizeExtension from "plugin-sugar-rush/extensions/sizeExtension";
 
 /**
  * SugarRushExtensionHandler class manages the extension configuration of the Sugar Rush plugins
+ * 
  * @property {SugarRushPlugin} plugin - Stores the plugin that is currently being managed.
  * @property {Extension[]} extensions - Stores the set of extensions that are associated with the current plugin.
  * 
