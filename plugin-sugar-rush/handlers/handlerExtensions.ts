@@ -4,13 +4,13 @@ import FormatExtension from "plugin-sugar-rush/extensions/formatExtension";
 import SizeExtension from "plugin-sugar-rush/extensions/sizeExtension";
 
 /**
- * SugarRushExtensionHandler class manages the configuration of SugarRush plugins and its extensions.
+ * SugarRushExtensionHandler class manages the extension configuration of the Sugar Rush plugins
  * @property {SugarRushPlugin} plugin - Stores the plugin that is currently being managed.
  * @property {Extension[]} extensions - Stores the set of extensions that are associated with the current plugin.
+ * 
  * @method clearExtensions() - Reinitializes the 'extensions' property to an empty array, effectively clearing all extensions.
  * @method getExtensions() - Reinitializes and updates the 'extensions' property
  * based on whether 'showFileIcons' setting is enabled for the plugin.
- * Returns the current set of extensions.
  */
 export default class SugarRushExtensionHandler {
 	private readonly plugin: SugarRushPlugin;

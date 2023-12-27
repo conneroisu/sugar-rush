@@ -1,8 +1,7 @@
 import { TFolder, type TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
 import { SugarRushOperationView } from "../views/viewOperation";
-import { sep } from "path";
-
 import type SugarRushPlugin from "../main";
+import { sep } from "path";
 
 /** 
  * The `SugarRushFileSystemHandler` class is responsible for handling all file system related operations.
