@@ -1,6 +1,9 @@
 {
 	"compilerOptions": {
-		"types": [ "node" ],
+		"outDir": "./dist", // Change the output directory to a different path
+		"types": [
+			"node"
+		],
 		"resolveJsonModule": true,
 		"baseUrl": ".",
 		"inlineSources": true,
