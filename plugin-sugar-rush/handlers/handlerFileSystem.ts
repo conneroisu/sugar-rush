@@ -23,6 +23,9 @@ import { sep } from "path";
  * @method isSugarFile - Returns true if the given file is a sugar file.
  **/
 export default class SugarRushFileSystemHandler {
+    refreshSugarFile(activeFile: TFile, leaf: WorkspaceLeaf) {
+        throw new Error("Method not implemented.");
+    }
 	private readonly plugin: SugarRushPlugin;
 	abstractMap: Map<number, TAbstractFile> = new Map();
 
