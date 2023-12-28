@@ -2,6 +2,7 @@ import { TFolder, type TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
 import { SugarRushOperationView } from "../views/viewOperation";
 import type SugarRushPlugin from "../main";
 import { sep } from "path";
+import type TSAbstractFile from "plugin-sugar-rush/contracts/TSAbstractFile";
 
 /** 
  * The `SugarRushFileSystemHandler` class is responsible for handling all file system related operations.
@@ -24,7 +25,7 @@ import { sep } from "path";
  **/
 export default class SugarRushFileSystemHandler {
 	private readonly plugin: SugarRushPlugin;
-	abstractMap: Map<number, TAbstractFile> = new Map();
+	abstractMap: Map<number, TSAbstractFile> = new Map();
 	/** 
 	 * Creates a new File System Handler.
 	 **/
@@ -38,8 +39,16 @@ export default class SugarRushFileSystemHandler {
 	 * @param {WorkspaceLeaf} leaf - The leaf to refresh the sugar file for.
 	 * @returns {void}
 	 **/
-	refreshSugarFile(activeFile: TFile, leaf: WorkspaceLeaf) {
-		throw new Error("Method not implemented.");
+	refreshSugarFile(activeFile: TFile, leaf: WorkspaceLeaf): void {
+		// fill the active file with teh parent children content
+		this.plugin.app.vault
+			.modify(activeFile, this.generateSugarFileContent(activeFile))
+			.then((r) => {
+				if (this.plugin.settings.debug) {
+					console.log("Refreshed file", activeFile);
+				}
+				this.loadSugarFile(activeFile, leaf);
+			});
 	}
 
 	/** 
