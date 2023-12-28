@@ -1,37 +1,10 @@
-import { Notice, type Command } from "obsidian";
-import type SugarRushPlugin from "../main";
+import { Notice } from "obsidian";
+import type SugarRushPlugin from "plugin-sugar-rush/main";
 
-/**
- * The `commandToggleHiddenFiles` class implements the `Command` interface for the `SugarRushPlugin`.
- *
- * @property {SugarRushPlugin} plugin - An instance of 'SugarRushPlugin', which will be used.
- * @property {string} id - The unique identifier for this command "toggle-hidden-files-in-sugar".
- * @property {string} name - The visible name of the command "Toggle Hidden Files In Sugar Views".
- * 
- * @constructor 
- * @param plugin - An instance of 'SugarRushPlugin', which will be used.
- * @method editorCheckCallback - A method that toggles the value of the 'showHiddenFiles' setting of the 'SugarRushPlugin', and then saves the plugin settings.
- **/
-export default class commandToggleHiddenFiles implements Command {
-	plugin!: SugarRushPlugin;
-	id: string = "toggle-hidden-files-in-sugar";
-	name: string = "Toggle Hidden Files In Sugar Views";
-
-	/**
-	 * Creates a Command that toggles the hidden files setting and reloads the view.
-	 **/
-	constructor(plugin: SugarRushPlugin) {
-		this.plugin = plugin;
-	}
-
-	/** 
-	 * Editor check callback for the command, commandToggleHiddenFiles.
-	 **/
-	editorCheckCallback: (checking: boolean) => boolean | void = () => {
-		if( this.plugin.operationHandler.operations.length > 0 )  {
+export default function commandToggleHiddenFiles(plugin: SugarRushPlugin, checking: boolean) {
+		if( plugin.operationHandler.operations.length > 0 )  {
 			new Notice("Cannot toggle hidden files while an operation is in progress.");
 		}
-		this.plugin.settings.showHiddenFiles = !this.plugin.settings.showHiddenFiles;
-		this.plugin.saveSettings();
-	};
+		plugin.settings.showHiddenFiles = !plugin.settings.showHiddenFiles;
+		plugin.saveSettings();
 }
