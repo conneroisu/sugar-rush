@@ -1,4 +1,4 @@
-import type SugarRushPlugin from "../main";
+import type SugarRushPlugin from "./main";
 import { type Extension } from "@codemirror/state";
 import FormatExtension from "plugin-sugar-rush/extensions/formatExtension";
 import SizeExtension from "plugin-sugar-rush/extensions/sizeExtension";
@@ -30,17 +30,13 @@ export default class SugarRushExtensionHandler {
 
 	/**
 	 * The `clearExtensions` method is a member of the `SugarRushExtensionHandler` class.
-	 * It sets the value of the `extensions` property to an empty array.
-	 * This effectively clears the extensions array connected with the current plugin in the `SugarRushExtensionHandler` instance.
 	 **/
 	clearExtensions() {
 		this.extensions = [];
 	}
 
 	/**
-	 * The `getExtensions` method belongs to the `SugarRushExtensionHandler` class.
-	 * It first clears the `extensions` array and then checks the settings of the plugin 
-	 * to determine which extensions to add.
+	 * Gets all of the extensions active for the plugin.
 	 **/
 	getExtensions() {
 		this.extensions = [];
@@ -53,4 +49,3 @@ export default class SugarRushExtensionHandler {
 		return this.extensions;
 	}
 }
-

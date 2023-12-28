@@ -1,9 +1,9 @@
-import commandRushToSugarView from "../commands/commandRush";
-import commandToggleHiddenFiles from "../commands/commandHidden";
-import commandSelectSugarViewEntry from "../commands/commandSelect";
-import commandSaveSugarView from "../commands/commandSave";
+import commandRushToSugarView from "./commands/commandRush";
+import commandToggleHiddenFiles from "./commands/commandHidden";
+import commandSelectSugarViewEntry from "./commands/commandSelect";
+import commandSaveSugarView from "./commands/commandSave";
 
-import SugarRushPlugin from "../main";
+import SugarRushPlugin from "./main";
 import commandRefreshSugarView from "plugin-sugar-rush/commands/commandRefresh";
 import type { Editor } from "obsidian";
 

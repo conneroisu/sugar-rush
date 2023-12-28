@@ -1,12 +1,16 @@
-import { App, Modal } from "obsidian";
-import { AbstractOperation } from "plugin-sugar-rush/handlers/handlerOperations";
+import { Modal } from "obsidian";
+import { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
+import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 export class SugarRushOperationView extends Modal {
-	operations: AbstractOperation[];
+	operations!: AbstractOperation[];
 	
-	constructor(app: App, operations: AbstractOperation[]) {
-		super(app);
-		this.operations = operations;
+	constructor(plugin: SugarRushPlugin) {
+		super(plugin.app);
+	}
+
+	getOperations(): AbstractOperation[] {
+		return [];
 	}
 
 	onOpen() {

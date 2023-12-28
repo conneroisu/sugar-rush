@@ -2,9 +2,17 @@ import { Notice } from "obsidian";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 export default function commandToggleHiddenFiles(plugin: SugarRushPlugin, checking: boolean) {
-		if( plugin.operationHandler.operations.length > 0 )  {
-			new Notice("Cannot toggle hidden files while an operation is in progress.");
+	if (checking) {
+		const activeFile = plugin.app.workspace.getActiveFile();
+		if (!activeFile) { return false; }
+		if (!plugin.fileSystemHandler.isSugarFile(activeFile)) {
+			return false;
 		}
-		plugin.settings.showHiddenFiles = !plugin.settings.showHiddenFiles;
-		plugin.saveSettings();
+		return true;
+	}
+	if (plugin.fileSystemHandler.operations.size > 0) {
+		new Notice("Cannot toggle hidden files while an operation is in progress.");
+	}
+	plugin.settings.showHiddenFiles = !plugin.settings.showHiddenFiles;
+	plugin.saveSettings();
 }

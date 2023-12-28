@@ -2,15 +2,24 @@ import { PluginSettingTab, Setting } from "obsidian";
 
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
+/**
+ * SugarRushSettingView class inherits from PluginSettingTab.
+ **/
 export class SugarRushSettingView extends PluginSettingTab {
 	plugin: SugarRushPlugin;
 
+	/**
+	 * Creates a new setting view.
+	 **/
 	constructor(plugin: SugarRushPlugin) {
 		super(plugin.app, plugin);
 		this.plugin = plugin;
 	}
 
 
+	/**
+	 * Displays the settings view.
+	 **/
 	display(): void {
 		const { containerEl } = this;
 

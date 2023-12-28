@@ -1,7 +1,6 @@
-import { App, Modal } from "obsidian";
-import { type AbstractOperation } from "../handlers/handlerOperations";
-
-
+import { Modal } from "obsidian";
+import { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
+import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
  * SugarRushPendingView class inherits from Modal.
@@ -12,37 +11,25 @@ import { type AbstractOperation } from "../handlers/handlerOperations";
  * @constructor
  * @param {App} app - The Obsidian application object.
  * @param {AbstractOperation[]} operations - An array of operations to be displayed in the modal view.
- * @method onOpen - Overrides Modal's onOpen method.
- * It populates the contentEl of the modal with HTML elements representing the pending operations.
- * It also creates "Minimize" and "Cancel" buttons with listeners that call the close method.
- * @method onClose - Overrides Modal's onClose method.
- * It clears the contentEl of the modal.
- */
-
+ * @method onOpen - Overrides Modal's onOpen method.Populates table of operations and populates footer with buttons.
+ * @method onClose - Overrides Modal's onClose method. It clears the contentEl of the modal.
+ **/
 export class SugarRushPendingView extends Modal {
-	operations: AbstractOperation[];
+	operations!: AbstractOperation[];
 	
 	/**
 	 * Constructs an instance of SugarRushPendingView with specified application object and operations.
 	 *
 	 * @constructor
-	 * @param {App} app - The Obsidian application object provided for the super Modal class.
-	 * @param {AbstractOperation[]} operations - An array of operations to be rendered in the modal view.
-	 */
-
-	constructor(app: App, operations: AbstractOperation[]) {
-		super(app);
-		this.operations = operations;
+	 * @param {SugarRushPlugin} plugin - An instance of SugarRushPlugin.
+	 **/
+	constructor(plugin: SugarRushPlugin) {
+		super(plugin.app);
 	}
 
 	/**
-	 * This method overrides Modal's onOpen method and is responsible for populating the contentEl of the modal with HTML elements
-	 * representing the pending operations. It generates an 'h1' header with text 'Pending Operations', then iterates over the
-	 * operations array creating an 'h2' header and a paragraph 'p' for each operation, where 'h2' contains the operation name and
-	 * the paragraph holds the operation description. Also, it creates two buttons 'Minimize' and 'Cancel' with listeners assigned to each
-	 * one of them. Both listeners call the close method, which closes the modal.
-	 */
-
+	 * On the opening of the modal.
+	 **/
 	onOpen() {
 		const { contentEl } = this;
 		contentEl.createEl("h1", { text: "Pending Operations" });
@@ -55,8 +42,6 @@ export class SugarRushPendingView extends Modal {
 		const minimizeButton = contentEl.createEl("button", { text: "Minimize" });
 		const cancelButton = contentEl.createEl("button", { text: "Cancel" });
 
-		// proress bar
-
 		cancelButton.addEventListener("click", () => {
 			this.close();
 		});
@@ -67,9 +52,8 @@ export class SugarRushPendingView extends Modal {
 	}
 
 	/**
-	 * This method overrides Modal's onClose method. It's responsible for clearing the contentEl of the modal,
-	 * essentially removing all HTML elements previously populated by the onOpen method.
-	 */
+	 * On the closing of the modal.
+	 **/
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();

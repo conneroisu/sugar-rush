@@ -1,8 +1,10 @@
-import { TFolder, type TAbstractFile, TFile, WorkspaceLeaf } from "obsidian";
-import { SugarRushOperationView } from "../views/viewOperation";
-import type SugarRushPlugin from "../main";
 import { sep } from "path";
+import { type TAbstractFile, TFile, TFolder, WorkspaceLeaf } from "obsidian";
 import type TSAbstractFile from "plugin-sugar-rush/contracts/TSAbstractFile";
+import { generateAbstractPrefix } from "plugin-sugar-rush/utils";
+import type { AbstractOperation } from "./contracts/AbstractOperation";
+import type SugarRushPlugin from "./main";
+import { SugarRushOperationView } from "./views/viewOperation";
 
 /** 
  * The `SugarRushFileSystemHandler` class is responsible for handling all file system related operations.
@@ -19,18 +21,19 @@ import type TSAbstractFile from "plugin-sugar-rush/contracts/TSAbstractFile";
  * @method createSugarFile - Creates a sugar file for the given file.
  * @method generateSugarFileContent - Generates the content for a sugar file for the given file.
  * @method getParentChildren - Returns the children of the parent of the given file.
- * @method generateAbstractPrefix - Generates an abstract prefix for the given file.
- * @method parseAbstractPrefixForId - Parses the abstract prefix for the id of the file.
  * @method isSugarFile - Returns true if the given file is a sugar file.
  **/
 export default class SugarRushFileSystemHandler {
 	private readonly plugin: SugarRushPlugin;
 	abstractMap: Map<number, TSAbstractFile> = new Map();
+	operations: Map<number, AbstractOperation> = new Map();
+
 	/** 
 	 * Creates a new File System Handler.
 	 **/
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
+		this.deleteAllSugarFiles()
 	}
 
 	/**
@@ -40,10 +43,9 @@ export default class SugarRushFileSystemHandler {
 	 * @returns {void}
 	 **/
 	refreshSugarFile(activeFile: TFile, leaf: WorkspaceLeaf): void {
-		// fill the active file with teh parent children content
 		this.plugin.app.vault
 			.modify(activeFile, this.generateSugarFileContent(activeFile))
-			.then((r) => {
+			.then(() => {
 				if (this.plugin.settings.debug) {
 					console.log("Refreshed file", activeFile);
 				}
@@ -55,10 +57,7 @@ export default class SugarRushFileSystemHandler {
 	 * Opens a modal for the operation view with all operations.
 	 **/
 	openSugarOperationViewModal(): void {
-		new SugarRushOperationView(
-			this.plugin.app,
-			this.plugin.operationHandler.operations
-		).open();
+		new SugarRushOperationView(this.plugin).open();
 	}
 
 	/** 
@@ -66,6 +65,7 @@ export default class SugarRushFileSystemHandler {
 	 **/
 	getAllSugarFiles() {
 		const sugarFiles: TFile[] = [];
+		// biome-ignore lint/complexity/noForEach: <explanation>
 		this.plugin.app.vault.getFiles().forEach((file) => {
 			if (file.extension === "sugar") {
 				sugarFiles.push(file);
@@ -78,8 +78,9 @@ export default class SugarRushFileSystemHandler {
 	 * Deletes all sugar files in the vault. (All .sugar files)
 	 **/
 	deleteAllSugarFiles() {
+		// biome-ignore lint/complexity/noForEach: <explanation>
 		this.getAllSugarFiles().forEach((file) => {
-			this.plugin.app.vault.delete(file).then((r) => {
+			this.plugin.app.vault.delete(file).then(() => {
 				if (this.plugin.settings.debug) {
 					console.log("Deleted file", file);
 				}
@@ -113,10 +114,9 @@ export default class SugarRushFileSystemHandler {
 			return "root" + ".sugar";
 		}
 		return (
-			activeFile.parent?.path +
+			`${activeFile.parent?.path +
 			sep +
-			activeFile.parent?.name.replace(sep, "-") +
-			".sugar"
+			activeFile.parent?.name.replace(sep, "-")}.sugar`
 		);
 	}
 
@@ -137,9 +137,9 @@ export default class SugarRushFileSystemHandler {
 		return this.getParentChildren(activeFile)
 			.map((file) => {
 				if (file instanceof TFolder) {
-					return this.generateAbstractPrefix(file) + file.name + "/";
+					return `${generateAbstractPrefix(file) + file.name}/`;
 				}
-				return this.generateAbstractPrefix(file) + file.name;
+				return generateAbstractPrefix(file) + file.name;
 			})
 			.join("\n");
 	}
@@ -158,24 +158,6 @@ export default class SugarRushFileSystemHandler {
 			return file.parent.children;
 		}
 		return [];
-	}
-
-	/** 
-	 * Generates an abstract prefix for the given file.
-	 **/
-	generateAbstractPrefix(file: TAbstractFile): string {
-		const code = Math.random().toString(5).substring(2, 7);
-		this.abstractMap.set(parseInt(code), file);
-		return "<a href=" + code + ">" + "</a>";
-	}
-
-	/** 
-	 * Parses the abstract prefix for the id of the file.
-	 **/
-	parseAbstractPrefixForId(line: string): number {
-		const code = line.match(/(?<=href=)\w+/);
-		const id = parseInt(code?.toString() ?? "");
-		return id;
 	}
 
 	/** 
