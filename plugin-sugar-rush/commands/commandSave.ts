@@ -1,4 +1,6 @@
-import type SugarRushPlugin from "plugin-sugar-rush/main";
+
+import SugarRushPlugin from "plugin-sugar-rush/main";
+import { Editor, TFile, TFolder } from "obsidian";
 
 export default function commandSaveSugarView(plugin: SugarRushPlugin, checking: boolean) {
 	if (checking) {

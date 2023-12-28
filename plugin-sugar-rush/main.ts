@@ -75,9 +75,7 @@ export default class SugarRushPlugin extends Plugin {
 	/**
 	 * saveSettings Method:
 	 * This asynchronous method is responsible for saving the settings of the SugarRushPlugin. It takes no parameters.
-	 * It uses the saveData method to save the current state of settings into the storage.
 	 **/
-
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}

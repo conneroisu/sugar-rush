@@ -1,69 +1,35 @@
-import { type Command, Editor, MarkdownView, type MarkdownFileInfo, TFile, TFolder } from "obsidian";
-import type SugarRushPlugin from "../main";
+import SugarRushPlugin from "plugin-sugar-rush/main";
 
-/**
- * The `commandSelectSugarViewEntry` class implements the Command interface.
- * @property id - The id of the command.
- * @property name - The name of the command.
- * @property plugin - The instance of the plugin.
- * @method editorCheckCallback - The callback that is called when the command is executed.
- **/
-export default class commandSelectSugarViewEntry implements Command {
-	id: string = "sugar-view-entry-select";
-	name: string = "Select Sugar View Entry";
-	plugin!: SugarRushPlugin;
+import { Editor, TFile, TFolder } from "obsidian";
 
-	/**
-	 * Creates a new command that can select an entry in a sugar view
-	 **/
-	constructor(plugin: SugarRushPlugin) {
-		this.plugin = plugin;
+export default function commandSelectEntry(plugin: SugarRushPlugin, checking: boolean, editor: Editor) {
+	const activeFile = plugin.app.workspace.getActiveFile();
+	const leaf = plugin.app.workspace.getMostRecentLeaf();
+	if (checking) {
+		return true;
 	}
-
-	editorCheckCallback?: ((checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => boolean | void) | undefined = (checking: boolean, editor: Editor, ctx: MarkdownView | MarkdownFileInfo) => {
-		const activeFile = this.plugin.app.workspace.getActiveFile();
-		const leaf = this.plugin.app.workspace.getMostRecentLeaf();
-		if (checking) {
-			return true;
+	if (activeFile && plugin.fileSystemHandler.isSugarFile(activeFile)) {
+		const id = editor.getLine(editor.getCursor().line).split("<a href=")[1].split(">")[0];
+		const file = plugin.fileSystemHandler.abstractMap.get(parseInt(id));
+		if (!file || !leaf) {
+			return false;
 		}
-		if (activeFile && this.plugin.fileSystemHandler.isSugarFile(activeFile)) {
-			const id = editor.getLine(editor.getCursor().line).split("<a href=")[1].split(">")[0];
-			const file = this.plugin.fileSystemHandler.abstractMap.get(parseInt(id));
-			if (!file || !leaf) {
-				return false;
+		if (file instanceof TFile) {
+			if (plugin.settings.debug) {
+				console.log("commandSelectSugarViewEntry.ts: selecting and opening TFile: " + file.path);
 			}
-			if (file instanceof TFile) {
-				if (this.plugin.settings.debug) {
-					console.log("commandSelectSugarViewEntry.ts: selecting and opening TFile: " + file.path);
-				}
-				this.plugin.fileSystemHandler.loadRegularFile(file, leaf);
-			}
-			if (file instanceof TFolder) {
-				if (this.plugin.settings.debug) {
-					console.log("commandSelectSugarViewEntry.ts: selecting and opening TFolder: " + file.path);
-				}
-			}
-
-			return true;
+			plugin.fileSystemHandler.loadRegularFile(file, leaf);
 		}
-		if (this.plugin.settings.debug) {
-			console.log("commandSelectSugarViewEntry.ts: not selecting anything | checking is ");
+		if (file instanceof TFolder) {
+			if (plugin.settings.debug) {
+				console.log("commandSelectSugarViewEntry.ts: selecting and opening TFolder: " + file.path);
+			}
 		}
-		return false;
-	};
-}
 
-
-function selectEntry(editor: Editor): void {
-	const cursor = editor.getCursor();
-	const line = editor.getLine(cursor.line);
-	const line_text = line.slice(0, undefined);
-	const id = parse_id(line_text);
-	console.log("selected id: " + id);
-}
-/**
- * Returns the id of a line in a sugar file (within the a href).
- **/
-function parse_id(line: string): string {
-	return line.split("<a href=")[1].split(">")[0];
+		return true;
+	}
+	if (plugin.settings.debug) {
+		console.log("commandSelectSugarViewEntry.ts: not selecting anything | checking is ");
+	}
+	return false;
 }
