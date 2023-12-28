@@ -11,8 +11,6 @@ import type { Editor } from "obsidian";
  * Class representing a handler for SugarRush commands.
  * @class SugarRushCommandHandler
  * @property {SugarRushPlugin} plugin - An instance of the SugarRushPlugin that this handler will register callbacks for.
- * @constructor
- * @param {SugarRushPlugin} plugin - An instance of SugarRushPlugin to attach the commands.
  **/
 export default class SugarRushCommandHandler {
 	private readonly plugin: SugarRushPlugin;
