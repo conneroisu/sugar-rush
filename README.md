@@ -22,6 +22,12 @@
 </ol>
 </details>
 
+## Visual Introduction
+
+TODO: Put gif/video here.
+
+TODO: add a See more examples link
+
 ## Introduction
 
 The goals of this plugin are to provide full control over the file system within your vault using a note as an interaction surface. 
