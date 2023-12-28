@@ -13,24 +13,21 @@ import type { Extension } from "@codemirror/state";
  */
 import type SugarRushPlugin from "../main";
 
-export abstract class AbstractExtension {
+export default abstract class AbstractExtension {
 	plugin: SugarRushPlugin;
 
 	/**
-	 * This constructor for the SugarRushExtensionHandler class accepts a single argument.
-	 * @param {SugarRushPlugin} plugin - This is the plugin associated with the SugarRushExtensionHandler instance upon its creation.
+	 * This constructor for the SugarRushExtensionHandler class 
+	 * it accepts a single argument, a reference to the Sugar Rush Plugin.
+	 * @param {SugarRushPlugin} plugin - reference to the Sugar Rush Plugin.
 	 */
 	protected constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
 	}
 
 	/**
-	 * The `getExtension` method is a member of the `AbstractExtension` class and it is used to get the current extension stored
-	 * in the `extension` property.
-	 * @throws {Error} - This method is abstract and should be implemented by the derived classes.
+	 * The `getExtension` method is a member of the `AbstractExtension` class 
+	 * and it is used to get the current extension being managed.
 	 */
-
-	getExtension(): Extension {
-		throw new Error("Method not implemented.");
-	}
+	abstract getExtension(): Extension;
 }
