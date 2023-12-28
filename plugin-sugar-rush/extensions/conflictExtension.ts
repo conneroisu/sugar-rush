@@ -1,8 +1,8 @@
 import { gutter } from "@codemirror/view";
-import {AbstractExtension} from "../contracts/AbstractExtension";
-import type SugarRushPlugin from "plugin-sugar-rush/main";
-import ConflictMarker from "./conflictMarker";
 import type { Extension } from "@codemirror/state";
+import AbstractExtension from "plugin-sugar-rush/contracts/AbstractExtension";
+import ConflictMarker from "plugin-sugar-rush/markers/conflictMarker";
+import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
  * The `conflictExtension` class is an extension of the `AbstractExtension` class from the plugin-sugar-rush package.

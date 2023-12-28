@@ -23,17 +23,23 @@ import { sep } from "path";
  * @method isSugarFile - Returns true if the given file is a sugar file.
  **/
 export default class SugarRushFileSystemHandler {
-    refreshSugarFile(activeFile: TFile, leaf: WorkspaceLeaf) {
-        throw new Error("Method not implemented.");
-    }
 	private readonly plugin: SugarRushPlugin;
 	abstractMap: Map<number, TAbstractFile> = new Map();
-
 	/** 
 	 * Creates a new File System Handler.
 	 **/
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
+	}
+
+	/**
+	 * The refreshSugarFile method is responsible for refreshing the sugar file for the given file.
+	 * @param {TFile} activeFile - The file to refresh the sugar file for.
+	 * @param {WorkspaceLeaf} leaf - The leaf to refresh the sugar file for.
+	 * @returns {void}
+	 **/
+	refreshSugarFile(activeFile: TFile, leaf: WorkspaceLeaf) {
+		throw new Error("Method not implemented.");
 	}
 
 	/** 

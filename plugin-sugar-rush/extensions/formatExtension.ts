@@ -1,7 +1,7 @@
 import { gutter } from "@codemirror/view";
 import type { Extension } from "@codemirror/state";
 import { FormatMarker } from "plugin-sugar-rush/markers/formatMarker";
-import { AbstractExtension } from "plugin-sugar-rush/contracts/AbstractExtension";
+import AbstractExtension from "plugin-sugar-rush/contracts/AbstractExtension";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 import assets from "../!icons.json";
 

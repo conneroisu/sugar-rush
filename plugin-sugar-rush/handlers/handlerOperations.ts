@@ -1,5 +1,6 @@
 import type { TAbstractFile } from "obsidian";
 import type SugarRushPlugin from "../main";
+import type { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
 
 /**
  * A handler class that manages, organizes and manipulates operations in the SugarRush Plugin environment.
@@ -13,11 +14,11 @@ import type SugarRushPlugin from "../main";
  * @method {void} popOperation - Pops off the last operation in the operations' stack and then runs that operation
  **/
 export default class SugarRushOperationHandler {
-	private readonly  plugin: SugarRushPlugin;
+	private readonly plugin: SugarRushPlugin;
 	operations: AbstractOperation[] = [];
 	sugarReadings: string[] = [];
 	operationExceptions: TAbstractFile[] = [];
-	
+
 	/**
 	 * Creates a SugarRushOperationHandler class.
 	 * @param {SugarRushPlugin} plugin - An instance of SugarRushPlugin to associate with the SugarRushOperationHandler
@@ -37,7 +38,6 @@ export default class SugarRushOperationHandler {
 
 	/**
 	 * The removeOperation method accepts an object of type AbstractOperation and removes it from the operations array defined in the SugarRushOperationHandler class.
-	 * It does this by filtering out the operation to be removed from the current operations array
 	 * @param {AbstractOperation} operation - The operation to remove from the operations array
 	 * @returns {void}
 	 **/
