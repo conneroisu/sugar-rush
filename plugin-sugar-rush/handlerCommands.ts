@@ -1,5 +1,4 @@
 import commandRushToSugarView from "./commands/commandRush";
-import commandToggleHiddenFiles from "./commands/commandHidden";
 import commandSelectSugarViewEntry from "./commands/commandSelect";
 import commandSaveSugarView from "./commands/commandSave";
 
@@ -24,16 +23,24 @@ export default class SugarRushCommandHandler {
 			id: "rush-to-sugar-view",
 			name: "Rush to Sugar View",
 			editorCheckCallback: (checking: boolean) => {
-				commandRushToSugarView(this.plugin, checking)
+				const activeFile = plugin.app.workspace.getActiveFile();
+				if (checking) {
+					if (activeFile) {
+						return true;
+					}
+					return false;
+				}
+				commandRushToSugarView(this.plugin)
 			}
 		});
-		this.plugin.addCommand({
-			id: "toggle-hidden-files",
-			name: "Toggle Hidden Files",
-			editorCheckCallback: (checking: boolean) => {
-				commandToggleHiddenFiles(this.plugin, checking)
-			}
-		});
+		// TODO: Implement this command corectly: toggle hidden files
+		// this.plugin.addCommand({
+		//     id: "toggle-hidden-files",
+		//     name: "Toggle Hidden Files",
+		//     editorCheckCallback: (checking: boolean) => {
+		//         commandToggleHiddenFiles(this.plugin, checking)
+		//     }
+		// });
 		this.plugin.addCommand({
 			id: "select-sugar-view-entry",
 			name: "Select Sugar View Entry",

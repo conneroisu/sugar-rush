@@ -8,6 +8,8 @@ import { assert } from 'console';
 describe('Assets', () => {
   it('should have a valid structure', () => {
 		assert(asset);
+		assert(asset["extension-associations"]);
+		assert(JSON.stringify(asset["extension-associations"]).length);
   });
 });
 

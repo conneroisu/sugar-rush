@@ -1,23 +1,25 @@
-import type { TAbstractFile } from "obsidian";
-import type TSAbstractFile from "./contracts/TSAbstractFile";
+import assets from "./!icons.json";
 
-	/** 
-	 * Generates an abstract prefix for the given file.
-	 **/
-	export function generateAbstractPrefix(this: any, file: TAbstractFile): string {
-		const code = Math.random().toString(5).substring(2, 7);
-		const absFile = this.plugin.app.vault.getAbstractFileByPath(file.path);
-		if (absFile === undefined) {
-			return "<a href=" + code + ">" + "</a>";
+/**
+ * Returns the icon that corresponds to the given file extension from the assets file.
+ * If no icon is associated with this extension, it will return the default icon instead.
+ * @param {string} extension - The string referencing the file extension for which an icon is to be retrieved.
+ * @return {string} - It returns the icon data string corresponding to the provided file extension.
+ */
+export function getIconForLineFileExtension(extension: string): string {
+	const icon = assets["extension-associations"].find((association) => {
+		return association.extensions.includes(extension);
+	});
+	if (icon === undefined) {
+		const defaultIcon = assets["extension-associations"].find(
+			(association) => {
+				return association.extensions.includes("*");
+			}
+		);
+		if (defaultIcon === undefined) {
+			return "";
 		}
-		this.abstractMap.set(parseInt(code), absFile as TSAbstractFile);
-			return "<a href=" + code + ">" + "</a>";
+		return defaultIcon.data;
 	}
-
-	/** 
-	 * Parses the abstract prefix for the id of the file.
-	 **/
-	export function parseAbstractPrefixForId(line: string): number {
-		return parseInt(line.match(/(?<=href=)\w+/)?.toString() ?? "");
-	}
-
+	return icon.data;
+}

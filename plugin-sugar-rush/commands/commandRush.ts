@@ -1,12 +1,12 @@
 import { TAbstractFile, TFile } from "obsidian";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
-export default function RushToSugarViewCommand(plugin: SugarRushPlugin, checking: boolean) {
-
+export default function RushToSugarViewCommand(plugin: SugarRushPlugin) {
 	const activeFile = plugin.app.workspace.getActiveFile();
 	const leaf = plugin.app.workspace.getMostRecentLeaf();
-	if (!checking && activeFile && leaf) {
-		const sugarFilePath = plugin.fileSystemHandler.getSugarFilePath(activeFile);
+	if (activeFile && leaf) {
+		const sugarFilePath =
+			plugin.fileSystemHandler.getSugarFilePath(activeFile);
 		if (activeFile.parent && activeFile.parent.name != "") {
 			// The file is not at the root and has a parent folder
 			const file: TFile | null | undefined | TAbstractFile =
@@ -15,10 +15,7 @@ export default function RushToSugarViewCommand(plugin: SugarRushPlugin, checking
 				plugin.fileSystemHandler
 					.createSugarFile(activeFile)
 					.then((file: TFile) => {
-						plugin.fileSystemHandler.loadSugarFile(
-							file,
-							leaf
-						);
+						plugin.fileSystemHandler.loadSugarFile(file, leaf);
 					});
 			} else {
 				if (file instanceof TFile) {
@@ -32,10 +29,7 @@ export default function RushToSugarViewCommand(plugin: SugarRushPlugin, checking
 				plugin.fileSystemHandler
 					.createSugarFile(activeFile)
 					.then((file: TFile) => {
-						plugin.fileSystemHandler.loadSugarFile(
-							file,
-							leaf
-						);
+						plugin.fileSystemHandler.loadSugarFile(file, leaf);
 					});
 			} else {
 				if (file instanceof TFile) {
@@ -49,5 +43,4 @@ export default function RushToSugarViewCommand(plugin: SugarRushPlugin, checking
 		}
 	}
 	return true;
-
 }

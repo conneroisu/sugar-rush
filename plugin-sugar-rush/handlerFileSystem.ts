@@ -74,6 +74,27 @@ export default class SugarRushFileSystemHandler {
 		return sugarFiles;
 	}
 
+
+	/** 
+	 * Generates an abstract prefix for the given file.
+	 **/
+	generateAbstractPrefix(file: TAbstractFile): string {
+		const code = Math.random().toString(5).substring(2, 7);
+		const absFile = this.plugin.app.vault.getAbstractFileByPath(file.path);
+		if (absFile) {
+			// convert the absFile to a TSAbstractFile
+			this.abstractMap.set(parseInt(code), );
+		}
+		return "<a href=" + code + ">" + "</a>";
+	}
+
+	/** 
+	 * Parses the abstract prefix for the id of the file.
+	 **/
+	parseAbstractPrefixForId(line: string): number {
+		return parseInt(line.match(/(?<=href=)\w+/)?.toString() ?? "");
+	}
+
 	/** 
 	 * Deletes all sugar files in the vault. (All .sugar files)
 	 **/
@@ -114,9 +135,10 @@ export default class SugarRushFileSystemHandler {
 			return "root" + ".sugar";
 		}
 		return (
-			`${activeFile.parent?.path +
+			activeFile.parent?.path +
 			sep +
-			activeFile.parent?.name.replace(sep, "-")}.sugar`
+			activeFile.parent?.name.replace(sep, "-") +
+			".sugar"
 		);
 	}
 
@@ -137,7 +159,7 @@ export default class SugarRushFileSystemHandler {
 		return this.getParentChildren(activeFile)
 			.map((file) => {
 				if (file instanceof TFolder) {
-					return `${generateAbstractPrefix(file) + file.name}/`;
+					return generateAbstractPrefix(file) + file.name + "/";
 				}
 				return generateAbstractPrefix(file) + file.name;
 			})

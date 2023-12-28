@@ -1,5 +1,5 @@
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-import { AbstractOperation } from "plugin-sugar-rush/handlers/handlerOperations";
+import { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
 import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/formatExtension";
 
 /**
