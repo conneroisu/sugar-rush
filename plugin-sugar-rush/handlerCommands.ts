@@ -1,21 +1,12 @@
-import commandSelectSugarViewEntry from "./commands/commandSelect";
 import commandSaveSugarView from "./commands/commandSave";
 
 import SugarRushPlugin from "./main";
 import commandRefreshSugarView from "plugin-sugar-rush/commands/commandRefresh";
 import { TFile, type Editor, TAbstractFile, TFolder } from "obsidian";
 
-/**
- * Class representing a handler for SugarRush commands.
- * @class SugarRushCommandHandler
- * @property {SugarRushPlugin} plugin - An instance of the SugarRushPlugin that this handler will register callbacks for.
- **/
 export default class SugarRushCommandHandler {
 	private readonly plugin: SugarRushPlugin;
 
-	/**
-	 * Create a command handler
-	 **/
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
 		this.plugin.addCommand({
