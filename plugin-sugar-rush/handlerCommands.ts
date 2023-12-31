@@ -1,10 +1,9 @@
-import commandRushToSugarView from "./commands/commandRush";
 import commandSelectSugarViewEntry from "./commands/commandSelect";
 import commandSaveSugarView from "./commands/commandSave";
 
 import SugarRushPlugin from "./main";
 import commandRefreshSugarView from "plugin-sugar-rush/commands/commandRefresh";
-import type { Editor } from "obsidian";
+import { TFile, type Editor, TAbstractFile, TFolder } from "obsidian";
 
 /**
  * Class representing a handler for SugarRush commands.
@@ -30,7 +29,46 @@ export default class SugarRushCommandHandler {
 					}
 					return false;
 				}
-				commandRushToSugarView(this.plugin)
+				const leaf = plugin.app.workspace.getMostRecentLeaf();
+				if (activeFile && leaf) {
+					const sugarFilePath =
+						plugin.fileSystemHandler.getSugarFilePath(activeFile);
+					if (activeFile.parent && activeFile.parent.name !== "") {
+						// The file is not at the root and has a parent folder
+						const file: TFile | null | undefined | TAbstractFile =
+							plugin.app.vault.getAbstractFileByPath(sugarFilePath);
+						if (!file) {
+							plugin.fileSystemHandler
+								.createSugarFile(activeFile)
+								.then((file: TFile) => {
+									plugin.fileSystemHandler.loadFile(file, leaf);
+								});
+						} else {
+							if (file instanceof TFile) {
+								plugin.fileSystemHandler.loadFile(file, leaf);
+							}
+						}
+					} else {
+						const file: TFile | null | undefined | TAbstractFile =
+							plugin.app.vault.getAbstractFileByPath(sugarFilePath);
+						if (!file) {
+							plugin.fileSystemHandler
+								.createSugarFile(activeFile)
+								.then((file: TFile) => {
+									plugin.fileSystemHandler.loadFile(file, leaf);
+								});
+						} else {
+							if (file instanceof TFile) {
+								plugin.fileSystemHandler.loadFile(file, leaf);
+							}
+						}
+					}
+				} else {
+					if (activeFile && leaf) {
+						return true;
+					}
+				}
+				return true;
 			}
 		});
 		// TODO: Implement this command corectly: toggle hidden files
@@ -45,7 +83,37 @@ export default class SugarRushCommandHandler {
 			id: "select-sugar-view-entry",
 			name: "Select Sugar View Entry",
 			editorCheckCallback: (checking: boolean, editor: Editor) => {
-				commandSelectSugarViewEntry(this.plugin, checking, editor)
+
+				const activeFile = plugin.app.workspace.getActiveFile();
+
+				const leaf = plugin.app.workspace.getMostRecentLeaf();
+				if (checking) {
+					return true;
+				}
+				if (activeFile && activeFile.extension === "sugar") {
+					const id = editor.getLine(editor.getCursor().line).split("<a href=")[1].split(">")[0];
+					const file = plugin.fileSystemHandler.abstractMap.get(parseInt(id));
+					if (!file || !leaf) {
+						return false;
+					}
+					if (file instanceof TFile) {
+						if (plugin.settings.debug) {
+							console.log(`commandSelectSugarViewEntry.ts: selecting and opening TFile: ${file.path}`);
+						}
+						plugin.fileSystemHandler.loadFile(file, leaf);
+					}
+					if (file instanceof TFolder) {
+						if (plugin.settings.debug) {
+							console.log(`commandSelectSugarViewEntry.ts: selecting and opening TFolder: ${file.path}`);
+						}
+					}
+
+					return true;
+				}
+				if (plugin.settings.debug) {
+					console.log("commandSelectSugarViewEntry.ts: not selecting anything | checking is ");
+				}
+				return false;
 			}
 		});
 		this.plugin.addCommand({

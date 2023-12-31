@@ -15,8 +15,7 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
  **/
 export class RenameOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
-	name: string = "Rename";
-	description: string = "Renames abstract file to the new path. ";
+	description = "Renames abstract file to the new path. ";
 	icon: string = getIconForLineFileExtension("rename");
 
 	/**

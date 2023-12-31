@@ -3,9 +3,7 @@ import { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
- * SugarRushPendingView class inherits from Modal.
- * This class is responsible for creating and managing a Pending Operations modal view.
- * @class
+ * View for viewing currently pending operations 
  * @extends Modal
  * @property {AbstractOperation[]} operations - An array of AbstractOperation.
  * @constructor
@@ -19,7 +17,6 @@ export class SugarRushPendingView extends Modal {
 	
 	/**
 	 * Constructs an instance of SugarRushPendingView with specified application object and operations.
-	 *
 	 * @constructor
 	 * @param {SugarRushPlugin} plugin - An instance of SugarRushPlugin.
 	 **/

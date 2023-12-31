@@ -9,7 +9,7 @@ import SugarRushPlugin from "plugin-sugar-rush/main";
  **/
 export default function commandSaveSugarView(plugin: SugarRushPlugin, checking: boolean): boolean | undefined {
 	if (checking) {
-		return plugin.fileSystemHandler.operations.size > 0;
+		return plugin.fileSystemHandler.operationsMap.size > 0;
 	}
 	if (!checking) {
 		plugin.fileSystemHandler.openSugarOperationViewModal();

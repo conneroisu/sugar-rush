@@ -17,10 +17,10 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  **/
 export class DuplicateOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
-	name: string = "Duplicate";
-	description: string = "Duplicates the file or directory at the given path";
+	name = "Duplicate";
+	description = "Duplicates the file or directory at the given path";
 	icon: string = getIconForLineFileExtension("duplicate");
-	id: string = "duplicate";
+	id = "duplicate";
 
 	/**
 	 * Creates an instance of RenameOperation.

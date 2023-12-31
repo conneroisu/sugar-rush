@@ -1,9 +1,10 @@
 import { App, Plugin, TFile } from "obsidian";
-import { DEFAULT_SETTINGS, type SugarRushPluginSettings } from "./settings";
-import { SugarRushSettingView } from "./views/viewSettings";
 import SugarRushCommandHandler from "./handlerCommands";
-import SugarRushFileSystemHandler from "./handlerFileSystem";
 import SugarRushExtensionHandler from "./handlerExtensions";
+import SugarRushFileSystemHandler from "./handlerFileSystem";
+import { DEFAULT_SETTINGS, type SugarRushPluginSettings } from "./settings";
+import { SugarRushOperationView } from "./viewOperation";
+import { SugarRushSettingView } from "./viewSettings";
 
 /**
  * The `SugarRushPlugin` class extends the `Plugin` base class to provide functionality related to handling sugar files in the Obsidian app.
@@ -40,12 +41,12 @@ export default class SugarRushPlugin extends Plugin {
 		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
 		this.extensionHandler = new SugarRushExtensionHandler(this);
 		this.app.workspace.on("file-open", (file: TFile | null) => {
-			if (file && !this.fileSystemHandler.isSugarFile(file)) {
+			if (file && !(file.extension === "sugar")) {
 				this.extensionHandler.getExtensions();
 				this.app.workspace.updateOptions();
 			} else {
-				if (this.fileSystemHandler.operations.size > 0) {
-					this.fileSystemHandler.openSugarOperationViewModal();
+				if (this.fileSystemHandler.operationsMap.size > 0) {
+					new SugarRushOperationView(this).open();
 				}
 			}
 		});

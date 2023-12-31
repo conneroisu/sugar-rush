@@ -3,7 +3,7 @@ import { PluginSettingTab, Setting } from "obsidian";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
- * SugarRushSettingView class inherits from PluginSettingTab.
+ * View for the settings of the plin, SugarRUshPlugin
  **/
 export class SugarRushSettingView extends PluginSettingTab {
 	plugin: SugarRushPlugin;
@@ -44,7 +44,7 @@ export class SugarRushSettingView extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Show Hidden Files")
-			.setDesc("Display hidden files?")
+			.setDesc("Display hidden files? (Requires a restart to see changes)")
 			.addToggle((toggle) => toggle
 				.setValue(this.plugin.settings.showHiddenFiles)
 				.onChange(async (value) => {
@@ -54,7 +54,7 @@ export class SugarRushSettingView extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Show File Sizes")
-			.setDesc("Display file sizes?")
+			.setDesc("Display file sizes? (Requires a restart to see changes)")
 			.addToggle((toggle) => toggle
 				.setValue(this.plugin.settings.showFileSizes)
 				.onChange(async (value) => {

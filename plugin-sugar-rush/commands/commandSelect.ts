@@ -8,7 +8,7 @@ export default function commandSelectEntry(plugin: SugarRushPlugin, checking: bo
 	if (checking) {
 		return true;
 	}
-	if (activeFile && plugin.fileSystemHandler.isSugarFile(activeFile)) {
+	if (activeFile && activeFile.extension === "sugar") {
 		const id = editor.getLine(editor.getCursor().line).split("<a href=")[1].split(">")[0];
 		const file = plugin.fileSystemHandler.abstractMap.get(parseInt(id));
 		if (!file || !leaf) {
@@ -18,7 +18,7 @@ export default function commandSelectEntry(plugin: SugarRushPlugin, checking: bo
 			if (plugin.settings.debug) {
 				console.log("commandSelectSugarViewEntry.ts: selecting and opening TFile: " + file.path);
 			}
-			plugin.fileSystemHandler.loadRegularFile(file, leaf);
+			plugin.fileSystemHandler.loadFile(file, leaf);
 		}
 		if (file instanceof TFolder) {
 			if (plugin.settings.debug) {

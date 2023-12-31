@@ -1,7 +1,7 @@
+import type { Extension } from "@codemirror/state";
 import { gutter } from "@codemirror/view";
 import { TAbstractFile, TFile, TFolder } from "obsidian";
 import { AbstractExtension } from "plugin-sugar-rush/contracts/AbstractExtension";
-import type { Extension } from "@codemirror/state";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 import { SizeMarker } from "../markers/sizeMarker";
 
@@ -13,7 +13,7 @@ import { SizeMarker } from "../markers/sizeMarker";
 
 export function getSizeForAbstractFile(file: TAbstractFile) {
 	if (file instanceof TFile) {
-		return file.stat.size;
+		return file.stat.size
 	}
 
 	if (file instanceof TFolder) {
@@ -70,7 +70,13 @@ export default class SizeExtension implements AbstractExtension {
 				if (file === undefined) {
 					return null;
 				}
-				return new SizeMarker(getSizeForAbstractFile(file).toString());
+				const bytes = getSizeForAbstractFile(file).toString();
+				// convert the bytes into the appropriate unit (KB MB GB)
+				const numbytes = parseInt(bytes)
+
+			// 
+				
+				return new SizeMarker(bytes)
 			},
 		});
 	}

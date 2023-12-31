@@ -1,6 +1,7 @@
+import { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-import type { AbstractOperation } from "./AbstractOperation";
-import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extensionFormat";
+import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
+
 
 /**
  * Allows creation of a new file or directory in the application, obsidian.
@@ -18,10 +19,9 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extens
  **/
 export class CreateOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
-	name: string = "Create";
-	description: string = "Creates a new file or directory at the given path";
+	description = "Creates a new file or directory at the given path";
 	icon: string = getIconForLineFileExtension("create");
-	id: string = "create";
+	id = "create";
 
 	/**
 	 * Creates an instance of create operation.

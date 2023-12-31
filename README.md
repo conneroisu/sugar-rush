@@ -55,7 +55,12 @@ Wanting to use `g<C-a>`? I would recommend using an [specific increment map]() w
 -   [ ] Renaming of files hooks into actions inside of Obsidian so that plugins can readjust the links to and from a file.
 -   [ ] Cross-Directory Actions
 
+
 ## Developing
+
+### How the Plugin Works
+
+Currently, the plugin keeps trake of files 
 
 ### Core Plugin Development
 
