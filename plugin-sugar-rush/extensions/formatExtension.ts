@@ -1,6 +1,6 @@
 import { gutter } from "@codemirror/view";
 import type { Extension } from "@codemirror/state";
-import { FormatMarker } from "plugin-sugar-rush/markers/formatMarker";
+import { FormatMarker } from "plugin-sugar-rush/markers/markerFormat";
 import AbstractExtension from "plugin-sugar-rush/contracts/AbstractExtension";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 import assets from "../!icons.json";
@@ -10,7 +10,7 @@ import assets from "../!icons.json";
  * If no icon is associated with this extension, it will return the default icon instead.
  * @param {string} extension - The string referencing the file extension for which an icon is to be retrieved.
  * @return {string} - It returns the icon data string corresponding to the provided file extension.
- */
+ **/
 export function getIconForLineFileExtension(extension: string): string {
 	const icon = assets["extension-associations"].find((association) => {
 		return association.extensions.includes(extension);
