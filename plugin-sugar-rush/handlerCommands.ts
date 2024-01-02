@@ -1,8 +1,5 @@
-import commandSaveSugarView from "./commands/commandSave";
-
+import { type Editor, TAbstractFile, TFile, TFolder, Notice } from "obsidian";
 import SugarRushPlugin from "./main";
-import commandRefreshSugarView from "plugin-sugar-rush/commands/commandRefresh";
-import { TFile, type Editor, TAbstractFile, TFolder } from "obsidian";
 
 export default class SugarRushCommandHandler {
 	private readonly plugin: SugarRushPlugin;
@@ -111,14 +108,75 @@ export default class SugarRushCommandHandler {
 			id: "save-sugar-view",
 			name: "Save Sugar View",
 			editorCheckCallback: (checking: boolean) => {
-				commandSaveSugarView(this.plugin, checking)
+	const activeFile = plugin.app.workspace.getActiveFile();
+	const leaf = plugin.app.workspace.getMostRecentLeaf();
+	if (!checking && activeFile && leaf) {
+		// delete all of the sugar files in the vault and then reload the current file
+
+		// reload the current file
+		plugin.app.vault
+			.modify(activeFile, plugin.fileSystemHandler.generateSugarFileContent(activeFile))
+			.then(() => {
+				if (plugin.settings.debug) {
+					console.log("Refreshed file", activeFile);
+				}
+				plugin.fileSystemHandler.loadFile(activeFile, leaf);
+			});
+	} else {
+		if (activeFile && leaf) {
+			return true;
+		}
+	}
+	return true;
 			}
 		});
 		this.plugin.addCommand({
 			id: "refresh-sugar-view",
 			name: "Refresh Sugar View",
 			editorCheckCallback: (checking: boolean) => {
-				commandRefreshSugarView(this.plugin, checking)
+				const activeFile = plugin.app.workspace.getActiveFile();
+				const leaf = plugin.app.workspace.getMostRecentLeaf();
+				if (!checking && activeFile && leaf) {
+					// delete all of the sugar files in the vault and then reload the current file
+
+					// reload the current file
+					plugin.app.vault
+						.modify(activeFile, plugin.fileSystemHandler.generateSugarFileContent(activeFile))
+						.then(() => {
+							if (plugin.settings.debug) {
+								console.log("Refreshed file", activeFile);
+							}
+							plugin.fileSystemHandler.loadFile(activeFile, leaf);
+						});
+				} else {
+					if (activeFile && leaf) {
+						return true;
+					}
+				}
+				return true;
+			}
+		});
+		this.plugin.addCommand({
+			id: "open-sugar-view",
+			name: "Open Sugar View",
+			editorCheckCallback: (checking: boolean) => {
+				// If checking is true, then we are checking if the command can be run.
+				if (checking) {
+					const activeFile = plugin.app.workspace.getActiveFile();
+					if (!activeFile) {
+						return false;
+					}
+					if (activeFile.extension !== "sugar") {
+						return false;
+					}
+					return true;
+				}
+				if (plugin.fileSystemHandler.operationsMap.size > 0) {
+					new Notice("Cannot toggle hidden files while an operation is in progress.");
+				}
+				plugin.settings.showHiddenFiles = !plugin.settings.showHiddenFiles;
+				plugin.saveSettings();
+				return true;
 			}
 		});
 	}

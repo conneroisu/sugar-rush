@@ -1,9 +1,10 @@
 import type { Extension } from "@codemirror/state";
 import { gutter } from "@codemirror/view";
 import { TAbstractFile, TFile, TFolder } from "obsidian";
-import { AbstractExtension } from "plugin-sugar-rush/contracts/AbstractExtension";
+import AbstractExtension from "plugin-sugar-rush/contracts/AbstractExtension";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-import { SizeMarker } from "../markers/sizeMarker";
+
+import { SizeMarker } from "plugin-sugar-rush/markers/markerSize";
 
 /**
  * Returns the size of a file or sum of sizes of all files within a folder, recursively.
@@ -74,8 +75,6 @@ export default class SizeExtension implements AbstractExtension {
 				// convert the bytes into the appropriate unit (KB MB GB)
 				const numbytes = parseInt(bytes)
 
-			// 
-				
 				return new SizeMarker(bytes)
 			},
 		});
