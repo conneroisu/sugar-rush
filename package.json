@@ -25,7 +25,7 @@
 		"@codemirror/language": "^6.9.3",
 		"@tsconfig/svelte": "^5.0.2",
 		"@types/better-sqlite3": "^7.6.8",
-		"@types/node": "^20.10.5",
+		"@types/node": "^20.10.6",
 		"@typescript-eslint/parser": "^6.16.0",
 		"@vitest/ui": "^1.1.0",
 		"better-sqlite3": "^9.2.2",
