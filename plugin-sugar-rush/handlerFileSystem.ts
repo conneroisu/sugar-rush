@@ -37,7 +37,7 @@ export default class SugarRushFileSystemHandler {
 	 * Returns all sugar files in the vault. (All .sugar files)
 	 * @returns {TFile[]} - All sugar files in the vault.
 	 **/
-	getAllSugarFiles(): TFile[] {
+	getSugarFiles(): TFile[] {
 		const sugarFiles: TFile[] = [];
 		this.plugin.app.vault.getFiles().forEach((file) => {
 			if (file.extension === "sugar") {
@@ -69,7 +69,7 @@ export default class SugarRushFileSystemHandler {
 	 * Deletes all sugar files in the vault. (All .sugar files)
 	 **/
 	deleteAllSugarFiles() {
-		this.getAllSugarFiles().forEach((file) => {
+		this.getSugarFiles().forEach((file) => {
 			this.plugin.app.vault.delete(file).then(() => {
 				if (this.plugin.settings.debug) {
 					console.log("Deleted file", file);
