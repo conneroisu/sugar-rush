@@ -1,14 +1,13 @@
 import { gutter } from "@codemirror/view";
 import type { Extension } from "@codemirror/state";
-import { AbstractExtension } from "plugin-sugar-rush/contracts/AbstractExtension";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
  * Extension that shows modifications to a suar file, +,-,~
  * @property plugin - The instance of the plugin.
  **/
-export default class IndicatorsExtension implements AbstractExtension {
-	plugin: SugarRushPlugin;
+export default class IndicatorsExtension {
+	private readonly plugin: SugarRushPlugin;
 	extension: Extension;
 	/**
 	 * Creates a new IndicatorsExtension that shows modifications to a sugar file

@@ -1,7 +1,7 @@
 import type { TAbstractFile } from "obsidian";
-import type { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
-import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/extensionFormat";
+import type { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
+import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 
 /**
  * Class `DeleteOperation` - representation of a delete operation.

@@ -1,5 +1,5 @@
 import type { TAbstractFile } from "obsidian";
-import { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
+import { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 

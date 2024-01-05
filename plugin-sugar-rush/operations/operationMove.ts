@@ -1,8 +1,6 @@
-import { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
-import { getIconForLineFileExtension } from "plugin-sugar-rush/extensions/formatExtension";
+import { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
+import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-
-type NewType = string;
 
 /**
  * An operation that essentially moves files @implements {AbstractOperation}.

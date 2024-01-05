@@ -1,3 +1,4 @@
+import { TAbstractFile, TFile, TFolder } from "obsidian";
 import assets from "./!icons.json";
 
 /**
@@ -22,4 +23,28 @@ export function getIconForLineFileExtension(extension: string): string {
 		return defaultIcon.data;
 	}
 	return icon.data;
+}
+/**
+ * Returns the size of a file or sum of sizes of all files within a folder, recursively.
+ * @param {TFile | TFolder} file - File or folder to get the size for.
+ * @returns The size of the file or sum of sizes of all files in the folder. Returns 0 if there are no files in the folder.
+ */
+
+export function getSizeForAbstractFile(file: TAbstractFile) {
+	if (file instanceof TFile) {
+		return file.stat.size;
+	}
+
+	if (file instanceof TFolder) {
+		let sum = 0;
+		for (const child of file.children) {
+			const res = getSizeForAbstractFile(child);
+			if (res) {
+				sum += res;
+			}
+		}
+		return sum;
+	}
+
+	return 0;
 }

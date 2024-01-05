@@ -1,8 +1,7 @@
 import { gutter } from "@codemirror/view";
 import type { Extension } from "@codemirror/state";
-import AbstractExtension from "plugin-sugar-rush/contracts/AbstractExtension";
-import ConflictMarker from "plugin-sugar-rush/markers/conflictMarker";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
+import ConflictMarker from "plugin-sugar-rush/markers/markerConflict";
 
 /**
  * The `conflictExtension` class is an extension of the `AbstractExtension` class from the plugin-sugar-rush package.
@@ -10,7 +9,7 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  * @property {SugarRushPlugin} plugin - This stores the instance of the SugarRushPlugin class.
  * @method parse_id - This method parses the id of the exception from the line of code.
  **/
-export default class ConflictExtension implements AbstractExtension {
+export default class ConflictExtension {
 	plugin: SugarRushPlugin;
 
 	/**

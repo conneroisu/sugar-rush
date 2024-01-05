@@ -1,10 +1,10 @@
 import { Modal } from "obsidian";
-import { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
+import { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 export class SugarRushOperationView extends Modal {
 	operations!: AbstractOperation[];
-	
+
 	constructor(plugin: SugarRushPlugin) {
 		super(plugin.app);
 	}

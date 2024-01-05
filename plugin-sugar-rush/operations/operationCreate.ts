@@ -1,7 +1,6 @@
-import { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
+import { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
-
 
 /**
  * Allows creation of a new file or directory in the application, obsidian.

@@ -1,5 +1,5 @@
 import { GutterMarker } from "@codemirror/view";
-import { getIconForLineFileExtension } from "../extensions/formatExtension";
+import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 
 /**
  * The FormatMarker class, a subclass of GutterMarker, represents a format indicator in file with associated icons.
@@ -26,8 +26,8 @@ export class FormatMarker extends GutterMarker {
 	}
 
 	/**
-	* Renders the marker to the dom.
-	**/
+	 * Renders the marker to the dom.
+	 **/
 	toDOM() {
 		const icon = document.createElementNS(
 			"http://www.w3.org/2000/svg",

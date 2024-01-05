@@ -1,9 +1,9 @@
 import { Modal } from "obsidian";
-import { AbstractOperation } from "plugin-sugar-rush/contracts/AbstractOperation";
+import { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
- * View for viewing currently pending operations 
+ * View for viewing currently pending operations
  * @extends Modal
  * @property {AbstractOperation[]} operations - An array of AbstractOperation.
  * @constructor
@@ -14,7 +14,7 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  **/
 export class SugarRushPendingView extends Modal {
 	operations!: AbstractOperation[];
-	
+
 	/**
 	 * Constructs an instance of SugarRushPendingView with specified application object and operations.
 	 * @constructor
@@ -36,13 +36,15 @@ export class SugarRushPendingView extends Modal {
 			contentEl.createEl("p", { text: operation.description });
 		}
 
-		const minimizeButton = contentEl.createEl("button", { text: "Minimize" });
+		const minimizeButton = contentEl.createEl("button", {
+			text: "Minimize",
+		});
 		const cancelButton = contentEl.createEl("button", { text: "Cancel" });
 
 		cancelButton.addEventListener("click", () => {
 			this.close();
 		});
-		
+
 		minimizeButton.addEventListener("click", () => {
 			this.close();
 		});
