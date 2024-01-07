@@ -19,7 +19,7 @@ export default class ConflictMarker extends GutterMarker {
 
 	/**
 	 * Renders the marker to teh dom.
-	 * */
+	 **/
 	toDOM() {
 		return document.createTextNode(this.message);
 	}
