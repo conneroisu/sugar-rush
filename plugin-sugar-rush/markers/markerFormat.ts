@@ -3,7 +3,6 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 
 /**
  * The format indicator in file with associated icons for each file extension.
- * @extends GutterMarker
  * @property {string} extension - Denotes the file extension associated with the FormatMarker instance.
  * @method toDOM - Overrides the toDOM method of the GutterMarker class.
  * @returns {HTMLElement} - Returns an SVG element with attached attributes and inner HTML derived from the

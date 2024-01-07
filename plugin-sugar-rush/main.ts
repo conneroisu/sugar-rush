@@ -31,7 +31,7 @@ export default class SugarRushPlugin extends Plugin {
 	app!: App;
 
 	/**
-	 * Asyncronously invokes when the plugin is loaded to the workspace.
+	 * Asyncronous routine when the plugin is loaded to the workspace.
 	 **/
 	async onload() {
 		await this.loadSettings();

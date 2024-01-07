@@ -2,9 +2,9 @@ import { gutter, GutterMarker } from "@codemirror/view";
 import assets from "../!icons.json";
 
 /**
- * Indicates changes in the 
+ * Indicates the state of a given line in a sugar view. 
  **/
-class IndicatorsGutterMarker extends GutterMarker {
+class StateMarker extends GutterMarker {
 	icon!: string;
 
 	/** 
