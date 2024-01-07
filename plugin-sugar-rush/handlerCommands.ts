@@ -22,7 +22,6 @@ export default class SugarRushCommandHandler {
 					const sugarFilePath =
 						plugin.fileSystemHandler.getSugarFilePath(activeFile);
 					if (activeFile.parent && activeFile.parent.name !== "") {
-						// The file is not at the root and has a parent folder
 						const file: TFile | null | undefined | TAbstractFile =
 							plugin.app.vault.getAbstractFileByPath(sugarFilePath);
 						if (!file) {
@@ -85,9 +84,7 @@ export default class SugarRushCommandHandler {
 			id: "select-sugar-view-entry",
 			name: "Select Sugar View Entry",
 			editorCheckCallback: (checking: boolean, editor: Editor) => {
-
 				const activeFile = plugin.app.workspace.getActiveFile();
-
 				const leaf = plugin.app.workspace.getMostRecentLeaf();
 				if (checking) {
 					return true;
@@ -125,9 +122,6 @@ export default class SugarRushCommandHandler {
 				const activeFile = plugin.app.workspace.getActiveFile();
 				const leaf = plugin.app.workspace.getMostRecentLeaf();
 				if (!checking && activeFile && leaf) {
-					// delete all of the sugar files in the vault and then reload the current file
-
-					// reload the current file
 					plugin.app.vault
 						.modify(activeFile, plugin.fileSystemHandler.generateSugarFileContent(activeFile))
 						.then(() => {
@@ -151,9 +145,6 @@ export default class SugarRushCommandHandler {
 				const activeFile = plugin.app.workspace.getActiveFile();
 				const leaf = plugin.app.workspace.getMostRecentLeaf();
 				if (!checking && activeFile && leaf) {
-					// delete all of the sugar files in the vault and then reload the current file
-
-					// reload the current file
 					plugin.app.vault
 						.modify(activeFile, plugin.fileSystemHandler.generateSugarFileContent(activeFile))
 						.then(() => {
