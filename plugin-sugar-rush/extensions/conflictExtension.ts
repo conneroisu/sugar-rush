@@ -1,12 +1,12 @@
 import type { Extension } from "@codemirror/state";
-import { gutter } from "@codemirror/view";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-import ConflictMarker from "plugin-sugar-rush/markers/markerConflict";
+import { gutter } from "@codemirror/view";
 import { CreateOperation } from "plugin-sugar-rush/operations/operationCreate";
 import { DeleteOperation } from "plugin-sugar-rush/operations/operationDelete";
 import { MoveOperation } from "plugin-sugar-rush/operations/operationMove";
 import { RenameOperation } from "plugin-sugar-rush/operations/operationRename";
 import { parse_id } from "plugin-sugar-rush/utils";
+import ConflictMarker from "plugin-sugar-rush/markers/markerConflict";
 
 /**
  * Extension that shows conflicts in the gutter.
@@ -24,6 +24,9 @@ export default class ConflictExtension {
 		this.plugin = plugin;
 	}
 
+	/** 
+	 * Returns the extension for ConflictExtension
+	 **/
 	getExtension(): Extension {
 		return gutter({
 			lineMarker: (view, line) => {
@@ -45,7 +48,7 @@ export default class ConflictExtension {
 					case RenameOperation:
 						return new ConflictMarker("Rename");
 					case undefined:
-						return null;
+						return new ConflictMarker("");
 				}
 			},
 		});
