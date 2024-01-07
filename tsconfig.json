@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"outDir": "./dist", // Change the output directory to a different path
+		"outDir": "./dist", 
 		"types": [
 			"node"
 		],
