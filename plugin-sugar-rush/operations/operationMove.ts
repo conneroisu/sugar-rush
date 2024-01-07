@@ -1,4 +1,3 @@
-import { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
@@ -39,6 +38,9 @@ export class MoveOperation  {
 		this.movedPath = this.newPath;
 	}
 
+	/** 
+	 * Run the operation
+	 **/
 	run(): void {
 		throw new Error("Method not implemented.");
 	}

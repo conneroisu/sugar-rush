@@ -1,15 +1,20 @@
 import { Modal } from "obsidian";
-import { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
+import type { CreateOperation } from "./operations/operationCreate";
+import type { MoveOperation } from "./operations/operationMove";
+import type { RenameOperation } from "./operations/operationRename";
+import type { DeleteOperation } from "./operations/operationDelete";
 
+/** 
+ * View that displays the operations that are pending
+ **/
 export class SugarRushOperationView extends Modal {
-	operations!: AbstractOperation[];
 
 	constructor(plugin: SugarRushPlugin) {
 		super(plugin.app);
 	}
 
-	getOperations(): AbstractOperation[] {
+	getOperations(): (CreateOperation | MoveOperation | RenameOperation | DeleteOperation | []) {
 		return [];
 	}
 
