@@ -63,10 +63,22 @@ export default class SugarRushCommandHandler {
 			id: "toggle-hidden-files",
 			name: "Toggle Hidden Files",
 			editorCheckCallback: (checking: boolean) => {
-				if(checking &&  plugin.app.workspace.getActiveFile()){
+				if (checking) {
+					const activeFile = plugin.app.workspace.getActiveFile();
+					if (!activeFile) {
+						return false;
+					}
+					if (activeFile.extension !== "sugar") {
+						return false;
+					}
 					return true;
 				}
-				this.plugin.settings.showHiddenFiles = !this.plugin.settings.showHiddenFiles;
+				if (plugin.fileSystemHandler.operationsMap.size > 0) {
+					new Notice("Cannot toggle hidden files while an operation is in progress.");
+				}
+				plugin.settings.showHiddenFiles = !plugin.settings.showHiddenFiles;
+				plugin.saveSettings();
+				return true;
 			}
 		});
 		this.plugin.addCommand({
@@ -155,28 +167,6 @@ export default class SugarRushCommandHandler {
 						return true;
 					}
 				}
-				return true;
-			}
-		});
-		this.plugin.addCommand({
-			id: "open-sugar-view",
-			name: "Open Sugar View",
-			editorCheckCallback: (checking: boolean) => {
-				if (checking) {
-					const activeFile = plugin.app.workspace.getActiveFile();
-					if (!activeFile) {
-						return false;
-					}
-					if (activeFile.extension !== "sugar") {
-						return false;
-					}
-					return true;
-				}
-				if (plugin.fileSystemHandler.operationsMap.size > 0) {
-					new Notice("Cannot toggle hidden files while an operation is in progress.");
-				}
-				plugin.settings.showHiddenFiles = !plugin.settings.showHiddenFiles;
-				plugin.saveSettings();
 				return true;
 			}
 		});
