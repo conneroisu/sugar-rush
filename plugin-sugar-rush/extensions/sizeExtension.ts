@@ -27,7 +27,6 @@ export default class SizeExtension {
 	getExtension(): Extension {
 		return gutter({
 			lineMarker: (view, line) => {
-				// search the abstract map for the fileSystemHandler
 				const lineForFile = view.state.doc.line(
 					view.state.doc.lineAt(line.from).number
 				);
@@ -40,9 +39,7 @@ export default class SizeExtension {
 					return null;
 				}
 				const bytes = getSizeForAbstractFile(file).toString();
-				// convert the bytes into the appropriate unit (KB MB GB)
 				const numbytes_sci = parseInt(bytes).toExponential(2);
-				// get the exponent
 				const exponent = parseInt(numbytes_sci.split("e")[1]);
 
 				return new SizeMarker(numbytes_sci);

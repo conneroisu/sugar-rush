@@ -63,10 +63,5 @@ export class SugarRushSettingView extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-		// sqlite view of the logging table
-		// new Setting(containerEl)
-		// .setName("Visual Extensions")
-		// .setDesc("Display visual extensions?")
-		// .add
 	}
 }

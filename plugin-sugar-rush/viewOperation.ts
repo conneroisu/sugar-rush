@@ -17,7 +17,6 @@ export class SugarRushOperationView extends Modal {
 		const { contentEl } = this;
 		contentEl.createEl("h1", { text: "Operation View" });
 
-		// create a list of operations
 		for (const operation of this.operations) {
 			contentEl.createEl("h2", { text: operation.name });
 			contentEl.createEl("p", { text: operation.description });
