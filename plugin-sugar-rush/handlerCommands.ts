@@ -59,14 +59,16 @@ export default class SugarRushCommandHandler {
 				return true;
 			}
 		});
-		// TODO: Implement this command corectly: toggle hidden files
-		// this.plugin.addCommand({
-		//     id: "toggle-hidden-files",
-		//     name: "Toggle Hidden Files",
-		//     editorCheckCallback: (checking: boolean) => {
-		//         commandToggleHiddenFiles(this.plugin, checking)
-		//     }
-		// });
+		this.plugin.addCommand({
+			id: "toggle-hidden-files",
+			name: "Toggle Hidden Files",
+			editorCheckCallback: (checking: boolean) => {
+				if(checking &&  plugin.app.workspace.getActiveFile()){
+					return true;
+				}
+				this.plugin.settings.showHiddenFiles = !this.plugin.settings.showHiddenFiles;
+			}
+		});
 		this.plugin.addCommand({
 			id: "select-sugar-view-entry",
 			name: "Select Sugar View Entry",
@@ -108,26 +110,26 @@ export default class SugarRushCommandHandler {
 			id: "save-sugar-view",
 			name: "Save Sugar View",
 			editorCheckCallback: (checking: boolean) => {
-	const activeFile = plugin.app.workspace.getActiveFile();
-	const leaf = plugin.app.workspace.getMostRecentLeaf();
-	if (!checking && activeFile && leaf) {
-		// delete all of the sugar files in the vault and then reload the current file
+				const activeFile = plugin.app.workspace.getActiveFile();
+				const leaf = plugin.app.workspace.getMostRecentLeaf();
+				if (!checking && activeFile && leaf) {
+					// delete all of the sugar files in the vault and then reload the current file
 
-		// reload the current file
-		plugin.app.vault
-			.modify(activeFile, plugin.fileSystemHandler.generateSugarFileContent(activeFile))
-			.then(() => {
-				if (plugin.settings.debug) {
-					console.log("Refreshed file", activeFile);
+					// reload the current file
+					plugin.app.vault
+						.modify(activeFile, plugin.fileSystemHandler.generateSugarFileContent(activeFile))
+						.then(() => {
+							if (plugin.settings.debug) {
+								console.log("Refreshed file", activeFile);
+							}
+							plugin.fileSystemHandler.loadFile(activeFile, leaf);
+						});
+				} else {
+					if (activeFile && leaf) {
+						return true;
+					}
 				}
-				plugin.fileSystemHandler.loadFile(activeFile, leaf);
-			});
-	} else {
-		if (activeFile && leaf) {
-			return true;
-		}
-	}
-	return true;
+				return true;
 			}
 		});
 		this.plugin.addCommand({
@@ -160,7 +162,6 @@ export default class SugarRushCommandHandler {
 			id: "open-sugar-view",
 			name: "Open Sugar View",
 			editorCheckCallback: (checking: boolean) => {
-				// If checking is true, then we are checking if the command can be run.
 				if (checking) {
 					const activeFile = plugin.app.workspace.getActiveFile();
 					if (!activeFile) {

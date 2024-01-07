@@ -1,6 +1,6 @@
 import { gutter } from "@codemirror/view";
 import type { Extension } from "@codemirror/state";
-import type SugarRushPlugin from "plugin-sugar-rush/main";
+import type SugarRushPlugin from "../main";
 
 /**
  * Extension that shows modifications to a suar file, +,-,~

@@ -4,7 +4,7 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
  * View for the settings of the plin, SugarRUshPlugin
- * @ext
+ * @e
  **/
 export class SugarRushSettingView extends PluginSettingTab {
 	plugin: SugarRushPlugin;

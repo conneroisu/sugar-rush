@@ -18,7 +18,7 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
  * @param {string} path - The path to the file or directory that should be deleted.
  * @method run(): void - The method that performs the delete operation.
  **/
-export class DeleteOperation implements AbstractOperation {
+export class DeleteOperation  {
 	plugin: SugarRushPlugin;
 	file!: TAbstractFile;
 	description = "Deletes the file or directory at the given path";

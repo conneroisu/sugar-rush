@@ -16,7 +16,7 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
  * @method constructor(plugin: SugarRushPlugin, path: string): void - Class constructor that initializes the `CreateOperation`.
  * @method run(): void - The main method that performs the operation, i.e., creating a new file or directory at the specified path.
  **/
-export class CreateOperation implements AbstractOperation {
+export class CreateOperation  {
 	plugin: SugarRushPlugin;
 	description = "Creates a new file or directory at the given path";
 	icon: string = getIconForLineFileExtension("create");

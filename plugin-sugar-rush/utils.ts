@@ -48,3 +48,18 @@ export function getSizeForAbstractFile(file: TAbstractFile) {
 
 	return 0;
 }
+
+/**
+ * Parses the id of the exception from the line of code.
+ * @param line - The line of code.
+ * @returns The id of the exception.
+ * @example
+ * // returns "1"
+ * parse_id("1 <a href="1">")
+ * @example
+ * // returns "2"
+ * parse_id("2 <a href="2">")
+ **/
+export function parse_id(line: string): string {
+	return line.split("<a href=")[1].split(">")[0];
+}

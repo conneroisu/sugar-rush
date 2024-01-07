@@ -13,7 +13,7 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
  * @property {string} icon - The icon for the operation given by the file extension
  * @method run - void
  **/
-export class RenameOperation implements AbstractOperation {
+export class RenameOperation {
 	plugin: SugarRushPlugin;
 	description = "Renames abstract file to the new path. ";
 	icon: string = getIconForLineFileExtension("rename");

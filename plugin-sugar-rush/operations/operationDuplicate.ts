@@ -15,7 +15,7 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  * @property {string} newPath - The new path of the file
  * @method run(): void - The method that performs the rename operation.
  **/
-export class DuplicateOperation implements AbstractOperation {
+export class DuplicateOperation  {
 	plugin: SugarRushPlugin;
 	name = "Duplicate";
 	description = "Duplicates the file or directory at the given path";
