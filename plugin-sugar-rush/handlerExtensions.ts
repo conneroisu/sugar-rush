@@ -40,7 +40,7 @@ export default class SugarRushExtensionHandler {
 	getExtensions() {
 		this.extensions = [];
 		if (this.plugin.settings.showFileIcons) {
-			this.extensions.push(new FormatExtension(this.plugin));
+			this.extensions.push(new FormatExtension());
 		}
 		if (this.plugin.settings.showFileSizes) {
 			this.extensions.push(new SizeExtension(this.plugin));

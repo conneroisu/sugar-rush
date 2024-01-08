@@ -6,7 +6,7 @@ import assets from "./!icons.json";
  * If no icon is associated with this extension, it will return the default icon instead.
  * @param {string} extension - The string referencing the file extension for which an icon is to be retrieved.
  * @return {string} - It returns the icon data string corresponding to the provided file extension.
- */
+ **/
 export function getIconForLineFileExtension(extension: string): string {
 	const icon = assets["extension-associations"].find((association) => {
 		return association.extensions.includes(extension);
@@ -24,12 +24,12 @@ export function getIconForLineFileExtension(extension: string): string {
 	}
 	return icon.data;
 }
+
 /**
  * Returns the size of a file or sum of sizes of all files within a folder, recursively.
  * @param {TFile | TFolder} file - File or folder to get the size for.
  * @returns The size of the file or sum of sizes of all files in the folder. Returns 0 if there are no files in the folder.
- */
-
+ **/
 export function getSizeForAbstractFile(file: TAbstractFile) {
 	if (file instanceof TFile) {
 		return file.stat.size;
@@ -62,4 +62,13 @@ export function getSizeForAbstractFile(file: TAbstractFile) {
  **/
 export function parse_id(line: string): string {
 	return line.split("<a href=")[1].split(">")[0];
+}
+
+
+/**
+ * Parses the abstract prefix for the id of the file.
+ * @param line - The line to parse the abstract prefix for.
+ **/
+export function parseAbstractPrefixForId(line: string): number {
+	return parseInt(line.match(/(?<=href=)\w+/)?.toString() ?? "");
 }

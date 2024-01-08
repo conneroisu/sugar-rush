@@ -1,5 +1,4 @@
 import { GutterMarker } from "@codemirror/view";
-import assets from "../!icons.json";
 
 /**
  * ExceptionMarker is a class that extends the GutterMarker class. 

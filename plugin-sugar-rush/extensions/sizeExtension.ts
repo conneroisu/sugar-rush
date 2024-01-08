@@ -1,7 +1,7 @@
 import type { Extension } from "@codemirror/state";
 import { gutter } from "@codemirror/view";
-import { getSizeForAbstractFile } from "plugin-sugar-rush/utils";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
+import { getSizeForAbstractFile, parseAbstractPrefixForId } from "plugin-sugar-rush/utils";
 
 import { SizeMarker } from "plugin-sugar-rush/markers/markerSize";
 
@@ -31,7 +31,7 @@ export default class SizeExtension {
 					view.state.doc.lineAt(line.from).number
 				);
 				const id =
-					this.plugin.fileSystemHandler.parseAbstractPrefixForId(
+					parseAbstractPrefixForId(
 						lineForFile.text
 					);
 				const file = this.plugin.fileSystemHandler.abstractMap.get(id);
@@ -40,7 +40,7 @@ export default class SizeExtension {
 				}
 				const bytes = getSizeForAbstractFile(file).toString();
 				const numbytes_sci = parseInt(bytes).toExponential(2);
-				const exponent = parseInt(numbytes_sci.split("e")[1]);
+				// const exponent = parseInt(numbytes_sci.split("e")[1]);
 
 				return new SizeMarker(numbytes_sci);
 			},

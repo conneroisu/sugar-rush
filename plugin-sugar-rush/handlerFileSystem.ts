@@ -1,8 +1,10 @@
 import { sep } from "path";
 import { type TAbstractFile, TFile, TFolder, WorkspaceLeaf } from "obsidian";
-import type { AbstractOperation } from "./operations/abstractOperation";
 import type SugarRushPlugin from "./main";
-import assets from "./!icons.json";
+import type { CreateOperation } from "./operations/operationCreate";
+import type { MoveOperation } from "./operations/operationMove";
+import type { DeleteOperation } from "./operations/operationDelete";
+import type { RenameOperation } from "./operations/operationRename";
 
 /**
  * The `SugarRushFileSystemHandler` class is responsible for handling all file system related operations.
@@ -22,7 +24,7 @@ import assets from "./!icons.json";
 export default class SugarRushFileSystemHandler {
 	private readonly plugin: SugarRushPlugin;
 	abstractMap: Map<number, TAbstractFile> = new Map();
-	operationsMap: Map<number, AbstractOperation> = new Map();
+	operationsMap: Map<number, CreateOperation | MoveOperation | DeleteOperation | RenameOperation> = new Map();
 
 	/**
 	 * Creates a new File System Handler.
@@ -39,11 +41,11 @@ export default class SugarRushFileSystemHandler {
 	 **/
 	getSugarFiles(): TFile[] {
 		const sugarFiles: TFile[] = [];
-		this.plugin.app.vault.getFiles().forEach((file) => {
+		for	(const file of this.plugin.app.vault.getFiles()) {
 			if (file.extension === "sugar") {
 				sugarFiles.push(file);
 			}
-		});
+		}
 		return sugarFiles;
 	}
 
@@ -57,25 +59,18 @@ export default class SugarRushFileSystemHandler {
 		return `<a href=${code}></a>`;
 	}
 
-	/**
-	 * Parses the abstract prefix for the id of the file.
-	 * @param line - The line to parse the abstract prefix for.
-	 **/
-	parseAbstractPrefixForId(line: string): number {
-		return parseInt(line.match(/(?<=href=)\w+/)?.toString() ?? "");
-	}
 
 	/**
 	 * Deletes all sugar files in the vault. (All .sugar files)
 	 **/
 	deleteAllSugarFiles() {
-		this.getSugarFiles().forEach((file) => {
+		for (const file of this.getSugarFiles()) {
 			this.plugin.app.vault.delete(file).then(() => {
 				if (this.plugin.settings.debug) {
 					console.log("Deleted file", file);
 				}
 			});
-		});
+		}
 	}
 
 	/**
