@@ -28,7 +28,7 @@ export default class SugarRushExtensionHandler {
 	}
 
 	/**
-	 * The `clearExtensions` method is a member of the `SugarRushExtensionHandler` class.
+	 * Clears the extensions array
 	 **/
 	clearExtensions() {
 		this.extensions = [];
