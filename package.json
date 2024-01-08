@@ -22,7 +22,7 @@
 	"author": "Conner Ohnesorge",
 	"license": "MIT",
 	"devDependencies": {
-		"@codemirror/language": "^6.9.3",
+		"@codemirror/language": "^6.10.0",
 		"@tsconfig/svelte": "^5.0.2",
 		"@types/better-sqlite3": "^7.6.8",
 		"@types/node": "^20.10.6",
