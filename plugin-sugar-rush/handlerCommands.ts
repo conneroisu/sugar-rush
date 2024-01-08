@@ -2,11 +2,9 @@ import { type Editor, TAbstractFile, TFile, TFolder, Notice } from "obsidian";
 import SugarRushPlugin from "./main";
 
 export default class SugarRushCommandHandler {
-	private readonly plugin: SugarRushPlugin;
 
 	constructor(plugin: SugarRushPlugin) {
-		this.plugin = plugin;
-		this.plugin.addCommand({
+		plugin.addCommand({
 			id: "rush-to-sugar-view",
 			name: "Rush to Sugar View",
 			editorCheckCallback: (checking: boolean) => {
@@ -58,7 +56,7 @@ export default class SugarRushCommandHandler {
 				return true;
 			}
 		});
-		this.plugin.addCommand({
+		plugin.addCommand({
 			id: "toggle-hidden-files",
 			name: "Toggle Hidden Files",
 			editorCheckCallback: (checking: boolean) => {
@@ -80,7 +78,7 @@ export default class SugarRushCommandHandler {
 				return true;
 			}
 		});
-		this.plugin.addCommand({
+		plugin.addCommand({
 			id: "select-sugar-view-entry",
 			name: "Select Sugar View Entry",
 			editorCheckCallback: (checking: boolean, editor: Editor) => {
@@ -115,7 +113,7 @@ export default class SugarRushCommandHandler {
 				return false;
 			}
 		});
-		this.plugin.addCommand({
+		plugin.addCommand({
 			id: "save-sugar-view",
 			name: "Save Sugar View",
 			editorCheckCallback: (checking: boolean) => {
@@ -138,7 +136,7 @@ export default class SugarRushCommandHandler {
 				return true;
 			}
 		});
-		this.plugin.addCommand({
+		plugin.addCommand({
 			id: "refresh-sugar-view",
 			name: "Refresh Sugar View",
 			editorCheckCallback: (checking: boolean) => {
