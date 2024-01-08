@@ -1,6 +1,5 @@
 import type { TAbstractFile } from "obsidian";
 import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
-import { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
@@ -17,7 +16,6 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  **/
 export class DuplicateOperation  {
 	plugin: SugarRushPlugin;
-	name = "Duplicate";
 	description = "Duplicates the file or directory at the given path";
 	icon: string = getIconForLineFileExtension("duplicate");
 	id = "duplicate";

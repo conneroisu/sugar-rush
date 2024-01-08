@@ -1,5 +1,4 @@
 import type { TAbstractFile } from "obsidian";
-import type { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 
@@ -23,6 +22,7 @@ export class DeleteOperation  {
 	file!: TAbstractFile;
 	description = "Deletes the file or directory at the given path";
 	icon: string = getIconForLineFileExtension("delete");
+	id = "delete";
 
 	/**
 	 * Creates an instance of delete operation.

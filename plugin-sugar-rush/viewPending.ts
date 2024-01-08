@@ -1,6 +1,9 @@
 import { Modal } from "obsidian";
-import { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
+import type { CreateOperation } from "./operations/operationCreate";
+import type { DeleteOperation } from "./operations/operationDelete";
+import type { RenameOperation } from "./operations/operationRename";
+import type { MoveOperation } from "./operations/operationMove";
 
 /**
  * View for viewing currently pending operations
@@ -13,7 +16,7 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  * @method onClose - Overrides Modal's onClose method. It clears the contentEl of the modal.
  **/
 export class SugarRushPendingView extends Modal {
-	operations!: AbstractOperation[];
+	operations!: (CreateOperation[] | MoveOperation[] | RenameOperation[] | DeleteOperation[] | []);
 
 	/**
 	 * Constructs an instance of SugarRushPendingView with specified application object and operations.
@@ -32,7 +35,7 @@ export class SugarRushPendingView extends Modal {
 		contentEl.createEl("h1", { text: "Pending Operations" });
 
 		for (const operation of this.operations) {
-			contentEl.createEl("h2", { text: operation.name });
+			contentEl.createEl("h2", { text: operation.id });
 			contentEl.createEl("p", { text: operation.description });
 		}
 

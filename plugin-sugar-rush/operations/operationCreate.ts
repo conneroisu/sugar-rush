@@ -1,4 +1,3 @@
-import { AbstractOperation } from "plugin-sugar-rush/operations/abstractOperation";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 

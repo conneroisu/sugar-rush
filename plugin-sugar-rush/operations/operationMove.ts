@@ -18,6 +18,7 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  * @method run - Method to execute the move operation. Currently throws an "Error: Method not implemented" exception.
  **/
 export class MoveOperation  {
+	id = "move";
 	plugin: SugarRushPlugin;
 	description: string;
 	icon: string = getIconForLineFileExtension("move");

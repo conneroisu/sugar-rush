@@ -14,7 +14,7 @@ export class SugarRushOperationView extends Modal {
 		super(plugin.app);
 	}
 
-	getOperations(): (CreateOperation | MoveOperation | RenameOperation | DeleteOperation | []) {
+	getOperations(): (CreateOperation[] | MoveOperation[] | RenameOperation[] | DeleteOperation[] | []) {
 		return [];
 	}
 
@@ -22,9 +22,14 @@ export class SugarRushOperationView extends Modal {
 		const { contentEl } = this;
 		contentEl.createEl("h1", { text: "Operation View" });
 
-		for (const operation of this.operations) {
-			contentEl.createEl("h2", { text: operation.name });
-			contentEl.createEl("p", { text: operation.description });
+		const operations = this.getOperations();
+		if (operations.length === 0) {
+			contentEl.createEl("p", { text: "There are no operations pending." });
+		}else{
+			for (const operation of operations) {
+				contentEl.createEl("h2", { text: operation.id });
+				contentEl.createEl("p", { text: operation.description });
+			}
 		}
 
 		const acceptButton = contentEl.createEl("button", { text: "Accept" });
