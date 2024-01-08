@@ -38,6 +38,9 @@ export class SugarRushOperationView extends Modal {
 		});
 	}
 
+	/**
+	 * Rotine thatrns on the closing of the view
+	 **/
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
