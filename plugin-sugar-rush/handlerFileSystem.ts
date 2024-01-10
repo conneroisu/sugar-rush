@@ -151,17 +151,17 @@ export default class SugarRushFileSystemHandler {
 
 	/**
 	 * Returns the children of the parent of the given file.
-	 * @param file - The file to get the parent children of.
+	 * @param {TAbstractFile} file -the returned  parent's children are of this file
 	 **/
 	getParentChildren(file: TAbstractFile): TAbstractFile[] {
 		if (file instanceof TFolder) {
-			return file.children;
+			return file.children; 
 		}
 		if (file instanceof TFile) {
 			if (file.parent === null) {
-				return this.plugin.app.vault.getRoot().children;
+				return this.plugin.app.vault.getRoot().children; 
 			}
-			return file.parent.children;
+			return file.parent.children; 
 		}
 		return [];
 	}
