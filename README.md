@@ -30,7 +30,7 @@ TODO: add a See more examples link
 
 ## Introduction
 
-The goals of this plugin are to provide full control over the file system within your vault using a note as an interaction surface. 
+The goals of this plugin are to provide full control over the file system within your vault using a note as an interaction surface.
 Notes created with this plugin are hidden from searches within your vault to allow for a faultless adoption.
 
 One can read more by going to the [wiki](https://github.com/conneroisu/sugar-rush/wiki)
@@ -42,12 +42,9 @@ One can read more by going to the [wiki](https://github.com/conneroisu/sugar-rus
 Wanting to use a leader key to trigger commands for the plugin? I recommend [tgrosinger's leader-hotkeys-obsidian](https://github.com/tgrosinger/leader-hotkeys-obsidian).
 One can check out the guide to do this in terms of this repository [here]()
 
-
 ### Increment Map
 
-
 Wanting to use `g<C-a>`? I would recommend using an [specific increment map]() within your `.obsidian.vimrc`
-
 
 ## Features
 
@@ -55,12 +52,11 @@ Wanting to use `g<C-a>`? I would recommend using an [specific increment map]() w
 -   [ ] Renaming of files hooks into actions inside of Obsidian so that plugins can readjust the links to and from a file.
 -   [ ] Cross-Directory Actions
 
-
 ## Developing
 
 ### How the Plugin Works
 
-Currently, the plugin keeps trake of files 
+Currently, the plugin keeps track of files and displays editable buffers of text that can allow the user to modify their file system.
 
 ### Core Plugin Development
 
@@ -70,11 +66,6 @@ Looking to develop **sugar-rush** further? Checkout [Developing](https://github.
 
 Looking to develop **sugar-rush** to do something out of the project's scope of interacting with just the file system? Check out how you can expand this plugin with your own plugins here.
 
-
 ## Contributors
 
 Find contributors and thier information [here](https://github/com/conneroisu/sugar-rush/wiki/Contributors) at the wiki documentation.
-
-
-
-
