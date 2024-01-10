@@ -24,7 +24,14 @@ import type { RenameOperation } from "./operations/operationRename";
 export default class SugarRushFileSystemHandler {
 	private readonly plugin: SugarRushPlugin;
 	abstractMap: Map<number, TAbstractFile> = new Map();
-	operationsMap: Map<number, CreateOperation | MoveOperation | DeleteOperation | RenameOperation> = new Map();
+	operationsMap: Map<
+		number,
+		CreateOperation | MoveOperation | DeleteOperation | RenameOperation
+	> = new Map();
+	pendingOperations: Map<
+		number,
+		CreateOperation | MoveOperation | DeleteOperation | RenameOperation
+	> = new Map();
 
 	/**
 	 * Creates a new File System Handler.
@@ -41,7 +48,7 @@ export default class SugarRushFileSystemHandler {
 	 **/
 	getSugarFiles(): TFile[] {
 		const sugarFiles: TFile[] = [];
-		for	(const file of this.plugin.app.vault.getFiles()) {
+		for (const file of this.plugin.app.vault.getFiles()) {
 			if (file.extension === "sugar") {
 				sugarFiles.push(file);
 			}
@@ -58,7 +65,6 @@ export default class SugarRushFileSystemHandler {
 		this.abstractMap.set(parseInt(code), file);
 		return `<a href=${code}></a>`;
 	}
-
 
 	/**
 	 * Deletes all sugar files in the vault. (All .sugar files)
@@ -107,14 +113,19 @@ export default class SugarRushFileSystemHandler {
 	}
 
 	/**
-	 * Creates a sugar file for the given file.
+	 * Creates a sugar file for the given file with the sugar files's content.
 	 * @param activeFile - the file to create the sugar file for
 	 **/
 	async createSugarFile(activeFile: TFile): Promise<TFile> {
-		return await this.plugin.app.vault.create(
+		const sugarFile = await this.plugin.app.vault.create(
 			this.getSugarFilePath(activeFile),
-			this.generateSugarFileContent(activeFile)
+			""
 		);
+		this.plugin.app.vault.modify(
+			sugarFile,
+			this.generateSugarFileContent(sugarFile)
+		);
+		return sugarFile;
 	}
 
 	/**
