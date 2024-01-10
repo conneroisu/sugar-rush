@@ -1,6 +1,7 @@
 import type { TAbstractFile } from "obsidian";
 import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
+import type AbstractOperation from "./AbstractOperation";
 
 /**
  * Operation that duplicates an AbstractFile to a new given path.
@@ -14,7 +15,7 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  * @property {string} newPath - The new path of the file
  * @method run(): void - The method that performs the rename operation.
  **/
-export class DuplicateOperation  {
+export class DuplicateOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	description = "Duplicates the file or directory at the given path";
 	icon: string = getIconForLineFileExtension("duplicate");

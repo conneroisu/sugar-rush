@@ -1,10 +1,7 @@
 import { sep } from "path";
 import { type TAbstractFile, TFile, TFolder, WorkspaceLeaf } from "obsidian";
 import type SugarRushPlugin from "./main";
-import type { CreateOperation } from "./operations/operationCreate";
-import type { MoveOperation } from "./operations/operationMove";
-import type { DeleteOperation } from "./operations/operationDelete";
-import type { RenameOperation } from "./operations/operationRename";
+import type AbstractOperation from "./operations/AbstractOperation";
 
 /**
  * The `SugarRushFileSystemHandler` class is responsible for handling all file system related operations.
@@ -24,14 +21,8 @@ import type { RenameOperation } from "./operations/operationRename";
 export default class SugarRushFileSystemHandler {
 	private readonly plugin: SugarRushPlugin;
 	abstractMap: Map<number, TAbstractFile> = new Map();
-	operationsMap: Map<
-		number,
-		CreateOperation | MoveOperation | DeleteOperation | RenameOperation
-	> = new Map();
-	pendingOperations: Map<
-		number,
-		CreateOperation | MoveOperation | DeleteOperation | RenameOperation
-	> = new Map();
+	operationsMap: Map<number, AbstractOperation> = new Map();
+	pendingOperations: Map<number, AbstractOperation> = new Map();
 
 	/**
 	 * Creates a new File System Handler.

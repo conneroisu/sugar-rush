@@ -1,5 +1,6 @@
 import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
+import type AbstractOperation from "./AbstractOperation";
 
 /**
  * An operation that essentially moves files @implements {AbstractOperation}.
@@ -17,7 +18,7 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
  * @param {string} newPath - The new path where the file or folder is moved to.
  * @method run - Method to execute the move operation. Currently throws an "Error: Method not implemented" exception.
  **/
-export class MoveOperation  {
+export class MoveOperation implements AbstractOperation {
 	id = "move";
 	plugin: SugarRushPlugin;
 	description: string;
@@ -39,7 +40,7 @@ export class MoveOperation  {
 		this.movedPath = this.newPath;
 	}
 
-	/** 
+	/**
 	 * Run the operation
 	 **/
 	run(): void {

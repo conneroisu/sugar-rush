@@ -1,6 +1,7 @@
-import type { TAbstractFile } from "obsidian";
+import type { AbstractInputSuggest, TAbstractFile } from "obsidian";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
+import type AbstractOperation from "./AbstractOperation";
 
 /**
  * Operation that renames an AbstractFile to a new given path.
@@ -12,7 +13,7 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
  * @property {string} icon - The icon for the operation given by the file extension
  * @method run - void
  **/
-export class RenameOperation {
+export class RenameOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	description = "Renames abstract file to the new path. ";
 	icon: string = getIconForLineFileExtension("rename");
