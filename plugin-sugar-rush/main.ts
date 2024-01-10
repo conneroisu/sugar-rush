@@ -15,7 +15,7 @@ import { SugarRushSettingView } from "./viewSettings";
  * @attribute {SugarRushOperationHandler} operationHandler - manages operations for the plugin.
  * @attrubute {SugarRushExtensionHandler} extensionHandler - manages extension related operations for the plugin.
  * @attribute {App} app - instance of the App class from Obsidian API.
- * 
+ *
  * @method {async loadSettings} - loads the settings for the plugin from the storage and merges it with default settings.
  * @method {async saveSettings} - saves the settings for the plugin to the storage.
  * @method {onload} - this method is run when the plugin is loaded. It initialization events for extensions, settings tab, and handlers.
@@ -56,7 +56,7 @@ export default class SugarRushPlugin extends Plugin {
 	 * Unloads the plugin, sugar-rush, from the workspace.
 	 **/
 	onunload() {
-		this.fileSystemHandler.deleteAllSugarFiles();
+		this.fileSystemHandler.removeAllSugarFiles();
 	}
 
 	/**

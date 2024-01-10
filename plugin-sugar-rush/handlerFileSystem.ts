@@ -39,7 +39,7 @@ export default class SugarRushFileSystemHandler {
 	 **/
 	constructor(plugin: SugarRushPlugin) {
 		this.plugin = plugin;
-		this.deleteAllSugarFiles();
+		this.removeAllSugarFiles();
 	}
 
 	/**
@@ -69,7 +69,7 @@ export default class SugarRushFileSystemHandler {
 	/**
 	 * Deletes all sugar files in the vault. (All .sugar files)
 	 **/
-	deleteAllSugarFiles() {
+	removeAllSugarFiles() {
 		for (const file of this.getSugarFiles()) {
 			this.plugin.app.vault.delete(file).then(() => {
 				if (this.plugin.settings.debug) {
