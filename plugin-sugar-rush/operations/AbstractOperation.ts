@@ -3,7 +3,6 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
 export default abstract class AbstractOperation {
 	plugin: SugarRushPlugin;
 	id: string;
-	icon: string;
 	description: string;
 
 	constructor(
@@ -14,7 +13,6 @@ export default abstract class AbstractOperation {
 	) {
 		this.plugin = plugin;
 		this.id = id;
-		this.icon = icon;
 		this.description = description;
 	}
 

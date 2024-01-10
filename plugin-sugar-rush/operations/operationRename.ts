@@ -16,7 +16,6 @@ import type AbstractOperation from "./AbstractOperation";
 export class RenameOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	description = "Renames abstract file to the new path. ";
-	icon: string = getIconForLineFileExtension("rename");
 	id = "rename";
 
 	/**

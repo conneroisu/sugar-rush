@@ -18,7 +18,6 @@ import type AbstractOperation from "./AbstractOperation";
 export class DuplicateOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	description = "Duplicates the file or directory at the given path";
-	icon: string = getIconForLineFileExtension("duplicate");
 	id = "duplicate";
 
 	/**

@@ -22,7 +22,6 @@ export class MoveOperation implements AbstractOperation {
 	id = "move";
 	plugin: SugarRushPlugin;
 	description: string;
-	icon: string = getIconForLineFileExtension("move");
 	originalPath: string;
 	movedPath: string;
 	newPath: string;

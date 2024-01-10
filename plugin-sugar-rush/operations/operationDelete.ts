@@ -22,7 +22,6 @@ export class DeleteOperation implements AbstractOperation {
 	plugin: SugarRushPlugin;
 	file!: TAbstractFile;
 	description = "Deletes the file or directory at the given path";
-	icon: string = getIconForLineFileExtension("delete");
 	id = "delete";
 
 	/**
