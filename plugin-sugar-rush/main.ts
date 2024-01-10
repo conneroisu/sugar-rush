@@ -45,8 +45,8 @@ export default class SugarRushPlugin extends Plugin {
 		await this.loadSettings(); // Load settings
 		this.registerExtensions(["sugar"], "markdown"); // Register extensions
 		this.addSettingTab(new SugarRushSettingView(this)); // Add the settings tab
-		this.addCommands(); // Add commands
 		this.fileSystemHandler = new SugarRushFileSystemHandler(this); // Initialize file system handler
+		this.addCommands(); // Add commands
 		this.app.workspace.on("file-open", (file: TFile | null) => {
 			if (file && !(file.extension === "sugar")) {
 				this.getExtensions(); // Update extensions
@@ -269,7 +269,7 @@ export default class SugarRushPlugin extends Plugin {
 			editorCheckCallback: (checking: boolean) => {
 				const activeFile = this.app.workspace.getActiveFile();
 				const leaf = this.app.workspace.getMostRecentLeaf();
-				if (!checking && activeFile && leaf) {
+				if (!checking && activeFile && leaf && activeFile.extension === "sugar"){
 					this.app.vault
 						.modify(
 							activeFile,
