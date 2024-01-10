@@ -1,9 +1,11 @@
 import type { Extension } from "@codemirror/state";
+import { GutterMarker } from "@codemirror/view";
 import { gutter } from "@codemirror/view";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-import { getSizeForAbstractFile, parseAbstractPrefixForId } from "plugin-sugar-rush/utils";
-
-import { SizeMarker } from "plugin-sugar-rush/markers/markerSize";
+import {
+	getSizeForAbstractFile,
+	parseAbstractPrefixForId,
+} from "plugin-sugar-rush/utils";
 
 /**
  * Size Extension that shows the size of a file in the gutter.
@@ -30,10 +32,7 @@ export default class SizeExtension {
 				const lineForFile = view.state.doc.line(
 					view.state.doc.lineAt(line.from).number
 				);
-				const id =
-					parseAbstractPrefixForId(
-						lineForFile.text
-					);
+				const id = parseAbstractPrefixForId(lineForFile.text);
 				const file = this.plugin.fileSystemHandler.abstractMap.get(id);
 				if (file === undefined) {
 					return null;
@@ -45,5 +44,27 @@ export default class SizeExtension {
 				return new SizeMarker(numbytes_sci);
 			},
 		});
+	}
+}
+
+/**
+ * The `SizeMarker` class is an extension of the `GutterMarker` class that shows the size of the line in the sugra file view.
+ **/
+export class SizeMarker extends GutterMarker {
+	sizeString: string;
+
+	/**
+	 * creates a new size marker
+	 **/
+	constructor(line: string) {
+		super();
+		this.sizeString = line;
+	}
+
+	/**
+	 * Renders the marker to the dom.
+	 **/
+	toDOM(): Text {
+		return document.createTextNode(this.sizeString);
 	}
 }

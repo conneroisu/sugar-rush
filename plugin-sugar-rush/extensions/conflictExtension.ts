@@ -1,4 +1,5 @@
 import type { Extension } from "@codemirror/state";
+import { GutterMarker } from "@codemirror/view";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
 import { gutter } from "@codemirror/view";
 import { CreateOperation } from "plugin-sugar-rush/operations/operationCreate";
@@ -6,7 +7,7 @@ import { DeleteOperation } from "plugin-sugar-rush/operations/operationDelete";
 import { MoveOperation } from "plugin-sugar-rush/operations/operationMove";
 import { RenameOperation } from "plugin-sugar-rush/operations/operationRename";
 import { parse_id } from "plugin-sugar-rush/utils";
-import ConflictMarker from "plugin-sugar-rush/markers/markerConflict";
+import { type } from "os";
 
 /**
  * Extension that shows conflicts in the gutter.
@@ -24,7 +25,7 @@ export default class ConflictExtension {
 		this.plugin = plugin;
 	}
 
-	/** 
+	/**
 	 * Returns the extension for ConflictExtension
 	 **/
 	getExtension(): Extension {
@@ -38,20 +39,43 @@ export default class ConflictExtension {
 					parseInt(parse_id(fileLine.text))
 				);
 
-				switch (result) {
-					case CreateOperation:
+				switch (typeof result) {
+					case typeof CreateOperation:
 						return new ConflictMarker("Create");
-					case DeleteOperation:
+					case typeof DeleteOperation:
 						return new ConflictMarker("Delete");
-					case MoveOperation: 
+					case typeof MoveOperation:
 						return new ConflictMarker("Move");
-					case RenameOperation:
+					case typeof RenameOperation:
 						return new ConflictMarker("Rename");
-					case undefined:
+					default:
 						return new ConflictMarker("");
 				}
 			},
 		});
 	}
+}
 
+/**
+ * ExceptionMarker is a class that extends the GutterMarker class.
+ * @property {string} message - This stores the text message of the exception to be displayed.
+ * @method toDOM - This method overrides the toDOM method of the GutterMarker class.
+ **/
+export class ConflictMarker extends GutterMarker {
+	message: string;
+
+	/**
+	 * Creates a new Exception marker that holds a text node
+	 **/
+	constructor(text: string) {
+		super();
+		this.message = text;
+	}
+
+	/**
+	 * Renders the marker to teh dom.
+	 **/
+	toDOM() {
+		return document.createTextNode(this.message);
+	}
 }

@@ -2,7 +2,6 @@ import { type Editor, TAbstractFile, TFile, TFolder, Notice } from "obsidian";
 import SugarRushPlugin from "./main";
 
 export default class SugarRushCommandHandler {
-
 	constructor(plugin: SugarRushPlugin) {
 		plugin.addCommand({
 			id: "rush-to-sugar-view",
