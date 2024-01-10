@@ -7,11 +7,13 @@ import {
 	TFile,
 	TFolder,
 } from "obsidian";
-import SugarRushExtensionHandler from "./handlerExtensions";
 import SugarRushFileSystemHandler from "./handlerFileSystem";
 import { DEFAULT_SETTINGS, type SugarRushPluginSettings } from "./settings";
 import { SugarRushOperationView } from "./viewOperation";
 import { SugarRushSettingView } from "./viewSettings";
+import { type Extension } from "@codemirror/state";
+import FormatExtension from "plugin-sugar-rush/extensions/formatExtension";
+import SizeExtension from "plugin-sugar-rush/extensions/sizeExtension";
 
 /**
  * The `SugarRushPlugin` class extends the `Plugin` base class to provide functionality related to handling sugar files in the Obsidian app.
@@ -33,26 +35,25 @@ import { SugarRushSettingView } from "./viewSettings";
 export default class SugarRushPlugin extends Plugin {
 	settings!: SugarRushPluginSettings;
 	fileSystemHandler!: SugarRushFileSystemHandler;
-	extensionHandler!: SugarRushExtensionHandler;
+	extensions!: Extension[];
 	app!: App;
 
 	/**
 	 * Asyncronous routine when the plugin is loaded to the workspace.
 	 **/
 	async onload() {
-		await this.loadSettings();
-		this.registerExtensions(["sugar"], "markdown");
-		this.addSettingTab(new SugarRushSettingView(this));
-		this.addCommands();
-		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
-		this.extensionHandler = new SugarRushExtensionHandler(this);
+		await this.loadSettings(); // Load settings
+		this.registerExtensions(["sugar"], "markdown"); // Register extensions
+		this.addSettingTab(new SugarRushSettingView(this)); // Add the settings tab
+		this.addCommands(); // Add commands
+		this.fileSystemHandler = new SugarRushFileSystemHandler(this); // Initialize file system handler
 		this.app.workspace.on("file-open", (file: TFile | null) => {
 			if (file && !(file.extension === "sugar")) {
-				this.extensionHandler.getExtensions();
-				this.app.workspace.updateOptions();
+				this.getExtensions(); // Update extensions
+				this.app.workspace.updateOptions(); // Update workspace options
 			} else {
 				if (this.fileSystemHandler.operationsMap.size > 0) {
-					new SugarRushOperationView(this).open();
+					new SugarRushOperationView(this).open(); // Open operation view
 				}
 			}
 		});
@@ -65,20 +66,66 @@ export default class SugarRushPlugin extends Plugin {
 		this.fileSystemHandler.removeAllSugarFiles();
 	}
 
+	/**
+	 * Asynchronously loads the settings for the plugin from the storage and merges it with default settings.
+	 **/
+	async loadSettings() {
+		this.settings = Object.assign(
+			{},
+			DEFAULT_SETTINGS,
+			await this.loadData()
+		);
+	}
+
+	/**
+	 * saveSettings Method:
+	 * This asynchronous method is responsible for saving the settings of the SugarRushPlugin. It takes no parameters.
+	 **/
+	async saveSettings() {
+		await this.saveData(this.settings);
+		this.extensions = this.getExtensions();
+		this.registerEditorExtension([this.extensions]);
+		this.clearExtensions();
+	}
+
+	/**
+	 * Clears the extensions array
+	 **/
+	clearExtensions() {
+		this.extensions = [];
+	}
+
+	/**
+	 * Gets all of the extensions active for the plugin.
+	 **/
+	getExtensions() {
+		this.extensions = [];
+		if (this.settings.showFileIcons) {
+			this.extensions.push(new FormatExtension());
+		}
+		if (this.settings.showFileSizes) {
+			this.extensions.push(new SizeExtension(this));
+		}
+		return this.extensions;
+	}
+
+	/**
+	 * Adds all the commands of the Plugin, SugarRushPlugin.
+	 **/
 	addCommands() {
 		this.addCommand({
 			id: "rush-to-sugar-view",
 			name: "Rush to Sugar View",
 			editorCheckCallback: (checking: boolean) => {
-				const activeFile = this.app.workspace.getActiveFile();
-				if (checking) {
-					if (activeFile) {
+				const { getActiveFile, getMostRecentLeaf } = this.app.workspace;
+				const [activeFile, leaf] = [
+					getActiveFile(), // Get the active file
+					getMostRecentLeaf(), // Get the most recent leaf
+				];
+				if (activeFile && leaf) {
+					if (checking) {
 						return true;
 					}
-					return false;
-				}
-				const leaf = this.app.workspace.getMostRecentLeaf();
-				if (activeFile && leaf) {
 					const sugarFilePath =
 						this.fileSystemHandler.getSugarFilePath(activeFile);
 					if (activeFile.parent && activeFile.parent.name !== "") {
@@ -244,24 +291,5 @@ export default class SugarRushPlugin extends Plugin {
 				return true;
 			},
 		});
-	}
-
-	/**
-	 * Asynchronously loads the settings for the plugin from the storage and merges it with default settings.
-	 **/
-	async loadSettings() {
-		this.settings = Object.assign(
-			{},
-			DEFAULT_SETTINGS,
-			await this.loadData()
-		);
-	}
-
-	/**
-	 * saveSettings Method:
-	 * This asynchronous method is responsible for saving the settings of the SugarRushPlugin. It takes no parameters.
-	 **/
-	async saveSettings() {
-		await this.saveData(this.settings);
 	}
 }

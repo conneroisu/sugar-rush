@@ -78,9 +78,9 @@ export default class SugarRushFileSystemHandler {
 	loadFile(file: TFile, leaf: WorkspaceLeaf): void {
 		leaf.openFile(file);
 		if (file.extension === "sugar") {
-			this.plugin.extensionHandler.getExtensions();
+			this.plugin.getExtensions();
 		} else {
-			this.plugin.extensionHandler.clearExtensions();
+			this.plugin.clearExtensions();
 		}
 		this.plugin.app.workspace.updateOptions();
 	}
