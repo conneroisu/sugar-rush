@@ -52,7 +52,10 @@ export default class SugarRushFileSystemHandler {
 	 * @param file - The file to generate the abstract prefix for.
 	 **/
 	generateAbstractPrefix(file: TAbstractFile): string {
-		console.log("| generateAbstractPrefix | generating abstract prefix for file: ", file);
+		console.log(
+			"| generateAbstractPrefix | generating abstract prefix for file: ",
+			file
+		);
 		const code = Math.random().toString(5).substring(2, 7);
 		this.abstractMap.set(parseInt(code), file);
 		return `<a href=${code}></a>`;
@@ -94,7 +97,10 @@ export default class SugarRushFileSystemHandler {
 	 * @returns {TFile} - the created sugar file
 	 **/
 	async createSugarFile(activeFile: TFile): Promise<TFile> {
-		console.log("| createSugarFile | creating sugar file for file: ", activeFile)
+		console.log(
+			"| createSugarFile | creating sugar file for file: ",
+			activeFile
+		);
 		const sugarFile = await this.plugin.app.vault.create(
 			this.getSugarFilePath(activeFile),
 			""
@@ -111,14 +117,18 @@ export default class SugarRushFileSystemHandler {
 	 * @param activeFile - the file to get the sugar file path for
 	 **/
 	getSugarFilePath(activeFile: TFile): string {
-		console.log("| getSugarFilePath | getting sugar file path for file: ", activeFile);
+		console.log(
+			"| getSugarFilePath | getting sugar file path for file: ",
+			activeFile
+		);
 		if (activeFile.parent && activeFile.parent.path === "/") {
 			return "root" + ".sugar";
 		}
-		return `${activeFile.parent?.path +
+		return `${
+			activeFile.parent?.path +
 			sep +
 			activeFile.parent?.name.replace(sep, "-")
-			}.sugar`;
+		}.sugar`;
 	}
 	/**
 	 * Generates the content for a sibling sugar file for the given file.
@@ -126,7 +136,10 @@ export default class SugarRushFileSystemHandler {
 	 * @returns {string} - the generated sugar file content
 	 **/
 	generateSugarFileContent(activeFile: TFile): string {
-		console.log("| generateSugarFileContent | generating sugar file content for file: ", activeFile);
+		console.log(
+			"| generateSugarFileContent | generating sugar file content for file: ",
+			activeFile
+		);
 		return this.getParentChildren(activeFile)
 			.map((file) => {
 				if (file instanceof TFolder) {
@@ -142,8 +155,11 @@ export default class SugarRushFileSystemHandler {
 	 * @param {TFile} sugarFile - the TFile for the sugar file to get the content for.
 	 **/
 	getSugarFileContent(sugarFile: TFile): string {
-		console.log("| getSugarFileContent | getting content for a sugar file at path: ", sugarFile.path);
-		const parentChildren =  this.getParentChildren(sugarFile)
+		console.log(
+			"| getSugarFileContent | getting content for a sugar file at path: ",
+			sugarFile.path
+		);
+		const parentChildren = this.getParentChildren(sugarFile)
 			.map((file) => {
 				if (file instanceof TFolder) {
 					return `${this.generateAbstractPrefix(file) + file.name}/`;
@@ -152,7 +168,7 @@ export default class SugarRushFileSystemHandler {
 			})
 			.join("\n");
 
-		return parentChildren:
+		return parentChildren;
 	}
 
 	/**
@@ -160,7 +176,10 @@ export default class SugarRushFileSystemHandler {
 	 * @param {TAbstractFile} abstractFile -the returned  parent's children are of this file
 	 **/
 	getParentChildren(abstractFile: TAbstractFile): TAbstractFile[] {
-		console.log("| getParentChildren | getting parent children for file: ", abstractFile);
+		console.log(
+			"| getParentChildren | getting parent children for file: ",
+			abstractFile
+		);
 		if (abstractFile instanceof TFolder) {
 			return abstractFile.children;
 		}

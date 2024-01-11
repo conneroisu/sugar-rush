@@ -117,10 +117,9 @@ export default class SugarRushPlugin extends Plugin {
 			id: "rush-to-sugar-view",
 			name: "Rush to Sugar View",
 			editorCallback: () => {
-				const [activeFile, leaf] = [
-					this.app.workspace.getActiveFile(), // Get the active file
-					this.app.workspace.getMostRecentLeaf(), // Get the most recent leaf
-				];
+				const activeFile = this.app.workspace.getActiveFile(); // Get the active file
+				const leaf = this.app.workspace.getMostRecentLeaf(); // Get the most recent leaf
+				// TODO: Redo this logic way too many if statements and nesting going on here very confusing for a reader
 				if (activeFile && leaf) {
 					const sugarFilePath =
 						this.fileSystemHandler.getSugarFilePath(activeFile);
@@ -260,7 +259,12 @@ export default class SugarRushPlugin extends Plugin {
 			editorCheckCallback: (checking: boolean) => {
 				const activeFile = this.app.workspace.getActiveFile();
 				const leaf = this.app.workspace.getMostRecentLeaf();
-				if (!checking && activeFile && leaf && activeFile.extension === "sugar") {
+				if (
+					!checking &&
+					activeFile &&
+					leaf &&
+					activeFile.extension === "sugar"
+				) {
 					this.app.vault
 						.modify(
 							activeFile,
