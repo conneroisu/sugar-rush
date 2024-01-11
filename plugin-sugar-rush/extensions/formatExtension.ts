@@ -21,15 +21,14 @@ export default class FormatExtension {
 				if (lineFileExtension !== null) {
 					return new FormatMarker(lineFileExtension[0]);
 				}
-				if (
-					view.state.doc.lineAt(line.from).text.trim().endsWith("/")
-				) {
+				if (view.state.doc.lineAt(line.from).text.trim().endsWith("/")) {
 					return new FormatMarker("/");
 				}
 				return null;
-			},
+			}
 		});
 	}
+
 
 	/**
 	 * Returns the extension

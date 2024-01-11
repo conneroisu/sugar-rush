@@ -116,16 +116,12 @@ export default class SugarRushPlugin extends Plugin {
 		this.addCommand({
 			id: "rush-to-sugar-view",
 			name: "Rush to Sugar View",
-			editorCheckCallback: (checking: boolean) => {
-				const { getActiveFile, getMostRecentLeaf } = this.app.workspace;
+			editorCallback: () => {
 				const [activeFile, leaf] = [
-					getActiveFile(), // Get the active file
-					getMostRecentLeaf(), // Get the most recent leaf
+					this.app.workspace.getActiveFile(), // Get the active file
+					this.app.workspace.getMostRecentLeaf(), // Get the most recent leaf
 				];
 				if (activeFile && leaf) {
-					if (checking) {
-						return true;
-					}
 					const sugarFilePath =
 						this.fileSystemHandler.getSugarFilePath(activeFile);
 					if (activeFile.parent && activeFile.parent.name !== "") {
@@ -255,12 +251,7 @@ export default class SugarRushPlugin extends Plugin {
 							}
 							this.fileSystemHandler.loadFile(activeFile, leaf);
 						});
-				} else {
-					if (activeFile && leaf) {
-						return true;
-					}
 				}
-				return true;
 			},
 		});
 		this.addCommand({
@@ -269,7 +260,7 @@ export default class SugarRushPlugin extends Plugin {
 			editorCheckCallback: (checking: boolean) => {
 				const activeFile = this.app.workspace.getActiveFile();
 				const leaf = this.app.workspace.getMostRecentLeaf();
-				if (!checking && activeFile && leaf && activeFile.extension === "sugar"){
+				if (!checking && activeFile && leaf && activeFile.extension === "sugar") {
 					this.app.vault
 						.modify(
 							activeFile,

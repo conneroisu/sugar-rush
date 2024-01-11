@@ -13,7 +13,6 @@ import type AbstractOperation from "./operations/AbstractOperation";
  * @method getAllSugarFiles - Returns all sugar files in the vault.
  * @method deleteAllSugarFiles - Deletes all sugar files in the vault.
  * @method loadFile - Loads file into the view.
- * @method getSugarFilePath - Returns the path of the sugar file for the given file.
  * @method createSugarFile - Creates a sugar file for the given file.
  * @method generateSugarFileContent - Generates the content for a sugar file for the given file.
  * @method getParentChildren - Returns the children of the parent of the given file.
@@ -38,6 +37,7 @@ export default class SugarRushFileSystemHandler {
 	 * @returns {TFile[]} - All sugar files in the vault.
 	 **/
 	getAllSugarFiles(): TFile[] {
+		console.log("| getAllSugarFiles | getting all sugar files");
 		const sugarFiles: TFile[] = [];
 		for (const file of this.plugin.app.vault.getFiles()) {
 			if (file.extension === "sugar") {
@@ -52,6 +52,7 @@ export default class SugarRushFileSystemHandler {
 	 * @param file - The file to generate the abstract prefix for.
 	 **/
 	generateAbstractPrefix(file: TAbstractFile): string {
+		console.log("| generateAbstractPrefix | generating abstract prefix for file: ", file);
 		const code = Math.random().toString(5).substring(2, 7);
 		this.abstractMap.set(parseInt(code), file);
 		return `<a href=${code}></a>`;
@@ -61,6 +62,7 @@ export default class SugarRushFileSystemHandler {
 	 * Deletes all sugar files in the vault. (All .sugar files)
 	 **/
 	removeAllSugarFiles() {
+		console.log("| removeAllSugarFiles | removing all sugar files");
 		for (const file of this.getAllSugarFiles()) {
 			this.plugin.app.vault.delete(file).then(() => {
 				if (this.plugin.settings.debug) {
@@ -76,6 +78,7 @@ export default class SugarRushFileSystemHandler {
 	 * @param leaf - The leaf to load the file into.
 	 **/
 	loadFile(file: TFile, leaf: WorkspaceLeaf): void {
+		console.log("| loadFile | loading file: ", file);
 		leaf.openFile(file);
 		if (file.extension === "sugar") {
 			this.plugin.getExtensions();
@@ -86,28 +89,12 @@ export default class SugarRushFileSystemHandler {
 	}
 
 	/**
-	 * Returns the path of the sugar file for the given file.
-	 * @param activeFile - the file to get the sugar file path for
-	 **/
-	getSugarFilePath(activeFile: TFile): string {
-		if (
-			activeFile.parent &&
-			(activeFile.parent.path === "/" || activeFile.parent === null)
-		) {
-			return "root" + ".sugar";
-		}
-		return `${
-			activeFile.parent?.path +
-			sep +
-			activeFile.parent?.name.replace(sep, "-")
-		}.sugar`;
-	}
-
-	/**
 	 * Creates a sugar file for the given file with the sugar files's content.
-	 * @param activeFile - the file to create the sugar file for
+	 * @param {TFile} activeFile - the file to create the sugar file for
+	 * @returns {TFile} - the created sugar file
 	 **/
 	async createSugarFile(activeFile: TFile): Promise<TFile> {
+		console.log("| createSugarFile | creating sugar file for file: ", activeFile)
 		const sugarFile = await this.plugin.app.vault.create(
 			this.getSugarFilePath(activeFile),
 			""
@@ -120,10 +107,26 @@ export default class SugarRushFileSystemHandler {
 	}
 
 	/**
-	 * Generates the content for a sugar file for the given file.
-	 * @param activeFile - the file to generate the sugar file content for
+	 * Returns the path of the sugar file for the given file.
+	 * @param activeFile - the file to get the sugar file path for
+	 **/
+	getSugarFilePath(activeFile: TFile): string {
+		console.log("| getSugarFilePath | getting sugar file path for file: ", activeFile);
+		if (activeFile.parent && activeFile.parent.path === "/") {
+			return "root" + ".sugar";
+		}
+		return `${activeFile.parent?.path +
+			sep +
+			activeFile.parent?.name.replace(sep, "-")
+			}.sugar`;
+	}
+	/**
+	 * Generates the content for a sibling sugar file for the given file.
+	 * @param {TFile} activeFile - the file to generate the sugar file content for
+	 * @returns {string} - the generated sugar file content
 	 **/
 	generateSugarFileContent(activeFile: TFile): string {
+		console.log("| generateSugarFileContent | generating sugar file content for file: ", activeFile);
 		return this.getParentChildren(activeFile)
 			.map((file) => {
 				if (file instanceof TFolder) {
@@ -136,10 +139,11 @@ export default class SugarRushFileSystemHandler {
 
 	/**
 	 * Gets the sugar file content for a sugar file given the {TFile} object of the sugar file.
-	 * @param sugarFile - the TFile for the sugar file
+	 * @param {TFile} sugarFile - the TFile for the sugar file to get the content for.
 	 **/
 	getSugarFileContent(sugarFile: TFile): string {
-		return this.getParentChildren(sugarFile)
+		console.log("| getSugarFileContent | getting content for a sugar file at path: ", sugarFile.path);
+		const parentChildren =  this.getParentChildren(sugarFile)
 			.map((file) => {
 				if (file instanceof TFolder) {
 					return `${this.generateAbstractPrefix(file) + file.name}/`;
@@ -147,21 +151,24 @@ export default class SugarRushFileSystemHandler {
 				return this.generateAbstractPrefix(file) + file.name;
 			})
 			.join("\n");
+
+		return parentChildren:
 	}
 
 	/**
 	 * Returns the children of the parent of the given file.
-	 * @param {TAbstractFile} file -the returned  parent's children are of this file
+	 * @param {TAbstractFile} abstractFile -the returned  parent's children are of this file
 	 **/
-	getParentChildren(file: TAbstractFile): TAbstractFile[] {
-		if (file instanceof TFolder) {
-			return file.children; 
+	getParentChildren(abstractFile: TAbstractFile): TAbstractFile[] {
+		console.log("| getParentChildren | getting parent children for file: ", abstractFile);
+		if (abstractFile instanceof TFolder) {
+			return abstractFile.children;
 		}
-		if (file instanceof TFile) {
-			if (file.parent === null) {
-				return this.plugin.app.vault.getRoot().children; 
+		if (abstractFile instanceof TFile) {
+			if (abstractFile.parent === null) {
+				return this.plugin.app.vault.getRoot().children;
 			}
-			return file.parent.children; 
+			return abstractFile.parent.children;
 		}
 		return [];
 	}
