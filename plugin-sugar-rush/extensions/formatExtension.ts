@@ -4,7 +4,8 @@ import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 import type { Extension } from "@codemirror/state";
 
 /**
- * Extension that shows the format of a file
+ * Extension that shows the format of a file using a logo.
+ * @property {Extension} extension - The extension that is used to show the format of a file.
  **/
 export default class FormatExtension {
 	extension: Extension;

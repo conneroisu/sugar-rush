@@ -1,14 +1,13 @@
 
 import { gutter } from "@codemirror/view";
 import { GutterMarker } from "@codemirror/view";
-import { getIconForLineFileExtension } from "plugin-sugar-rush/utils";
 import type { Extension } from "@codemirror/state";
 
 /**
- * Extension that shows the format of a file using a logo.
- * @property {Extension} extension - The extension that is used to show the format of a file.
+ * Extension that shows the modified date of a file using text.
+ * @property {Extension} extension - The extension that is used to show the modified date of a file.
  **/
-export default class FormatExtension {
+export default class DateExtension {
 	extension: Extension;
 
 	/**
@@ -21,10 +20,10 @@ export default class FormatExtension {
 					.line(view.state.doc.lineAt(line.from).number)
 					.text.match(/(?<=\.)\w+$/);
 				if (lineFileExtension !== null) {
-					return new FormatMarker(lineFileExtension[0]);
+					return new DateMarker(lineFileExtension[0]);
 				}
 				if (view.state.doc.lineAt(line.from).text.trim().endsWith("/")) {
-					return new FormatMarker("/");
+					return new DateMarker("/");
 				}
 				return null;
 			}
@@ -47,8 +46,8 @@ export default class FormatExtension {
  * @returns {HTMLElement} - Returns an SVG element with attached attributes and inner HTML derived from the
  * current extension via the getIconForLineFileExtension() function.
  **/
-export class FormatMarker extends GutterMarker {
-	extension: string;
+export class DateMarker extends GutterMarker {
+	body: string;
 
 	/**
 	 * Creates a new FormatMarker that holds a text node
@@ -56,25 +55,15 @@ export class FormatMarker extends GutterMarker {
 	 **/
 	constructor(text: string) {
 		super();
-		this.extension = text;
+		this.body = text;
 	}
 
 	/**
 	 * Renders the marker to the dom.
 	 **/
 	toDOM() {
-		const icon = document.createElementNS(
-			"http://www.w3.org/2000/svg",
-			"svg"
-		);
-		icon.setAttrs({
-			width: "1em",
-			height: "1em",
-			viewBox: "0 0 1em 1em",
-			xmlns: "http://www.w3.org/2000/svg",
-			align: "center",
-		});
-		icon.innerHTML = getIconForLineFileExtension(this.extension);
-		return icon;
+		const text = document.createElement("div");
+		text.innerText = this.body;
+		return text;
 	}
 }
