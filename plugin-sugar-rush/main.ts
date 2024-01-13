@@ -70,11 +70,7 @@ export default class SugarRushPlugin extends Plugin {
 	 * Asynchronously loads the settings for the plugin from the storage and merges it with default settings.
 	 **/
 	async loadSettings() {
-		this.settings = Object.assign(
-			{},
-			DEFAULT_SETTINGS,
-			await this.loadData()
-		);
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	/**
@@ -163,21 +159,15 @@ export default class SugarRushPlugin extends Plugin {
 		this.addCommand({
 			id: "toggle-hidden-files",
 			name: "Toggle Hidden Files",
-			editorCheckCallback: (checking: boolean) => {
-				if (checking) {
-					const activeFile = this.app.workspace.getActiveFile();
-					if (!activeFile) {
-						return false;
+			editorCallback: () => {
+				const activeFile = this.app.workspace.getActiveFile();
+				if (activeFile && activeFile.extension !== "sugar") {
+					if (this.fileSystemHandler.operationsMap.size > 0) {
+						new Notice(
+							"Cannot toggle hidden files while an operation is in progress.",
+						);
+						return;
 					}
-					if (activeFile.extension !== "sugar") {
-						return false;
-					}
-					return true;
-				}
-				if (this.fileSystemHandler.operationsMap.size > 0) {
-					new Notice(
-						"Cannot toggle hidden files while an operation is in progress."
-					);
 				}
 				this.settings.showHiddenFiles = !this.settings.showHiddenFiles;
 				this.saveSettings();
@@ -198,16 +188,14 @@ export default class SugarRushPlugin extends Plugin {
 						.getLine(editor.getCursor().line)
 						.split("<a href=")[1]
 						.split(">")[0];
-					const file = this.fileSystemHandler.abstractMap.get(
-						parseInt(id)
-					);
+					const file = this.fileSystemHandler.abstractMap.get(parseInt(id));
 					if (!file || !leaf) {
 						return false;
 					}
 					if (file instanceof TFile) {
 						if (this.settings.debug) {
 							console.log(
-								`commandSelectSugarViewEntry.ts: selecting and opening TFile: ${file.path}`
+								`commandSelectSugarViewEntry.ts: selecting and opening TFile: ${file.path}`,
 							);
 						}
 						this.fileSystemHandler.loadFile(file, leaf);
@@ -215,41 +203,29 @@ export default class SugarRushPlugin extends Plugin {
 					if (file instanceof TFolder) {
 						if (this.settings.debug) {
 							console.log(
-								`commandSelectSugarViewEntry.ts: selecting and opening TFolder: ${file.path}`
+								`commandSelectSugarViewEntry.ts: selecting and opening TFolder: ${file.path}`,
 							);
 						}
 					}
-
-					return true;
 				}
 				if (this.settings.debug) {
 					console.log(
-						"commandSelectSugarViewEntry.ts: not selecting anything | checking is "
+						"commandSelectSugarViewEntry.ts: not selecting anything | checking is ",
 					);
 				}
-				return false;
 			},
 		});
 		this.addCommand({
 			id: "save-sugar-view",
 			name: "Save Sugar View",
-			editorCheckCallback: (checking: boolean) => {
+			editorCallback: () => {
 				const activeFile = this.app.workspace.getActiveFile();
 				const leaf = this.app.workspace.getMostRecentLeaf();
-				if (!checking && activeFile && leaf) {
-					this.app.vault
-						.modify(
-							activeFile,
-							this.fileSystemHandler.generateSugarFileContent(
-								activeFile
-							)
-						)
-						.then(() => {
-							if (this.settings.debug) {
-								console.log("Refreshed file", activeFile);
-							}
-							this.fileSystemHandler.loadFile(activeFile, leaf);
-						});
+				if (activeFile && leaf) {
+					this.app.vault.modify(
+						activeFile,
+						this.fileSystemHandler.generateSugarFileContent(activeFile),
+					);
 				}
 			},
 		});
@@ -268,9 +244,7 @@ export default class SugarRushPlugin extends Plugin {
 					this.app.vault
 						.modify(
 							activeFile,
-							this.fileSystemHandler.generateSugarFileContent(
-								activeFile
-							)
+							this.fileSystemHandler.generateSugarFileContent(activeFile),
 						)
 						.then(() => {
 							if (this.settings.debug) {
