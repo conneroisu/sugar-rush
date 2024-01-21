@@ -7,7 +7,6 @@ import { DeleteOperation } from "plugin-sugar-rush/operations/operationDelete";
 import { MoveOperation } from "plugin-sugar-rush/operations/operationMove";
 import { RenameOperation } from "plugin-sugar-rush/operations/operationRename";
 import { parse_id } from "plugin-sugar-rush/utils";
-import { type } from "os";
 
 /**
  * Extension that shows conflicts in the gutter.

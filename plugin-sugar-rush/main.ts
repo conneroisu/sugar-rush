@@ -113,9 +113,8 @@ export default class SugarRushPlugin extends Plugin {
 			id: "rush-to-sugar-view",
 			name: "Rush to Sugar View",
 			editorCallback: () => {
-				const activeFile = this.app.workspace.getActiveFile(); // Get the active file
-				const leaf = this.app.workspace.getMostRecentLeaf(); // Get the most recent leaf
-				// TODO: Redo this logic way too many if statements and nesting going on here very confusing for a reader
+				const activeFile = this.app.workspace.getActiveFile();
+				const leaf = this.app.workspace.getMostRecentLeaf();
 				if (activeFile && leaf) {
 					const sugarFilePath =
 						this.fileSystemHandler.getSugarFilePath(activeFile);
@@ -148,12 +147,7 @@ export default class SugarRushPlugin extends Plugin {
 							}
 						}
 					}
-				} else {
-					if (activeFile && leaf) {
-						return true;
-					}
 				}
-				return true;
 			},
 		});
 		this.addCommand({
@@ -193,25 +187,24 @@ export default class SugarRushPlugin extends Plugin {
 						return false;
 					}
 					if (file instanceof TFile) {
-						if (this.settings.debug) {
-							console.log(
-								`commandSelectSugarViewEntry.ts: selecting and opening TFile: ${file.path}`,
-							);
-						}
 						this.fileSystemHandler.loadFile(file, leaf);
 					}
 					if (file instanceof TFolder) {
-						if (this.settings.debug) {
-							console.log(
-								`commandSelectSugarViewEntry.ts: selecting and opening TFolder: ${file.path}`,
-							);
+						if (file.children.length > 0) {
+							const child = file.children[0];
+							if (child instanceof TFile) {
+								const sugarFilePath =
+									this.fileSystemHandler.getSugarFilePath(child);
+								const sugarFile = this.app.vault.getAbstractFileByPath(sugarFilePath);
+								if (sugarFile !== null && sugarFile instanceof TFile) {
+									this.fileSystemHandler.loadFile(sugarFile, leaf);
+								}
+							}
+						}else{
+							// create the sugar file
+							const sugarFile = this.fileSystemHandler.createSugarFile(file);
 						}
 					}
-				}
-				if (this.settings.debug) {
-					console.log(
-						"commandSelectSugarViewEntry.ts: not selecting anything | checking is ",
-					);
 				}
 			},
 		});
@@ -247,9 +240,6 @@ export default class SugarRushPlugin extends Plugin {
 							this.fileSystemHandler.generateSugarFileContent(activeFile),
 						)
 						.then(() => {
-							if (this.settings.debug) {
-								console.log("Refreshed file", activeFile);
-							}
 							this.fileSystemHandler.loadFile(activeFile, leaf);
 						});
 				} else {
