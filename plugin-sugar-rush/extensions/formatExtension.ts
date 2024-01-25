@@ -59,7 +59,7 @@ export class FormatMarker extends GutterMarker {
 	}
 
 	/**
-	 * Renders the marker to the dom.
+	 * Renders the marker to the CodeMirror View.
 	 **/
 	toDOM() {
 		const icon = document.createElementNS(

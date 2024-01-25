@@ -41,7 +41,7 @@ export class DeleteOperation implements AbstractOperation {
 	 * @return {void}
 	 **/
 	run(): void {
-		// get teh abstract file at the path
+		// get the abstract file at the path
 		if (this.file) {
 			this.plugin.app.vault.delete(this.file);
 		}

@@ -1,6 +1,5 @@
 import { gutter, GutterMarker } from "@codemirror/view";
 import type { Extension } from "@codemirror/state";
-import assets from "../!icons.json";
 import type SugarRushPlugin from "../main";
 
 /**
@@ -19,7 +18,7 @@ export default class IndicatorsExtension {
 	}
 
 	/**
-	 * Returns the extension
+	 * Returns the extension, IndicatorsExtension, that shows modifications to a sugar file.
 	 * @returns {Extension} - The extension
 	 **/
 	getExtension(): Extension {
@@ -46,7 +45,7 @@ class StateMarker extends GutterMarker {
 	}
 
 	/**
-	 * Renders the marker to the dom.
+	 * Renders the marker to the CodeMirror View.
 	 **/
 	toDOM(): Text {
 		return document.createTextNode(this.icon);

@@ -22,7 +22,7 @@ import SizeExtension from "plugin-sugar-rush/extensions/sizeExtension";
  * @attribute {SugarRushCommandHandler} commandHandler - manages command related operations for the plugin.
  * @attribute {SugarRushFileSystemHandler} fileSystemHandler - manages filesystem related operations for sugar files.
  * @attribute {SugarRushOperationHandler} operationHandler - manages operations for the plugin.
- * @attrubute {SugarRushExtensionHandler} extensionHandler - manages extension related operations for the plugin.
+ * @attribute {SugarRushExtensionHandler} extensionHandler - manages extension related operations for the plugin.
  * @attribute {App} app - instance of the App class from Obsidian API.
  *
  * @method {async loadSettings} - loads the settings for the plugin from the storage and merges it with default settings.
@@ -39,22 +39,21 @@ export default class SugarRushPlugin extends Plugin {
 	app!: App;
 
 	/**
-	 * Asyncronous routine when the plugin is loaded to the workspace.
+	 * Asynchronous routine when the plugin is loaded to the workspace.
 	 **/
 	async onload() {
-		await this.loadSettings(); // Load settings
-		this.registerExtensions(["sugar"], "markdown"); // Register extensions
-		this.addSettingTab(new SugarRushSettingView(this)); // Add the settings tab
-		this.fileSystemHandler = new SugarRushFileSystemHandler(this); // Initialize file system handler
-		this.addCommands(); // Add commands
+		await this.loadSettings(); 
+		this.registerExtensions(["sugar"], "markdown"); 
+		this.addSettingTab(new SugarRushSettingView(this)); 
+		this.fileSystemHandler = new SugarRushFileSystemHandler(this); 
+		this.addCommands(); 
 		this.app.workspace.on("file-open", (file: TFile | null) => {
 			if (file && !(file.extension === "sugar")) {
-				this.getExtensions(); // Update extensions
-				this.app.workspace.updateOptions(); // Update workspace options
-			} else {
-				if (this.fileSystemHandler.operationsMap.size > 0) {
-					new SugarRushOperationView(this).open(); // Open operation view
-				}
+				this.getExtensions(); 
+				this.app.workspace.updateOptions(); 
+			}
+			else if (this.fileSystemHandler.operationsMap.size > 0) {
+				new SugarRushOperationView(this).open(); 
 			}
 		});
 	}
@@ -106,7 +105,7 @@ export default class SugarRushPlugin extends Plugin {
 	}
 
 	/**
-	 * Adds all the commands of the Plugin, SugarRushPlugin.
+	 * Adds all the commands of the Plugin, {SugarRushPlugin}.
 	 **/
 	addCommands() {
 		this.addCommand({
@@ -127,10 +126,9 @@ export default class SugarRushPlugin extends Plugin {
 								.then((file: TFile) => {
 									this.fileSystemHandler.loadFile(file, leaf);
 								});
-						} else {
-							if (file instanceof TFile) {
-								this.fileSystemHandler.loadFile(file, leaf);
-							}
+						}
+						else if (file instanceof TFile) {
+							this.fileSystemHandler.loadFile(file, leaf);
 						}
 					} else {
 						const file: TFile | null | undefined | TAbstractFile =
@@ -141,10 +139,9 @@ export default class SugarRushPlugin extends Plugin {
 								.then((file: TFile) => {
 									this.fileSystemHandler.loadFile(file, leaf);
 								});
-						} else {
-							if (file instanceof TFile) {
-								this.fileSystemHandler.loadFile(file, leaf);
-							}
+						}
+						else if (file instanceof TFile) {
+							this.fileSystemHandler.loadFile(file, leaf);
 						}
 					}
 				}
@@ -155,13 +152,11 @@ export default class SugarRushPlugin extends Plugin {
 			name: "Toggle Hidden Files",
 			editorCallback: () => {
 				const activeFile = this.app.workspace.getActiveFile();
-				if (activeFile && activeFile.extension !== "sugar") {
-					if (this.fileSystemHandler.operationsMap.size > 0) {
-						new Notice(
-							"Cannot toggle hidden files while an operation is in progress.",
-						);
-						return;
-					}
+				if (activeFile && activeFile.extension !== "sugar" && this.fileSystemHandler.operationsMap.size > 0) {
+					new Notice(
+						"Cannot toggle hidden files while an operation is in progress.",
+					);
+					return;
 				}
 				this.settings.showHiddenFiles = !this.settings.showHiddenFiles;
 				this.saveSettings();
@@ -200,7 +195,7 @@ export default class SugarRushPlugin extends Plugin {
 									this.fileSystemHandler.loadFile(sugarFile, leaf);
 								}
 							}
-						}else{
+						} else {
 							// create the sugar file
 							const sugarFile = this.fileSystemHandler.createSugarFile(file);
 						}
@@ -228,12 +223,10 @@ export default class SugarRushPlugin extends Plugin {
 			editorCheckCallback: (checking: boolean) => {
 				const activeFile = this.app.workspace.getActiveFile();
 				const leaf = this.app.workspace.getMostRecentLeaf();
-				if (
-					!checking &&
+				if (!checking &&
 					activeFile &&
 					leaf &&
-					activeFile.extension === "sugar"
-				) {
+					activeFile.extension === "sugar") {
 					this.app.vault
 						.modify(
 							activeFile,
@@ -242,10 +235,9 @@ export default class SugarRushPlugin extends Plugin {
 						.then(() => {
 							this.fileSystemHandler.loadFile(activeFile, leaf);
 						});
-				} else {
-					if (activeFile && leaf) {
-						return true;
-					}
+				}
+				else if (activeFile && leaf) {
+					return true;
 				}
 				return true;
 			},

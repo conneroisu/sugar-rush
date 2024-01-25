@@ -62,7 +62,7 @@ export class SizeMarker extends GutterMarker {
 	}
 
 	/**
-	 * Renders the marker to the dom.
+	 * Renders the marker to the CodeMirror View.
 	 **/
 	toDOM(): Text {
 		return document.createTextNode(this.sizeString);

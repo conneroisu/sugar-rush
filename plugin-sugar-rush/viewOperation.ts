@@ -7,6 +7,7 @@ import type { DeleteOperation } from "./operations/operationDelete";
 
 /** 
  * View that displays the operations that are pending
+ * @extends Modal
  **/
 export class SugarRushOperationView extends Modal {
 

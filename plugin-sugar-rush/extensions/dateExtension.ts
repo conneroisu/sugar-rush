@@ -1,4 +1,3 @@
-
 import { gutter } from "@codemirror/view";
 import { GutterMarker } from "@codemirror/view";
 import type { Extension } from "@codemirror/state";
@@ -59,7 +58,7 @@ export class DateMarker extends GutterMarker {
 	}
 
 	/**
-	 * Renders the marker to the dom.
+	 * Renders the marker to the CodeMirror View.
 	 **/
 	toDOM() {
 		const text = document.createElement("div");
