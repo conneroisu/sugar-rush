@@ -4,13 +4,14 @@ import type SugarRushPlugin from "plugin-sugar-rush/main";
 
 /**
  * View for the settings of the plin, SugarRUshPlugin
- * @e
+ * @extends PluginSettingTab
  **/
 export class SugarRushSettingView extends PluginSettingTab {
 	plugin: SugarRushPlugin;
 
 	/**
 	 * Creates a new setting view.
+	 * @param {SugarRushPlugin} plugin - The plugin that this view is for.
 	 **/
 	constructor(plugin: SugarRushPlugin) {
 		super(plugin.app, plugin);

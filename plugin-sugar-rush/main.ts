@@ -42,18 +42,18 @@ export default class SugarRushPlugin extends Plugin {
 	 * Asynchronous routine when the plugin is loaded to the workspace.
 	 **/
 	async onload() {
-		await this.loadSettings(); 
-		this.registerExtensions(["sugar"], "markdown"); 
-		this.addSettingTab(new SugarRushSettingView(this)); 
-		this.fileSystemHandler = new SugarRushFileSystemHandler(this); 
-		this.addCommands(); 
+		await this.loadSettings();
+		this.registerExtensions(["sugar"], "markdown");
+		this.addSettingTab(new SugarRushSettingView(this));
+		this.fileSystemHandler = new SugarRushFileSystemHandler(this);
+		this.addCommands();
 		this.app.workspace.on("file-open", (file: TFile | null) => {
 			if (file && !(file.extension === "sugar")) {
-				this.getExtensions(); 
-				this.app.workspace.updateOptions(); 
+				this.getExtensions();
+				this.app.workspace.updateOptions();
 			}
 			else if (this.fileSystemHandler.operationsMap.size > 0) {
-				new SugarRushOperationView(this).open(); 
+				new SugarRushOperationView(this).open();
 			}
 		});
 	}

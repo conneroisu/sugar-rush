@@ -1,9 +1,5 @@
 import { Modal } from "obsidian";
 import type SugarRushPlugin from "plugin-sugar-rush/main";
-import type { CreateOperation } from "./operations/operationCreate";
-import type { MoveOperation } from "./operations/operationMove";
-import type { RenameOperation } from "./operations/operationRename";
-import type { DeleteOperation } from "./operations/operationDelete";
 
 /** 
  * View that displays the operations that are pending
@@ -11,15 +7,26 @@ import type { DeleteOperation } from "./operations/operationDelete";
  **/
 export class SugarRushOperationView extends Modal {
 
+	/**
+	 * Constructor for the class
+	 * @param {SugarRushPlugin} plugin - instance of the plugin class
+	 * @returns {SugarRushOperationView} - instance of the class
+	 **/
 	constructor(plugin: SugarRushPlugin) {
 		super(plugin.app);
 	}
 
-	getOperations(): (CreateOperation[] | MoveOperation[] | RenameOperation[] | DeleteOperation[] | []) {
+	/**
+	 * Returns the operations that are pending
+	 **/
+	getOperations(): (Operation[]) {
 		return [];
 	}
 
-	onOpen() {
+	/** 
+	 * Routine that runs on the opening of the view
+	 **/
+	onOpen(): void {
 		const { contentEl } = this;
 		contentEl.createEl("h1", { text: "Operation View" });
 
