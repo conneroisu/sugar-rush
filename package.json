@@ -23,7 +23,7 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@codemirror/language": "^6.10.0",
-		"@tsconfig/svelte": "^5.0.2",
+		"@tsconfig/svelte": "^5.0.4",
 		"@types/better-sqlite3": "^7.6.8",
 		"@types/node": "^22.10.10",
 		"@typescript-eslint/parser": "^6.18.0",
