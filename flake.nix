@@ -90,18 +90,69 @@
             exec = ''
               import { readFileSync, writeFileSync } from "fs";
 
-              const targetVersion = process.env.npm_package_version;
+              try {
+                  // Read and parse package.json
+                  const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
+                  const currentVersion = packageJson.version;
 
-              // read minAppVersion from manifest.json and bump version to target version
-              let manifest = JSON.parse(readFileSync("manifest.json", "utf8"));
-              const { minAppVersion } = manifest;
-              manifest.version = targetVersion;
-              writeFileSync("manifest.json", JSON.stringify(manifest, null, "\t"));
+                  if (!currentVersion) {
+                      throw new Error("No version field found in package.json");
+                  }
 
-              // update versions.json with target version and minAppVersion from manifest.json
-              let versions = JSON.parse(readFileSync("versions.json", "utf8"));
-              versions[targetVersion] = minAppVersion;
-              writeFileSync("versions.json", JSON.stringify(versions, null, "\t"));
+                  console.log("Current version:", currentVersion);
+
+                  // Parse version components
+                  const versionParts = currentVersion.split(".");
+                  if (versionParts.length !== 3) {
+                      throw new Error("Invalid version format: " + currentVersion + ". Expected format: major.minor.patch");
+                  }
+
+                  const [major, minor, patch] = versionParts.map(part => {
+                      const num = Number(part);
+                      if (isNaN(num) || num < 0) {
+                          throw new Error("Invalid version number: " + part);
+                      }
+                      return num;
+                  });
+
+                  console.log("Major:", major, "Minor:", minor, "Patch:", patch);
+
+                  // Increment patch version
+                  const newPatch = patch + 1;
+
+                  // Combine major, minor, and patch into a new version string with "." separators
+                  const newVersion = major + "." + minor + "." + newPatch;
+                  console.log("New version:", newVersion);
+
+                  // Save it back to package.json
+                  packageJson.version = newVersion;
+                  writeFileSync("package.json", JSON.stringify(packageJson, null, 2));
+                  console.log("Updated package.json with new version");
+
+                  // Read minAppVersion from manifest.json and bump version to target version
+                  let manifest = JSON.parse(readFileSync("manifest.json", "utf8"));
+                  const { minAppVersion } = manifest;
+
+                  if (!minAppVersion) {
+                      throw new Error("No minAppVersion found in manifest.json");
+                  }
+
+                  manifest.version = newVersion;
+                  writeFileSync("manifest.json", JSON.stringify(manifest, null, "\t"));
+                  console.log("Updated manifest.json with new version");
+
+                  // Update versions.json with target version and minAppVersion from manifest.json
+                  let versions = JSON.parse(readFileSync("versions.json", "utf8"));
+                  versions[newVersion] = minAppVersion;
+                  writeFileSync("versions.json", JSON.stringify(versions, null, "\t"));
+                  console.log("Updated versions.json with new version");
+
+                  console.log("\nSuccessfully bumped version from " + currentVersion + " to " + newVersion);
+
+              } catch (error) {
+                  console.error("Error:", error.message);
+                  process.exit(1);
+              }
             '';
           };
         };

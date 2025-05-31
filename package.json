@@ -1,17 +1,17 @@
 {
   "name": "sugar-rush",
   "module": "index.ts",
-	"version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "private": true,
   "devDependencies": {
     "@types/bun": "latest"
   },
-	"scripts": {
-		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json"
-	},
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "version": "node version-bump.mjs && git add manifest.json versions.json"
+  },
   "peerDependencies": {
     "typescript": "^5"
   }
