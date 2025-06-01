@@ -5,7 +5,9 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "esbuild": "^0.25.5",
+    "obsidian": "latest"
   },
   "scripts": {
     "dev": "node esbuild.config.mjs",
@@ -14,5 +16,9 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.33.0",
+    "builtin-modules": "^5.0.0"
   }
 }
