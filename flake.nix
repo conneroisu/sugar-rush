@@ -54,6 +54,7 @@
             nixd
             statix
             deadnix
+            esbuild
           ]
           ++ builtins.attrValues scriptPackages;
 
