@@ -1,5 +1,7 @@
 import { App, TFile, TFolder, Notice } from 'obsidian';
 import type { FileOperation } from './buffer-parser';
+import { createComponentLogger } from './logger';
+import type { Logger } from './logger';
 
 export interface OperationBatch {
   type: 'rename' | 'move' | 'delete' | 'create';
@@ -16,18 +18,26 @@ export class FileOperationsManager {
   private app: App;
   private undoHistory: FileOperation[][] = [];
   private maxUndoHistory: number = 50;
+  private log?: ReturnType<typeof createComponentLogger>;
 
-  constructor(app: App, maxUndoHistory: number = 50) {
+  constructor(app: App, maxUndoHistory: number = 50, logger?: Logger) {
     this.app = app;
     this.maxUndoHistory = maxUndoHistory;
+    if (logger) {
+      this.log = createComponentLogger(logger, 'FileOperationsManager');
+    }
   }
 
   /**
    * Executes a batch of file operations
    */
   async executeFileOperations(operations: FileOperation[]): Promise<OperationResult[]> {
-    if (operations.length === 0) return [];
+    if (operations.length === 0) {
+      this.log?.debug('No operations to execute');
+      return [];
+    }
 
+    this.log?.info('Executing file operations', { operationCount: operations.length });
     const results: OperationResult[] = [];
     
     // Group operations by type for efficient execution

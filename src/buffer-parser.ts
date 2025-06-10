@@ -1,4 +1,6 @@
 import { TFile, TFolder } from 'obsidian';
+import { createComponentLogger } from './logger';
+import type { Logger } from './logger';
 
 export interface FileOperation {
   type: 'rename' | 'move' | 'delete' | 'create';
@@ -20,11 +22,20 @@ export interface DirectoryLine {
 }
 
 export class BufferParser {
+  private log?: ReturnType<typeof createComponentLogger>;
+  
+  constructor(logger?: Logger) {
+    if (logger) {
+      this.log = createComponentLogger(logger, 'BufferParser');
+    }
+  }
   
   /**
    * Parses directory buffer content and returns file operations to execute
    */
   parseFileOperations(originalContent: string, editedContent: string, basePath: string): FileOperation[] {
+    this.log?.debug('Parsing file operations', { basePath, originalLineCount: originalContent.split('\n').length, editedLineCount: editedContent.split('\n').length });
+    
     const originalLines = this.parseDirectoryLines(originalContent, basePath);
     const editedLines = this.parseDirectoryLines(editedContent, basePath);
     
@@ -75,6 +86,8 @@ export class BufferParser {
     
     // Detect moves (changes in directory structure)
     // This is more complex and will be implemented in Phase 3
+    
+    this.log?.info('Parsed file operations', { operationCount: operations.length, operations: operations.map(op => ({ type: op.type, path: op.path })) });
     
     return operations;
   }

@@ -20,6 +20,8 @@ import { BufferParser } from './src/buffer-parser';
 import type { FileOperation, DirectoryLine } from './src/buffer-parser';
 import { FileOperationsManager } from './src/file-operations-manager';
 import type { OperationResult } from './src/file-operations-manager';
+import { Logger, LogLevel, createComponentLogger } from './src/logger';
+import type { LoggerSettings } from './src/logger';
 
 // Plugin settings interface
 interface SugarRushSettings {
@@ -46,6 +48,9 @@ interface SugarRushSettings {
   confirmDeletions: boolean;
   enableUndo: boolean;
   maxUndoHistory: number;
+  
+  // Logging
+  logging: LoggerSettings;
 }
 
 const DEFAULT_SETTINGS: SugarRushSettings = {
@@ -62,7 +67,17 @@ const DEFAULT_SETTINGS: SugarRushSettings = {
   debounceDelay: 500,
   confirmDeletions: true,
   enableUndo: true,
-  maxUndoHistory: 50
+  maxUndoHistory: 50,
+  logging: {
+    logLevel: LogLevel.INFO,
+    enableConsoleLogging: true,
+    enableFileLogging: false,
+    logFilePath: 'sugar-rush.log',
+    maxLogFileSize: 10, // 10MB
+    maxLogFiles: 5,
+    includeStackTrace: true,
+    timestampFormat: 'iso'
+  }
 };
 
 
@@ -71,19 +86,29 @@ class NavigationEngine {
   private app: App;
   private plugin: SugarRushPlugin;
   private previousViewState: any = null;
+  private log: ReturnType<typeof createComponentLogger>;
 
   constructor(app: App, plugin: SugarRushPlugin) {
     this.app = app;
     this.plugin = plugin;
+    this.log = createComponentLogger(plugin.logger, 'NavigationEngine');
   }
 
   async handleMinusKey(evt: Event): Promise<boolean> {
+    this.log.trace('Handle minus key pressed');
+    
     // Only trigger in markdown views when vim mode is in normal mode
     const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
-    if (!activeView) return false;
+    if (!activeView) {
+      this.log.debug('No active markdown view found');
+      return false;
+    }
     
     // Check if we're in vim normal mode (if vim mode is enabled)
-    if (!this.isInNormalMode(activeView)) return false;
+    if (!this.isInNormalMode(activeView)) {
+      this.log.debug('Not in vim normal mode, ignoring minus key');
+      return false;
+    }
     
     // Store current view state for return navigation
     this.previousViewState = {
@@ -94,9 +119,13 @@ class NavigationEngine {
     
     // Get current file's parent directory
     const file = activeView.file;
-    if (!file) return false;
+    if (!file) {
+      this.log.warn('No file in active view');
+      return false;
+    }
     
     const parentPath = file.parent?.path || '/';
+    this.log.info('Navigating to parent directory', { currentFile: file.path, parentPath });
     
     // Transform current pane into directory view
     await this.showDirectoryInPane(parentPath, activeView.leaf);
@@ -117,24 +146,33 @@ class NavigationEngine {
 
   private async showDirectoryInPane(path: string, leaf: WorkspaceLeaf): Promise<void> {
     try {
+      this.log.debug('Setting view state for directory', { path });
       await leaf.setViewState({
         type: 'directory-edit',
         state: { path: path }
       });
+      this.log.info('Successfully opened directory view', { path });
     } catch (error) {
-      console.error('Sugar Rush: Failed to show directory view:', error);
+      this.log.error('Failed to show directory view', { path }, error as Error);
       new Notice('Failed to open directory view');
     }
   }
 
   async returnToPreviousFile(): Promise<void> {
-    if (!this.previousViewState) return;
+    if (!this.previousViewState) {
+      this.log.debug('No previous view state to return to');
+      return;
+    }
     
     const { file, cursor, scrollTop } = this.previousViewState;
     const leaf = this.app.workspace.activeLeaf;
-    if (!leaf) return;
+    if (!leaf) {
+      this.log.warn('No active leaf to return to previous file');
+      return;
+    }
     
     try {
+      this.log.info('Returning to previous file', { filePath: file?.path });
       await leaf.openFile(file);
       
       // Restore cursor and scroll position
@@ -143,12 +181,14 @@ class NavigationEngine {
         if (view) {
           view.editor.setCursor(cursor);
           view.editor.scrollTo(null, scrollTop);
+          this.log.debug('Restored cursor and scroll position', { cursor, scrollTop });
         }
       }, 50);
       
       this.previousViewState = null;
+      this.log.info('Successfully returned to previous file');
     } catch (error) {
-      console.error('Sugar Rush: Failed to return to previous file:', error);
+      this.log.error('Failed to return to previous file', { filePath: file?.path }, error as Error);
       new Notice('Failed to return to previous file');
     }
   }
@@ -166,19 +206,23 @@ class DirectoryEditView extends TextFileView {
   private debouncedSave: () => void;
   private hasUnsavedChanges: boolean = false;
   private content: string = '';
+  private log: ReturnType<typeof createComponentLogger>;
 
   constructor(leaf: WorkspaceLeaf, app: App, navigationEngine: NavigationEngine, plugin: SugarRushPlugin) {
     super(leaf);
     this.navigation = false; // Disable default navigation
     this.navigationEngine = navigationEngine;
     this.plugin = plugin;
-    this.bufferParser = new BufferParser();
-    this.fileOperationsManager = new FileOperationsManager(app, plugin.settings.maxUndoHistory);
+    this.log = createComponentLogger(plugin.logger, 'DirectoryEditView');
+    this.bufferParser = new BufferParser(plugin.logger);
+    this.fileOperationsManager = new FileOperationsManager(app, plugin.settings.maxUndoHistory, plugin.logger);
     
     // Set up debounced save
     this.debouncedSave = debounce(async () => {
       await this.executePendingOperations();
     }, plugin.settings.debounceDelay);
+    
+    this.log.debug('DirectoryEditView created');
   }
 
   getViewType(): string {
@@ -210,16 +254,21 @@ class DirectoryEditView extends TextFileView {
   }
 
   async onOpen(): Promise<void> {
+    this.log.debug('DirectoryEditView opening');
     await super.onOpen();
     
     const state = this.leaf.getViewState().state as any;
     if (state?.path) {
       this.directoryPath = state.path;
+      this.log.info('Loading directory contents', { path: this.directoryPath });
       await this.loadDirectoryContents();
+    } else {
+      this.log.warn('No directory path provided in view state');
     }
   }
 
   async onClose(): Promise<void> {
+    this.log.debug('DirectoryEditView closing');
     await super.onClose();
   }
 
@@ -533,9 +582,17 @@ class DirectoryEditView extends TextFileView {
 export default class SugarRushPlugin extends Plugin {
   settings!: SugarRushSettings;
   navigationEngine!: NavigationEngine;
+  logger!: Logger;
+  log!: ReturnType<typeof createComponentLogger>;
 
   async onload(): Promise<void> {
     await this.loadSettings();
+
+    // Initialize logger
+    this.logger = new Logger(this.app, this.settings.logging);
+    this.log = createComponentLogger(this.logger, 'Plugin');
+    
+    this.log.info('Sugar Rush plugin loading...');
 
     // Initialize navigation engine
     this.navigationEngine = new NavigationEngine(this.app, this);
@@ -590,11 +647,18 @@ export default class SugarRushPlugin extends Plugin {
     // Add settings tab
     this.addSettingTab(new SugarRushSettingTab(this.app, this));
 
-    console.log('Sugar Rush plugin loaded');
+    this.log.info('Sugar Rush plugin loaded successfully');
   }
 
-  onunload(): void {
-    console.log('Sugar Rush plugin unloaded');
+  async onunload(): Promise<void> {
+    this.log?.info('Sugar Rush plugin unloading...');
+    
+    // Flush any pending logs
+    if (this.logger) {
+      await this.logger.flush();
+    }
+    
+    this.log?.info('Sugar Rush plugin unloaded');
   }
 
   async loadSettings(): Promise<void> {
@@ -603,6 +667,12 @@ export default class SugarRushPlugin extends Plugin {
 
   async saveSettings(): Promise<void> {
     await this.saveData(this.settings);
+    
+    // Update logger settings if logger is initialized
+    if (this.logger) {
+      this.logger.updateSettings(this.settings.logging);
+      this.log?.debug('Logger settings updated');
+    }
   }
 }
 
@@ -694,5 +764,146 @@ class SugarRushSettingTab extends PluginSettingTab {
           this.plugin.settings.lazyLoadThreshold = value;
           await this.plugin.saveSettings();
         }));
+
+    // Logging Settings
+    containerEl.createEl('h3', { text: 'Logging' });
+
+    new Setting(containerEl)
+      .setName('Log level')
+      .setDesc('Minimum level of logs to record')
+      .addDropdown(dropdown => dropdown
+        .addOption(LogLevel.TRACE.toString(), 'Trace (Very verbose)')
+        .addOption(LogLevel.DEBUG.toString(), 'Debug (Verbose)')
+        .addOption(LogLevel.INFO.toString(), 'Info (Normal)')
+        .addOption(LogLevel.WARN.toString(), 'Warning (Important)')
+        .addOption(LogLevel.ERROR.toString(), 'Error (Critical)')
+        .addOption(LogLevel.FATAL.toString(), 'Fatal (Critical)')
+        .addOption(LogLevel.OFF.toString(), 'Off (Disabled)')
+        .setValue(this.plugin.settings.logging.logLevel.toString())
+        .onChange(async (value) => {
+          this.plugin.settings.logging.logLevel = parseInt(value) as LogLevel;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName('Enable console logging')
+      .setDesc('Log messages to the browser console')
+      .addToggle(toggle => toggle
+        .setValue(this.plugin.settings.logging.enableConsoleLogging)
+        .onChange(async (value) => {
+          this.plugin.settings.logging.enableConsoleLogging = value;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName('Enable file logging')
+      .setDesc('Save log messages to a file in your vault')
+      .addToggle(toggle => toggle
+        .setValue(this.plugin.settings.logging.enableFileLogging)
+        .onChange(async (value) => {
+          this.plugin.settings.logging.enableFileLogging = value;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName('Log file path')
+      .setDesc('Path where log files will be stored')
+      .addText(text => text
+        .setPlaceholder('sugar-rush.log')
+        .setValue(this.plugin.settings.logging.logFilePath)
+        .onChange(async (value) => {
+          this.plugin.settings.logging.logFilePath = value || 'sugar-rush.log';
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName('Max log file size (MB)')
+      .setDesc('Maximum size before log files are rotated')
+      .addSlider(slider => slider
+        .setLimits(1, 100, 1)
+        .setValue(this.plugin.settings.logging.maxLogFileSize)
+        .setDynamicTooltip()
+        .onChange(async (value) => {
+          this.plugin.settings.logging.maxLogFileSize = value;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName('Max log files')
+      .setDesc('Number of rotated log files to keep')
+      .addSlider(slider => slider
+        .setLimits(1, 10, 1)
+        .setValue(this.plugin.settings.logging.maxLogFiles)
+        .setDynamicTooltip()
+        .onChange(async (value) => {
+          this.plugin.settings.logging.maxLogFiles = value;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName('Include stack traces')
+      .setDesc('Include stack traces in error logs')
+      .addToggle(toggle => toggle
+        .setValue(this.plugin.settings.logging.includeStackTrace)
+        .onChange(async (value) => {
+          this.plugin.settings.logging.includeStackTrace = value;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName('Timestamp format')
+      .setDesc('Format for timestamps in log messages')
+      .addDropdown(dropdown => dropdown
+        .addOption('iso', 'ISO 8601 (2023-12-25T10:30:00.000Z)')
+        .addOption('locale', 'Locale format (12/25/2023, 10:30:00 AM)')
+        .addOption('unix', 'Unix timestamp (1703504200000)')
+        .setValue(this.plugin.settings.logging.timestampFormat)
+        .onChange(async (value) => {
+          this.plugin.settings.logging.timestampFormat = value;
+          await this.plugin.saveSettings();
+        }));
+
+    // Log management
+    const logManagementDiv = containerEl.createDiv();
+    logManagementDiv.createEl('h4', { text: 'Log Management' });
+
+    new Setting(logManagementDiv)
+      .setName('Clear log file')
+      .setDesc('Remove all content from the current log file')
+      .addButton(button => button
+        .setButtonText('Clear logs')
+        .setCta()
+        .onClick(async () => {
+          if (this.plugin.logger) {
+            await this.plugin.logger.clearLogFile();
+          }
+        }));
+
+    new Setting(logManagementDiv)
+      .setName('View log file')
+      .setDesc('Open the current log file in Obsidian')
+      .addButton(button => button
+        .setButtonText('Open log file')
+        .onClick(async () => {
+          const logFile = this.app.vault.getAbstractFileByPath(this.plugin.settings.logging.logFilePath);
+          if (logFile instanceof TFile) {
+            const leaf = this.app.workspace.getLeaf();
+            await leaf.openFile(logFile);
+          } else {
+            new Notice('Log file not found. Enable file logging first.');
+          }
+        }));
+
+    // Show current log file size
+    if (this.plugin.logger) {
+      this.plugin.logger.getLogFileSize().then(size => {
+        const sizeInMB = (size / (1024 * 1024)).toFixed(2);
+        const statusDiv = logManagementDiv.createDiv();
+        statusDiv.createEl('small', { 
+          text: `Current log file size: ${sizeInMB} MB`,
+          cls: 'setting-item-description'
+        });
+      });
+    }
   }
 }
