@@ -1,5 +1,5 @@
 {
-  description = "A development shell for go";
+  description = "Sugar Rush - A obsidian plugin similar to oil/vinegar in vim.";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
