@@ -1,0 +1,26 @@
+{
+  "enableMinusKeyNavigation": true,
+  "enableContinuousNavigation": true,
+  "returnToFileHotkey": "Ctrl+^",
+  "showFileExtensions": true,
+  "showHiddenFiles": false,
+  "indentationStyle": "spaces",
+  "indentationSize": 2,
+  "enableCustomVimCommands": true,
+  "customKeybindings": {},
+  "lazyLoadThreshold": 5000,
+  "debounceDelay": 500,
+  "confirmDeletions": true,
+  "enableUndo": true,
+  "maxUndoHistory": 50,
+  "logging": {
+    "logLevel": 2,
+    "enableConsoleLogging": true,
+    "enableFileLogging": true,
+    "logFilePath": "sugar-rush.log",
+    "maxLogFileSize": 10,
+    "maxLogFiles": 5,
+    "includeStackTrace": true,
+    "timestampFormat": "iso"
+  }
+}

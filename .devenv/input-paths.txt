@@ -1,0 +1,4 @@
+/home/connerohnesorge/Documents/000Vaults/SecondBrain/.obsidian/plugins/sugar-rush/.devenv.flake.nix
+/home/connerohnesorge/Documents/000Vaults/SecondBrain/.obsidian/plugins/sugar-rush/devenv.lock
+/home/connerohnesorge/Documents/000Vaults/SecondBrain/.obsidian/plugins/sugar-rush/devenv.nix
+/home/connerohnesorge/Documents/000Vaults/SecondBrain/.obsidian/plugins/sugar-rush/devenv.yaml
