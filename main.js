@@ -1048,13 +1048,22 @@ var DirectoryEditView = class extends import_obsidian4.TextFileView {
   async onOpen() {
     this.log.debug("DirectoryEditView opening");
     await super.onOpen();
-    const state = this.leaf.getViewState().state;
+    let attempts = 0;
+    const maxAttempts = 5;
+    let state = this.leaf.getViewState().state;
+    while (!(state == null ? void 0 : state.path) && attempts < maxAttempts) {
+      const delay = Math.pow(2, attempts) * 10;
+      this.log.debug("View state not ready, retrying...", { attempt: attempts + 1, delay });
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      state = this.leaf.getViewState().state;
+      attempts++;
+    }
     if (state == null ? void 0 : state.path) {
       this.directoryPath = state.path;
-      this.log.info("Loading directory contents", { path: this.directoryPath });
+      this.log.info("Loading directory contents", { path: this.directoryPath, attempts });
       await this.loadDirectoryContents();
     } else {
-      this.log.warn("No directory path provided in view state");
+      this.log.warn("No directory path provided in view state after retries", { attempts });
     }
   }
   async onClose() {
@@ -1307,9 +1316,12 @@ var SugarRushPlugin = class extends import_obsidian4.Plugin {
     __publicField(this, "log");
   }
   async onload() {
+    console.log("Sugar Rush: onload() started");
     await this.loadSettings();
+    console.log("Sugar Rush: Settings loaded:", this.settings);
     this.logger = new Logger(this.app, this.settings.logging);
     this.log = createComponentLogger(this.logger, "Plugin");
+    console.log("Sugar Rush: Logger initialized");
     this.log.info("Sugar Rush plugin loading...");
     this.navigationEngine = new NavigationEngine(this.app, this);
     this.registerView(
@@ -1352,7 +1364,11 @@ var SugarRushPlugin = class extends import_obsidian4.Plugin {
         }
       }
     });
-    this.addSettingTab(new SugarRushSettingTab(this.app, this));
+    console.log("Sugar Rush: Creating settings tab");
+    const settingsTab = new SugarRushSettingTab(this.app, this);
+    console.log("Sugar Rush: Settings tab created:", settingsTab);
+    this.addSettingTab(settingsTab);
+    console.log("Sugar Rush: Settings tab added to plugin");
     this.log.info("Sugar Rush plugin loaded successfully");
   }
   async onunload() {
@@ -1364,7 +1380,11 @@ var SugarRushPlugin = class extends import_obsidian4.Plugin {
     (_b = this.log) == null ? void 0 : _b.info("Sugar Rush plugin unloaded");
   }
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const loadedData = await this.loadData();
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
+    if (loadedData == null ? void 0 : loadedData.logging) {
+      this.settings.logging = Object.assign({}, DEFAULT_SETTINGS.logging, loadedData.logging);
+    }
   }
   async saveSettings() {
     var _a;
@@ -1382,9 +1402,13 @@ var SugarRushSettingTab = class extends import_obsidian4.PluginSettingTab {
     this.plugin = plugin;
   }
   display() {
+    var _a, _b, _c;
+    console.log("Sugar Rush: Settings display() method called");
     const { containerEl } = this;
     containerEl.empty();
+    console.log("Sugar Rush: Container element cleared, creating header");
     containerEl.createEl("h2", { text: "Sugar Rush Settings" });
+    console.log("Sugar Rush: Header created, plugin settings:", this.plugin.settings);
     containerEl.createEl("h3", { text: "Navigation" });
     new import_obsidian4.Setting(containerEl).setName("Enable minus key navigation").setDesc("Press - to navigate to parent directory").addToggle((toggle) => toggle.setValue(this.plugin.settings.enableMinusKeyNavigation).onChange(async (value) => {
       this.plugin.settings.enableMinusKeyNavigation = value;
@@ -1413,15 +1437,35 @@ var SugarRushSettingTab = class extends import_obsidian4.PluginSettingTab {
       this.plugin.settings.lazyLoadThreshold = value;
       await this.plugin.saveSettings();
     }));
-    containerEl.createEl("h3", { text: "Logging" });
-    new import_obsidian4.Setting(containerEl).setName("Log level").setDesc("Minimum level of logs to record").addDropdown((dropdown) => dropdown.addOption(0 /* TRACE */.toString(), "Trace (Very verbose)").addOption(1 /* DEBUG */.toString(), "Debug (Verbose)").addOption(2 /* INFO */.toString(), "Info (Normal)").addOption(3 /* WARN */.toString(), "Warning (Important)").addOption(4 /* ERROR */.toString(), "Error (Critical)").addOption(5 /* FATAL */.toString(), "Fatal (Critical)").addOption(6 /* OFF */.toString(), "Off (Disabled)").setValue(this.plugin.settings.logging.logLevel.toString()).onChange(async (value) => {
-      this.plugin.settings.logging.logLevel = parseInt(value);
-      await this.plugin.saveSettings();
-    }));
-    new import_obsidian4.Setting(containerEl).setName("Enable console logging").setDesc("Log messages to the browser console").addToggle((toggle) => toggle.setValue(this.plugin.settings.logging.enableConsoleLogging).onChange(async (value) => {
-      this.plugin.settings.logging.enableConsoleLogging = value;
-      await this.plugin.saveSettings();
-    }));
+    const loggingHeader = containerEl.createEl("h3", { text: "Logging" });
+    console.log("Sugar Rush: Creating logging settings section", {
+      headerCreated: !!loggingHeader,
+      settingsExists: !!this.plugin.settings,
+      loggingExists: !!((_a = this.plugin.settings) == null ? void 0 : _a.logging),
+      logLevel: (_c = (_b = this.plugin.settings) == null ? void 0 : _b.logging) == null ? void 0 : _c.logLevel
+    });
+    try {
+      new import_obsidian4.Setting(containerEl).setName("Log level").setDesc("Minimum level of logs to record").addDropdown((dropdown) => {
+        var _a2, _b2;
+        return dropdown.addOption(0 /* TRACE */.toString(), "Trace (Very verbose)").addOption(1 /* DEBUG */.toString(), "Debug (Verbose)").addOption(2 /* INFO */.toString(), "Info (Normal)").addOption(3 /* WARN */.toString(), "Warning (Important)").addOption(4 /* ERROR */.toString(), "Error (Critical)").addOption(5 /* FATAL */.toString(), "Fatal (Critical)").addOption(6 /* OFF */.toString(), "Off (Disabled)").setValue(((_b2 = (_a2 = this.plugin.settings.logging) == null ? void 0 : _a2.logLevel) != null ? _b2 : 2 /* INFO */).toString()).onChange(async (value) => {
+          this.plugin.settings.logging.logLevel = parseInt(value);
+          await this.plugin.saveSettings();
+        });
+      });
+    } catch (error) {
+      console.error("Sugar Rush: Error creating log level setting:", error);
+      containerEl.createEl("p", { text: "Error loading logging settings. Check console for details." });
+    }
+    new import_obsidian4.Setting(containerEl).setName("Enable console logging").setDesc("Log messages to the browser console").addToggle((toggle) => {
+      var _a2, _b2;
+      return toggle.setValue((_b2 = (_a2 = this.plugin.settings.logging) == null ? void 0 : _a2.enableConsoleLogging) != null ? _b2 : true).onChange(async (value) => {
+        if (!this.plugin.settings.logging) {
+          this.plugin.settings.logging = Object.assign({}, DEFAULT_SETTINGS.logging);
+        }
+        this.plugin.settings.logging.enableConsoleLogging = value;
+        await this.plugin.saveSettings();
+      });
+    });
     new import_obsidian4.Setting(containerEl).setName("Enable file logging").setDesc("Save log messages to a file in your vault").addToggle((toggle) => toggle.setValue(this.plugin.settings.logging.enableFileLogging).onChange(async (value) => {
       this.plugin.settings.logging.enableFileLogging = value;
       await this.plugin.saveSettings();

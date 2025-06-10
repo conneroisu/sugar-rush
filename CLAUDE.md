@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Sugar Rush is an Obsidian plugin that brings Vim Vinegar/Neovim Oil-style navigation to Obsidian. The plugin transforms directory navigation into editable text buffers, allowing users to manipulate files and folders using vim-style operations within the Obsidian interface.
 
-**Current Status**: Early development stage - comprehensive specifications exist but implementation is minimal (placeholder code only).
+**Current Status**: Active development stage - core plugin structure implemented with directory navigation, buffer-based editing, and vim integration. Main plugin class, directory view, and file operations system are functional.
 
 ## MCPs
 
@@ -32,20 +32,29 @@ statix
 deadnix
 ```
 
-### Running the Project
+### Building and Development
 ```bash
-# Run current entry point (placeholder)
-bun run index.ts
+# Development build with watching (recommended for active development)
+npm run dev
 
-# TypeScript compilation (when needed)
-tsc
+# Production build for testing/deployment
+npm run build
+
+# TypeScript type checking without emission
+tsc -noEmit -skipLibCheck
+
+# Version bump and prepare for release
+npm run version
 ```
 
-### Future Development Commands
-Once implemented, the plugin will need:
-- Obsidian plugin build process
-- Hot reload during development
-- Plugin manifest validation
+### Plugin Testing
+```bash
+# Copy built files to Obsidian vault plugins folder for testing
+# Example: cp main.js manifest.json ~/.obsidian/plugins/sugar-rush/
+
+# After making changes, run build and reload plugin in Obsidian
+npm run dev  # Then reload in Obsidian settings
+```
 
 ## Architecture Overview
 
@@ -57,54 +66,64 @@ The plugin implements two main navigation paradigms:
 
 ### Technical Architecture
 
-**Plugin Structure**:
-- **Main Plugin Class**: Extends Obsidian's `Plugin` class
-- **Directory View**: Custom view type for directory editing
-- **Vim Mode Integration**: Extensions to CodeMirror 5 vim mode
-- **File Operations Parser**: Interprets buffer changes as file system operations
-- **Navigation State Manager**: Tracks directory history and context
+**Implemented Components**:
+- **SugarRushPlugin**: Main plugin class extending Obsidian's `Plugin` class (main.ts:582)
+- **DirectoryEditView**: Custom view extending `TextFileView` for buffer-based directory editing (main.ts:198)
+- **NavigationEngine**: Handles minus-key navigation and view state management (main.ts:85)
+- **BufferParser**: Parses directory contents and file operations from buffer text (src/buffer-parser.ts)
+- **FileOperationsManager**: Executes file system operations with undo support (src/file-operations-manager.ts)
+- **Logger**: Comprehensive logging system with file and console output (src/logger.ts)
 
-**Key Components**:
-- **Buffer-based Directory Editing**: Transform folder contents into editable text
-- **Vim Register Integration**: Enable cross-directory file operations
-- **File Operation Engine**: Execute file system changes from buffer modifications
-- **Obsidian Link Integration**: Maintain vault link integrity during operations
+**Key Systems**:
+- **Buffer-based Editing**: Directory contents displayed as editable text with emoji icons (📁 folders, 📄 files)
+- **Vim Integration**: Custom CodeMirror vim commands for directory operations (Enter to open, '-' to navigate up)
+- **Debounced Auto-save**: File operations executed automatically after buffer changes with configurable delay
+- **Settings Management**: Comprehensive settings with logging, performance, and vim integration options
 
-### Implementation Strategy
+### Current Implementation Status
 
-**Phase 1**: Basic vim-aware navigation
-- Implement `-` key binding for parent directory navigation
-- Create basic directory view with file listing
-- Integrate with Obsidian's workspace system
+**✅ Completed**:
+- Minus key navigation for parent directory access
+- Directory view with buffer-based editing
+- File operations (rename, delete, create, move) via text editing
+- Vim mode integration with custom keybindings
+- Auto-save with debounced file operations
+- Comprehensive logging and settings system
+- Undo/redo support for file operations
 
-**Phase 2**: Buffer integration
-- Transform directory contents into editable buffers
-- Implement file operation parsing from buffer changes
-- Add basic file operations (rename, delete, create)
-
-**Phase 3**: Advanced operations
+**🔄 In Progress/Needs Work**:
 - Cross-directory operations via vim registers
-- Bulk file operations
+- Performance optimization for large directories  
+- Error handling and validation improvements
 - Integration with Obsidian's file explorer
+- Floating window mode for quick navigation
 
-**Phase 4**: Polish and optimization
-- Performance optimization for large directories
-- Error handling and user feedback
-- Comprehensive testing
+**📋 Testing Required**:
+- Compatibility with different Obsidian versions
+- Vim mode behavior consistency
+- Large directory performance
+- Edge cases in file operations
 
 ## Development Notes
 
 ### Technology Stack
-- **Runtime**: Bun (modern JavaScript runtime)
-- **Language**: TypeScript with strict configuration
-- **Module System**: ESNext modules
-- **Development Environment**: Nix Flakes for reproducibility
+- **Language**: TypeScript with strict configuration (tsconfig.json)
+- **Build System**: esbuild for fast bundling (esbuild.config.mjs)
+- **Module System**: ESNext modules with CommonJS output for Obsidian
+- **Development Environment**: Nix Flakes for reproducible development
+- **Package Manager**: npm with Node.js ecosystem
 
 ### Project Structure
 ```
-src/                    # Plugin source code (to be implemented)
-specs/                  # Comprehensive technical specifications
-├── plan-v1.md         # 778-line detailed implementation plan
+main.ts                 # Main plugin implementation (939 lines) - core logic
+manifest.json          # Obsidian plugin manifest
+esbuild.config.mjs     # Build configuration with hot reload support
+src/                   # Core modules
+├── buffer-parser.ts   # Directory buffer parsing and file operation detection
+├── file-operations-manager.ts  # File system operations with undo support
+└── logger.ts          # Comprehensive logging system
+specs/                 # Technical specifications
+├── plan-v1.md         # Detailed implementation roadmap
 └── grading-prompt.md  # Evaluation criteria
 ```
 
@@ -116,21 +135,37 @@ The `specs/plan-v1.md` contains extremely detailed technical specifications incl
 - Performance optimization approaches
 - Error handling strategies
 
-### Missing Components (To Be Implemented)
-- `manifest.json` for Obsidian plugin registration
-- Obsidian API dependencies in package.json
-- Plugin build system and bundling
-- Main plugin class implementation
-- Directory view and buffer management
-- Vim mode extensions
+### Development Considerations
 
-### Obsidian Plugin Requirements
-When implementing, ensure:
-- Plugin manifest follows Obsidian's specification
-- Proper integration with Obsidian's plugin API
-- Compatibility with Obsidian's vim mode
-- Respect for Obsidian's file system abstractions
-- Testing with actual Obsidian installation
+**Build System**: 
+- esbuild provides fast bundling with watch mode for development
+- External dependencies properly configured for Obsidian environment
+- Source maps enabled in development, disabled in production
+
+**Plugin Registration**:
+- `manifest.json` properly configured for Obsidian plugin API
+- Main entry point builds to `main.js` in CommonJS format
+- All required Obsidian APIs properly imported and typed
+
+**File Operations**:
+- Buffer changes are debounced to prevent excessive file system operations
+- Undo history maintained for file operations (separate from text undo)
+- Validation prevents destructive operations from malformed buffer content
+
+### Key Vim Integration Features
+
+**Custom Keybindings** (main.ts:415-490):
+- `Enter`: Open file or navigate into folder
+- `-`: Navigate to parent directory  
+- `a`: Append new file (enter insert mode)
+- `i`: Insert new file at cursor
+- `:w`: Manual save of pending operations
+- `u`: Undo last file operations
+
+**Ex Commands** (when enabled in settings):
+- `:mkdir <name>`: Create new directory
+- `:touch <name>`: Create new file
+- `:rename <name>`: Rename current line's file/folder
 
 ## Important Considerations
 

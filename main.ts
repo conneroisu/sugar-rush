@@ -257,13 +257,25 @@ class DirectoryEditView extends TextFileView {
     this.log.debug('DirectoryEditView opening');
     await super.onOpen();
     
-    const state = this.leaf.getViewState().state as any;
+    // Retry getting view state with exponential backoff to handle race condition
+    let attempts = 0;
+    const maxAttempts = 5;
+    let state = this.leaf.getViewState().state as any;
+    
+    while (!state?.path && attempts < maxAttempts) {
+      const delay = Math.pow(2, attempts) * 10; // 10ms, 20ms, 40ms, 80ms, 160ms
+      this.log.debug('View state not ready, retrying...', { attempt: attempts + 1, delay });
+      await new Promise(resolve => setTimeout(resolve, delay));
+      state = this.leaf.getViewState().state as any;
+      attempts++;
+    }
+    
     if (state?.path) {
       this.directoryPath = state.path;
-      this.log.info('Loading directory contents', { path: this.directoryPath });
+      this.log.info('Loading directory contents', { path: this.directoryPath, attempts });
       await this.loadDirectoryContents();
     } else {
-      this.log.warn('No directory path provided in view state');
+      this.log.warn('No directory path provided in view state after retries', { attempts });
     }
   }
 
@@ -586,12 +598,15 @@ export default class SugarRushPlugin extends Plugin {
   log!: ReturnType<typeof createComponentLogger>;
 
   async onload(): Promise<void> {
+    console.log('Sugar Rush: onload() started');
     await this.loadSettings();
+    console.log('Sugar Rush: Settings loaded:', this.settings);
 
     // Initialize logger
     this.logger = new Logger(this.app, this.settings.logging);
     this.log = createComponentLogger(this.logger, 'Plugin');
     
+    console.log('Sugar Rush: Logger initialized');
     this.log.info('Sugar Rush plugin loading...');
 
     // Initialize navigation engine
@@ -645,7 +660,11 @@ export default class SugarRushPlugin extends Plugin {
     });
 
     // Add settings tab
-    this.addSettingTab(new SugarRushSettingTab(this.app, this));
+    console.log('Sugar Rush: Creating settings tab');
+    const settingsTab = new SugarRushSettingTab(this.app, this);
+    console.log('Sugar Rush: Settings tab created:', settingsTab);
+    this.addSettingTab(settingsTab);
+    console.log('Sugar Rush: Settings tab added to plugin');
 
     this.log.info('Sugar Rush plugin loaded successfully');
   }
@@ -662,7 +681,13 @@ export default class SugarRushPlugin extends Plugin {
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const loadedData = await this.loadData();
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
+    
+    // Ensure logging settings are properly merged
+    if (loadedData?.logging) {
+      this.settings.logging = Object.assign({}, DEFAULT_SETTINGS.logging, loadedData.logging);
+    }
   }
 
   async saveSettings(): Promise<void> {
@@ -686,10 +711,13 @@ class SugarRushSettingTab extends PluginSettingTab {
   }
 
   display(): void {
+    console.log('Sugar Rush: Settings display() method called');
     const { containerEl } = this;
     containerEl.empty();
 
+    console.log('Sugar Rush: Container element cleared, creating header');
     containerEl.createEl('h2', { text: 'Sugar Rush Settings' });
+    console.log('Sugar Rush: Header created, plugin settings:', this.plugin.settings);
 
     // Navigation Settings
     containerEl.createEl('h3', { text: 'Navigation' });
@@ -766,31 +794,45 @@ class SugarRushSettingTab extends PluginSettingTab {
         }));
 
     // Logging Settings
-    containerEl.createEl('h3', { text: 'Logging' });
+    const loggingHeader = containerEl.createEl('h3', { text: 'Logging' });
+    console.log('Sugar Rush: Creating logging settings section', { 
+      headerCreated: !!loggingHeader,
+      settingsExists: !!this.plugin.settings,
+      loggingExists: !!this.plugin.settings?.logging,
+      logLevel: this.plugin.settings?.logging?.logLevel
+    });
 
-    new Setting(containerEl)
-      .setName('Log level')
-      .setDesc('Minimum level of logs to record')
-      .addDropdown(dropdown => dropdown
-        .addOption(LogLevel.TRACE.toString(), 'Trace (Very verbose)')
-        .addOption(LogLevel.DEBUG.toString(), 'Debug (Verbose)')
-        .addOption(LogLevel.INFO.toString(), 'Info (Normal)')
-        .addOption(LogLevel.WARN.toString(), 'Warning (Important)')
-        .addOption(LogLevel.ERROR.toString(), 'Error (Critical)')
-        .addOption(LogLevel.FATAL.toString(), 'Fatal (Critical)')
-        .addOption(LogLevel.OFF.toString(), 'Off (Disabled)')
-        .setValue(this.plugin.settings.logging.logLevel.toString())
-        .onChange(async (value) => {
-          this.plugin.settings.logging.logLevel = parseInt(value) as LogLevel;
-          await this.plugin.saveSettings();
-        }));
+    try {
+      new Setting(containerEl)
+        .setName('Log level')
+        .setDesc('Minimum level of logs to record')
+        .addDropdown(dropdown => dropdown
+          .addOption(LogLevel.TRACE.toString(), 'Trace (Very verbose)')
+          .addOption(LogLevel.DEBUG.toString(), 'Debug (Verbose)')
+          .addOption(LogLevel.INFO.toString(), 'Info (Normal)')
+          .addOption(LogLevel.WARN.toString(), 'Warning (Important)')
+          .addOption(LogLevel.ERROR.toString(), 'Error (Critical)')
+          .addOption(LogLevel.FATAL.toString(), 'Fatal (Critical)')
+          .addOption(LogLevel.OFF.toString(), 'Off (Disabled)')
+          .setValue((this.plugin.settings.logging?.logLevel ?? LogLevel.INFO).toString())
+          .onChange(async (value) => {
+            this.plugin.settings.logging.logLevel = parseInt(value) as LogLevel;
+            await this.plugin.saveSettings();
+          }));
+    } catch (error) {
+      console.error('Sugar Rush: Error creating log level setting:', error);
+      containerEl.createEl('p', { text: 'Error loading logging settings. Check console for details.' });
+    }
 
     new Setting(containerEl)
       .setName('Enable console logging')
       .setDesc('Log messages to the browser console')
       .addToggle(toggle => toggle
-        .setValue(this.plugin.settings.logging.enableConsoleLogging)
+        .setValue(this.plugin.settings.logging?.enableConsoleLogging ?? true)
         .onChange(async (value) => {
+          if (!this.plugin.settings.logging) {
+            this.plugin.settings.logging = Object.assign({}, DEFAULT_SETTINGS.logging);
+          }
           this.plugin.settings.logging.enableConsoleLogging = value;
           await this.plugin.saveSettings();
         }));
