@@ -54,6 +54,7 @@ export class BufferParser {
           const newPath = this.constructNewPath(basePath, editedLine.name, originalLine.isFolder);
           operations.push({
             type: 'rename',
+            path: newPath,
             oldPath: originalLine.path,
             newPath: newPath,
             newName: editedLine.name
@@ -104,16 +105,16 @@ export class BufferParser {
     if (!match) return null;
     
     const [, indent, icon, name] = match;
-    const depth = Math.floor(indent.length / 2); // Assuming 2 spaces per indent level
+    const depth = Math.floor((indent || '').length / 2); // Assuming 2 spaces per indent level
     const isFolder = icon === '📁';
     
     const path = name === '..' 
       ? this.getParentPath(basePath)
-      : this.constructPath(basePath, name);
+      : this.constructPath(basePath, name || '');
     
     return {
       path,
-      name,
+      name: name || '',
       isFolder,
       depth,
       lineNumber,
@@ -246,7 +247,7 @@ export class BufferParser {
     const match = line.match(/^[📁📄]\s+(.+)$/);
     if (!match) return null;
     
-    const name = match[1];
+    const name = match[1] || '';
     const isFolder = line.startsWith('📁');
     
     return { name, isFolder };

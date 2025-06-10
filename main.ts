@@ -12,12 +12,14 @@ import {
   TFolder,
   Component,
   TextFileView,
-  ViewStateResult,
   debounce
 } from 'obsidian';
+import type { ViewStateResult } from 'obsidian';
 
-import { BufferParser, FileOperation, DirectoryLine } from './src/buffer-parser';
-import { FileOperationsManager, OperationResult } from './src/file-operations-manager';
+import { BufferParser } from './src/buffer-parser';
+import type { FileOperation, DirectoryLine } from './src/buffer-parser';
+import { FileOperationsManager } from './src/file-operations-manager';
+import type { OperationResult } from './src/file-operations-manager';
 
 // Plugin settings interface
 interface SugarRushSettings {
@@ -63,23 +65,6 @@ const DEFAULT_SETTINGS: SugarRushSettings = {
   maxUndoHistory: 50
 };
 
-// File operation types
-interface FileOperation {
-  type: 'rename' | 'move' | 'delete' | 'create';
-  path: string;
-  oldPath?: string;
-  newPath?: string;
-}
-
-interface DirectoryLine {
-  path: string;
-  name: string;
-  isFolder: boolean;
-  depth: number;
-  lineNumber: number;
-  originalPath?: string;
-  existsInOriginal?: boolean;
-}
 
 // Navigation Engine - handles the core navigation logic
 class NavigationEngine {
@@ -92,7 +77,7 @@ class NavigationEngine {
     this.plugin = plugin;
   }
 
-  async handleMinusKey(evt: KeyboardEvent): Promise<boolean> {
+  async handleMinusKey(evt: Event): Promise<boolean> {
     // Only trigger in markdown views when vim mode is in normal mode
     const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
     if (!activeView) return false;
@@ -146,7 +131,7 @@ class NavigationEngine {
     if (!this.previousViewState) return;
     
     const { file, cursor, scrollTop } = this.previousViewState;
-    const leaf = this.app.workspace.getActiveLeaf();
+    const leaf = this.app.workspace.activeLeaf;
     if (!leaf) return;
     
     try {
@@ -171,7 +156,7 @@ class NavigationEngine {
 
 // Directory Edit View - custom view for editing directories as buffers
 class DirectoryEditView extends TextFileView {
-  private directoryPath: string;
+  private directoryPath: string = '';
   private originalContent: string = '';
   private navigationEngine: NavigationEngine;
   private isLoading: boolean = false;
@@ -180,6 +165,7 @@ class DirectoryEditView extends TextFileView {
   private plugin: SugarRushPlugin;
   private debouncedSave: () => void;
   private hasUnsavedChanges: boolean = false;
+  private content: string = '';
 
   constructor(leaf: WorkspaceLeaf, app: App, navigationEngine: NavigationEngine, plugin: SugarRushPlugin) {
     super(leaf);
@@ -207,9 +193,20 @@ class DirectoryEditView extends TextFileView {
     return 'folder';
   }
 
-  async onLoadFile(file: TFile): Promise<string> {
+  async onLoadFile(file: TFile): Promise<void> {
     // This method is called by TextFileView, but we override it for directory handling
-    return '';
+  }
+
+  getViewData(): string {
+    return this.content;
+  }
+
+  setViewData(data: string, clear: boolean): void {
+    this.content = data;
+  }
+
+  clear(): void {
+    this.content = '';
   }
 
   async onOpen(): Promise<void> {
@@ -262,12 +259,16 @@ class DirectoryEditView extends TextFileView {
     
     // Add parent directory entry (unless we're at root)
     if (folder.parent) {
-      files.push({
+      // Create a special parent directory marker
+      const parentMarker = {
         name: '..',
         path: folder.parent.path,
         parent: folder.parent.parent,
-        vault: folder.vault
-      } as TFolder);
+        vault: folder.vault,
+        children: [],
+        isRoot: () => false
+      } as unknown as TFolder;
+      files.push(parentMarker);
     }
 
     // Add folders first, then files
@@ -278,7 +279,12 @@ class DirectoryEditView extends TextFileView {
       return a.name.localeCompare(b.name);
     });
 
-    files.push(...children);
+    // Filter and add valid children
+    children.forEach(child => {
+      if (child instanceof TFile || child instanceof TFolder) {
+        files.push(child);
+      }
+    });
     return files;
   }
 
@@ -357,74 +363,75 @@ class DirectoryEditView extends TextFileView {
 
   private setupDirectoryKeybindings(cm: any): void {
     // Define custom actions for directory operations
-    if (typeof CodeMirror !== 'undefined' && CodeMirror.Vim) {
+    const CM = (globalThis as any).CodeMirror;
+    if (typeof CM !== 'undefined' && CM.Vim) {
       
       // Enter key to open file/folder
-      CodeMirror.Vim.defineAction('openFileOrFolder', (cm: any) => {
+      CM.Vim.defineAction('openFileOrFolder', (cm: any) => {
         const cursor = cm.getCursor();
         const line = cm.getLine(cursor.line);
         this.handleFileOpen(line, cursor);
       });
 
-      CodeMirror.Vim.map('<CR>', ':openFileOrFolder<CR>', 'normal');
+      CM.Vim.map('<CR>', ':openFileOrFolder<CR>', 'normal');
       
       // Map minus key to go up to parent directory
-      CodeMirror.Vim.defineAction('navigateUp', (cm: any) => {
+      CM.Vim.defineAction('navigateUp', (cm: any) => {
         this.navigateToParent();
       });
 
-      CodeMirror.Vim.map('-', ':navigateUp<CR>', 'normal');
+      CM.Vim.map('-', ':navigateUp<CR>', 'normal');
 
       // Add file creation commands
-      CodeMirror.Vim.defineAction('appendNewFile', (cm: any) => {
+      CM.Vim.defineAction('appendNewFile', (cm: any) => {
         const cursor = cm.getCursor();
         const newLine = cursor.line + 1;
         cm.replaceRange('\n📄 ', { line: cursor.line, ch: cm.getLine(cursor.line).length });
         cm.setCursor({ line: newLine, ch: 3 });
-        CodeMirror.Vim.enterInsertMode(cm);
+        CM.Vim.enterInsertMode(cm);
       });
 
-      CodeMirror.Vim.defineAction('insertNewFile', (cm: any) => {
+      CM.Vim.defineAction('insertNewFile', (cm: any) => {
         const cursor = cm.getCursor();
         cm.replaceRange('📄 ', cursor);
         cm.setCursor({ line: cursor.line, ch: cursor.ch + 3 });
-        CodeMirror.Vim.enterInsertMode(cm);
+        CM.Vim.enterInsertMode(cm);
       });
 
-      CodeMirror.Vim.map('a', ':appendNewFile<CR>', 'normal');
-      CodeMirror.Vim.map('i', ':insertNewFile<CR>', 'normal');
+      CM.Vim.map('a', ':appendNewFile<CR>', 'normal');
+      CM.Vim.map('i', ':insertNewFile<CR>', 'normal');
 
       // Manual save command
-      CodeMirror.Vim.defineAction('saveDirectory', (cm: any) => {
+      CM.Vim.defineAction('saveDirectory', (cm: any) => {
         this.executePendingOperations();
       });
 
-      CodeMirror.Vim.map(':w', ':saveDirectory<CR>', 'normal');
+      CM.Vim.map(':w', ':saveDirectory<CR>', 'normal');
 
       // Undo command
-      CodeMirror.Vim.defineAction('undoOperations', (cm: any) => {
+      CM.Vim.defineAction('undoOperations', (cm: any) => {
         this.undoLastOperations();
       });
 
-      CodeMirror.Vim.map('u', ':undoOperations<CR>', 'normal');
+      CM.Vim.map('u', ':undoOperations<CR>', 'normal');
 
       // Define ex commands for file operations
       if (this.plugin.settings.enableCustomVimCommands) {
-        CodeMirror.Vim.defineEx('mkdir', 'mkdir', (cm: any, input: any) => {
+        CM.Vim.defineEx('mkdir', 'mkdir', (cm: any, input: any) => {
           const dirName = input.args.join(' ');
           if (dirName) {
             this.createDirectory(dirName);
           }
         });
 
-        CodeMirror.Vim.defineEx('touch', 'touch', (cm: any, input: any) => {
+        CM.Vim.defineEx('touch', 'touch', (cm: any, input: any) => {
           const fileName = input.args.join(' ');
           if (fileName) {
             this.createFile(fileName);
           }
         });
 
-        CodeMirror.Vim.defineEx('rename', 'ren', (cm: any, input: any) => {
+        CM.Vim.defineEx('rename', 'ren', (cm: any, input: any) => {
           const newName = input.args.join(' ');
           if (newName) {
             this.renameCurrentFile(newName, cm);
@@ -524,8 +531,8 @@ class DirectoryEditView extends TextFileView {
 
 // Main Plugin Class
 export default class SugarRushPlugin extends Plugin {
-  settings: SugarRushSettings;
-  navigationEngine: NavigationEngine;
+  settings!: SugarRushSettings;
+  navigationEngine!: NavigationEngine;
 
   async onload(): Promise<void> {
     await this.loadSettings();
@@ -549,7 +556,7 @@ export default class SugarRushPlugin extends Plugin {
         if (checking) return !!view && this.settings.enableMinusKeyNavigation;
         
         if (view && this.settings.enableMinusKeyNavigation) {
-          this.navigationEngine.handleMinusKey(new KeyboardEvent('keydown', { key: '-' }));
+          this.navigationEngine.handleMinusKey(new Event('keydown'));
         }
         return true;
       }
@@ -565,15 +572,17 @@ export default class SugarRushPlugin extends Plugin {
     });
 
     // Register global keydown handler for more responsive navigation
-    this.registerDomEvent(document, 'keydown', (evt: KeyboardEvent) => {
-      if (evt.key === '-' && !evt.ctrlKey && !evt.altKey && !evt.shiftKey && !evt.metaKey) {
+    this.registerDomEvent((globalThis as any).document, 'keydown', (evt: Event) => {
+      const keyEvent = evt as any;
+      if (keyEvent.key === '-' && !keyEvent.ctrlKey && !keyEvent.altKey && !keyEvent.shiftKey && !keyEvent.metaKey) {
         const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (activeView && this.settings.enableMinusKeyNavigation) {
-          const handled = this.navigationEngine.handleMinusKey(evt);
-          if (handled) {
-            evt.preventDefault();
-            evt.stopPropagation();
-          }
+          this.navigationEngine.handleMinusKey(evt).then(handled => {
+            if (handled) {
+              keyEvent.preventDefault();
+              keyEvent.stopPropagation();
+            }
+          });
         }
       }
     });

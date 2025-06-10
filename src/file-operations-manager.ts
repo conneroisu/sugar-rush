@@ -1,5 +1,5 @@
 import { App, TFile, TFolder, Notice } from 'obsidian';
-import { FileOperation } from './buffer-parser';
+import type { FileOperation } from './buffer-parser';
 
 export interface OperationBatch {
   type: 'rename' | 'move' | 'delete' | 'create';
@@ -351,7 +351,7 @@ export class FileOperationsManager {
    * Gets the last set of operations for undo
    */
   getLastOperations(): FileOperation[] | null {
-    return this.undoHistory.length > 0 ? this.undoHistory[this.undoHistory.length - 1] : null;
+    return this.undoHistory.length > 0 ? this.undoHistory[this.undoHistory.length - 1] || null : null;
   }
 
   /**
@@ -395,6 +395,7 @@ export class FileOperationsManager {
     // Process in reverse order
     for (let i = operations.length - 1; i >= 0; i--) {
       const op = operations[i];
+      if (!op) continue;
       
       switch (op.type) {
         case 'create':
@@ -407,11 +408,14 @@ export class FileOperationsManager {
           
         case 'rename':
           // Reverse of rename is rename back
-          reverseOps.push({
-            type: 'rename',
-            oldPath: op.newPath!,
-            newPath: op.oldPath!
-          });
+          if (op.newPath && op.oldPath) {
+            reverseOps.push({
+              type: 'rename',
+              path: op.oldPath,
+              oldPath: op.newPath,
+              newPath: op.oldPath
+            });
+          }
           break;
           
         case 'delete':
@@ -422,13 +426,16 @@ export class FileOperationsManager {
         case 'move':
           // Reverse of move is move back
           if (op.oldPath && op.targetDirectory) {
-            const fileName = op.oldPath.split('/').pop()!;
-            const originalDir = op.oldPath.replace('/' + fileName, '');
-            reverseOps.push({
-              type: 'move',
-              oldPath: `${op.targetDirectory}/${fileName}`,
-              targetDirectory: originalDir
-            });
+            const fileName = op.oldPath.split('/').pop();
+            if (fileName) {
+              const originalDir = op.oldPath.replace('/' + fileName, '');
+              reverseOps.push({
+                type: 'move',
+                path: op.oldPath,
+                oldPath: `${op.targetDirectory}/${fileName}`,
+                targetDirectory: originalDir
+              });
+            }
           }
           break;
       }
