@@ -30,6 +30,15 @@
           exec = ''$EDITOR "$REPO_ROOT"/flake.nix'';
           description = "Edit flake.nix";
         };
+        lint = {
+          exec = ''
+            oxlint --fix
+          '';
+          description = "Lint";
+          deps = [
+            pkgs.oxlint
+          ];
+        };
       };
 
       scriptPackages =
@@ -55,6 +64,8 @@
             statix
             deadnix
             esbuild
+            typescript-language-server
+            eslint
           ]
           ++ builtins.attrValues scriptPackages;
 
@@ -69,19 +80,6 @@
         inherit system;
       };
     in {
-      # default = pkgs.buildGoModule {
-      #   pname = "my-go-project";
-      #   version = "0.0.1";
-      #   src = ./.;
-      #   vendorHash = "";
-      #   doCheck = false;
-      #   meta = with pkgs.lib; {
-      #     description = "My Go project";
-      #     homepage = "https://github.com/conneroisu/my-go-project";
-      #     license = licenses.asl20;
-      #     maintainers = with maintainers; [connerohnesorge];
-      #   };
-      # };
     });
 
     formatter = forAllSystems (system: let

@@ -9,6 +9,7 @@ export interface FileOperation {
   newPath?: string;
   newName?: string;
   targetDirectory?: string;
+  content?: string; // For copying file content
 }
 
 export interface DirectoryLine {
@@ -84,8 +85,9 @@ export class BufferParser {
       }
     }
     
-    // Detect moves (changes in directory structure)
-    // This is more complex and will be implemented in Phase 3
+    // Detect moves based on directory path changes or indentation changes
+    const moveOperations = this.detectMoveOperations(originalLines, editedLines, basePath);
+    operations.push(...moveOperations);
     
     this.log?.info('Parsed file operations', { operationCount: operations.length, operations: operations.map(op => ({ type: op.type, path: op.path })) });
     
@@ -253,6 +255,57 @@ export class BufferParser {
     }).join('\n');
   }
   
+  /**
+   * Detects move operations based on file path or indentation changes
+   */
+  private detectMoveOperations(originalLines: DirectoryLine[], editedLines: DirectoryLine[], basePath: string): FileOperation[] {
+    const operations: FileOperation[] = [];
+    
+    // Create lookup maps by file name for easier comparison
+    const originalByName = new Map<string, DirectoryLine>();
+    const editedByName = new Map<string, DirectoryLine>();
+    
+    originalLines.forEach(line => {
+      if (line.name !== '..') {
+        originalByName.set(line.name, line);
+      }
+    });
+    
+    editedLines.forEach(line => {
+      if (line.name !== '..') {
+        editedByName.set(line.name, line);
+      }
+    });
+    
+    // Check for files that exist in both but have different paths/depths
+    for (const [name, editedLine] of editedByName) {
+      const originalLine = originalByName.get(name);
+      
+      if (originalLine && originalLine.path !== editedLine.path) {
+        // File exists in both but has different path - this is a move
+        const targetDirectory = this.extractDirectoryFromPath(editedLine.path);
+        
+        operations.push({
+          type: 'move',
+          path: editedLine.path,
+          oldPath: originalLine.path,
+          targetDirectory: targetDirectory
+        });
+      }
+    }
+    
+    return operations;
+  }
+  
+  /**
+   * Extract directory path from a full file path
+   */
+  private extractDirectoryFromPath(filePath: string): string {
+    const lastSlash = filePath.lastIndexOf('/');
+    if (lastSlash === -1) return '/';
+    return filePath.substring(0, lastSlash) || '/';
+  }
+
   /**
    * Extracts file information from a buffer line
    */

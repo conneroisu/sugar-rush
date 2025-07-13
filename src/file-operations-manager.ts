@@ -1,4 +1,4 @@
-import { App, TFile, TFolder, Notice } from 'obsidian';
+import { App, TFolder, Notice } from 'obsidian';
 import type { FileOperation } from './buffer-parser';
 import { createComponentLogger } from './logger';
 import type { Logger } from './logger';
@@ -39,22 +39,22 @@ export class FileOperationsManager {
 
     this.log?.info('Executing file operations', { operationCount: operations.length });
     const results: OperationResult[] = [];
-    
+
     // Group operations by type for efficient execution
     const batches = this.groupOperationsByType(operations);
-    
+
     // Store operations for undo functionality
     this.addToUndoHistory(operations);
-    
+
     try {
       for (const batch of batches) {
         const batchResults = await this.executeBatch(batch);
         results.push(...batchResults);
       }
-      
+
       // Trigger metadata cache update
       await this.updateMetadataCache();
-      
+
       // Show success notification
       if (results.every(r => r.success)) {
         new Notice(`Successfully executed ${operations.length} file operation(s)`);
@@ -62,12 +62,12 @@ export class FileOperationsManager {
         const failed = results.filter(r => !r.success).length;
         new Notice(`Completed with ${failed} error(s). Check console for details.`);
       }
-      
+
     } catch (error) {
       console.error('Sugar Rush: Failed to execute file operations:', error);
       new Notice('Failed to execute file operations');
     }
-    
+
     return results;
   }
 
@@ -76,14 +76,14 @@ export class FileOperationsManager {
    */
   private groupOperationsByType(operations: FileOperation[]): OperationBatch[] {
     const batches: Map<string, FileOperation[]> = new Map();
-    
+
     // Process in specific order: creates, renames, moves, then deletes
     const order = ['create', 'rename', 'move', 'delete'];
-    
+
     for (const type of order) {
       batches.set(type, operations.filter(op => op.type === type));
     }
-    
+
     return Array.from(batches.entries())
       .filter(([_, ops]) => ops.length > 0)
       .map(([type, ops]) => ({ type: type as any, operations: ops }));
@@ -94,12 +94,12 @@ export class FileOperationsManager {
    */
   private async executeBatch(batch: OperationBatch): Promise<OperationResult[]> {
     const results: OperationResult[] = [];
-    
+
     for (const operation of batch.operations) {
       try {
         const result = await this.executeOperation(operation);
         results.push(result);
-        
+
         if (!result.success) {
           console.error(`Sugar Rush: Operation failed:`, result.error);
         }
@@ -111,7 +111,7 @@ export class FileOperationsManager {
         });
       }
     }
-    
+
     return results;
   }
 
@@ -162,13 +162,15 @@ export class FileOperationsManager {
 
       // Determine if it's a folder based on the name
       const isFolder = !operation.newName.includes('.') || operation.newName.endsWith('/');
-      
+
       if (isFolder) {
         // Create folder
         await this.app.vault.createFolder(operation.path);
       } else {
-        // Create file with default content
-        const content = operation.newName.endsWith('.md') ? '' : '';
+        // Create file with provided content or default content
+        const content = operation.content !== undefined
+          ? operation.content
+          : (operation.newName.endsWith('.md') ? '' : '');
         await this.app.vault.create(operation.path, content);
       }
 
@@ -265,7 +267,7 @@ export class FileOperationsManager {
       }
 
       const newPath = `${operation.targetDirectory}/${file.name}`;
-      
+
       // Check if target already exists
       const existing = this.app.vault.getAbstractFileByPath(newPath);
       if (existing) {
@@ -337,7 +339,7 @@ export class FileOperationsManager {
     try {
       // Trigger metadata cache update
       this.app.metadataCache.trigger('resolved');
-      
+
       // Wait a bit for the cache to update
       await new Promise(resolve => setTimeout(resolve, 100));
     } catch (error) {
@@ -350,7 +352,7 @@ export class FileOperationsManager {
    */
   private addToUndoHistory(operations: FileOperation[]): void {
     this.undoHistory.push([...operations]);
-    
+
     // Maintain history size
     if (this.undoHistory.length > this.maxUndoHistory) {
       this.undoHistory.shift();
@@ -374,10 +376,10 @@ export class FileOperationsManager {
     try {
       // Create reverse operations
       const reverseOps = this.createReverseOperations(lastOps);
-      
+
       // Execute reverse operations without adding to undo history
       const results = await this.executeOperationsWithoutUndo(reverseOps);
-      
+
       const success = results.every(r => r.success);
       if (success) {
         new Notice('Successfully undid file operations');
@@ -386,7 +388,7 @@ export class FileOperationsManager {
         // Add back to history if undo failed
         this.undoHistory.push(lastOps);
       }
-      
+
       return success;
     } catch (error) {
       console.error('Sugar Rush: Failed to undo operations:', error);
@@ -401,12 +403,12 @@ export class FileOperationsManager {
    */
   private createReverseOperations(operations: FileOperation[]): FileOperation[] {
     const reverseOps: FileOperation[] = [];
-    
+
     // Process in reverse order
     for (let i = operations.length - 1; i >= 0; i--) {
       const op = operations[i];
       if (!op) continue;
-      
+
       switch (op.type) {
         case 'create':
           // Reverse of create is delete
@@ -415,7 +417,7 @@ export class FileOperationsManager {
             path: op.path
           });
           break;
-          
+
         case 'rename':
           // Reverse of rename is rename back
           if (op.newPath && op.oldPath) {
@@ -427,12 +429,12 @@ export class FileOperationsManager {
             });
           }
           break;
-          
+
         case 'delete':
           // Can't easily reverse delete, skip for now
           // In the future, could implement trash recovery
           break;
-          
+
         case 'move':
           // Reverse of move is move back
           if (op.oldPath && op.targetDirectory) {
@@ -450,7 +452,7 @@ export class FileOperationsManager {
           break;
       }
     }
-    
+
     return reverseOps;
   }
 
@@ -459,7 +461,7 @@ export class FileOperationsManager {
    */
   private async executeOperationsWithoutUndo(operations: FileOperation[]): Promise<OperationResult[]> {
     const results: OperationResult[] = [];
-    
+
     for (const operation of operations) {
       try {
         const result = await this.executeOperation(operation);
@@ -472,7 +474,7 @@ export class FileOperationsManager {
         });
       }
     }
-    
+
     return results;
   }
 
