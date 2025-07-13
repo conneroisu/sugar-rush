@@ -1,15 +1,15 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, type MarkdownFileInfo } from 'obsidian';
 
-interface MyPluginSettings {
+interface SugarRushSettings {
   mySetting: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: SugarRushSettings = {
   mySetting: 'default'
 }
 
-export default class MyPlugin extends Plugin {
-  settings!: MyPluginSettings;
+export default class SugarRush extends Plugin {
+  settings!: SugarRushSettings;
 
   async onload() {
     await this.loadSettings();
@@ -56,7 +56,7 @@ export default class MyPlugin extends Plugin {
     });
 
     // This adds a settings tab so the user can configure various aspects of the plugin
-    this.addSettingTab(new SampleSettingTab(this.app, this));
+    this.addSettingTab(new SugarRushSettingTab(this.app, this));
   }
 
   onunload() {
@@ -88,10 +88,10 @@ class SampleModal extends Modal {
   }
 }
 
-class SampleSettingTab extends PluginSettingTab {
-  plugin: MyPlugin;
+class SugarRushSettingTab extends PluginSettingTab {
+  plugin: SugarRush;
 
-  constructor(app: App, plugin: MyPlugin) {
+  constructor(app: App, plugin: SugarRush) {
     super(app, plugin);
     this.plugin = plugin;
   }
