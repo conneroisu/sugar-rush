@@ -66,7 +66,6 @@
             esbuild
             typescript-language-server
             eslint
-            biome
             vscode-langservers-extracted
           ]
           ++ builtins.attrValues scriptPackages;

@@ -23,10 +23,6 @@ export default class SugarRush extends Plugin {
   async onload() {
     await this.loadSettings();
 
-    // This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-    const statusBarItemEl = this.addStatusBarItem();
-    statusBarItemEl.setText("Status Bar Text");
-
     // This adds a simple command that can be triggered anywhere
     this.addCommand({
       id: "open-sample-modal-simple",
@@ -72,7 +68,7 @@ export default class SugarRush extends Plugin {
     this.addSettingTab(new SugarRushSettingTab(this.app, this));
   }
 
-  onunload() {}
+  onunload() { }
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
