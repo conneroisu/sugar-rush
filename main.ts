@@ -1,12 +1,21 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, type MarkdownFileInfo } from 'obsidian';
+import {
+  type App,
+  type Editor,
+  type MarkdownFileInfo,
+  MarkdownView,
+  Modal,
+  Plugin,
+  PluginSettingTab,
+  Setting,
+} from "obsidian";
 
 interface SugarRushSettings {
   mySetting: string;
 }
 
 const DEFAULT_SETTINGS: SugarRushSettings = {
-  mySetting: 'default'
-}
+  mySetting: "default",
+};
 
 export default class SugarRush extends Plugin {
   settings!: SugarRushSettings;
@@ -16,32 +25,36 @@ export default class SugarRush extends Plugin {
 
     // This adds a status bar item to the bottom of the app. Does not work on mobile apps.
     const statusBarItemEl = this.addStatusBarItem();
-    statusBarItemEl.setText('Status Bar Text');
+    statusBarItemEl.setText("Status Bar Text");
 
     // This adds a simple command that can be triggered anywhere
     this.addCommand({
-      id: 'open-sample-modal-simple',
-      name: 'Open sample modal (simple)',
+      id: "open-sample-modal-simple",
+      name: "Open sample modal (simple)",
       callback: () => {
         new SampleModal(this.app).open();
-      }
+      },
     });
     // This adds an editor command that can perform some operation on the current editor instance
     this.addCommand({
-      id: 'sample-editor-command',
-      name: 'Sample editor command',
-      editorCallback: (editor: Editor, view: MarkdownView | MarkdownFileInfo) => {
+      id: "sample-editor-command",
+      name: "Sample editor command",
+      editorCallback: (
+        editor: Editor,
+        view: MarkdownView | MarkdownFileInfo,
+      ) => {
         console.log(editor.getSelection());
-        editor.replaceSelection('Sample Editor Command');
-      }
+        editor.replaceSelection("Sample Editor Command");
+      },
     });
     // This adds a complex command that can check whether the current state of the app allows execution of the command
     this.addCommand({
-      id: 'open-sample-modal-complex',
-      name: 'Open sample modal (complex)',
+      id: "open-sample-modal-complex",
+      name: "Open sample modal (complex)",
       checkCallback: (checking: boolean) => {
         // Conditions to check
-        const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+        const markdownView =
+          this.app.workspace.getActiveViewOfType(MarkdownView);
         if (markdownView) {
           // If checking is true, we're simply "checking" if the command can be run.
           // If checking is false, then we want to actually perform the operation.
@@ -52,16 +65,14 @@ export default class SugarRush extends Plugin {
           // This command will only show up in Command Palette when the check function returns true
           return true;
         }
-      }
+      },
     });
 
     // This adds a settings tab so the user can configure various aspects of the plugin
     this.addSettingTab(new SugarRushSettingTab(this.app, this));
   }
 
-  onunload() {
-
-  }
+  onunload() {}
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
@@ -79,7 +90,7 @@ class SampleModal extends Modal {
 
   onOpen() {
     const { contentEl } = this;
-    contentEl.setText('Woah!');
+    contentEl.setText("Woah!");
   }
 
   onClose() {
@@ -101,16 +112,17 @@ class SugarRushSettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
-
     new Setting(containerEl)
-      .setName('Setting #1')
-      .setDesc('It\'s a secret')
-      .addText(text => text
-        .setPlaceholder('Enter your secret')
-        .setValue(this.plugin.settings.mySetting)
-        .onChange(async (value) => {
-          this.plugin.settings.mySetting = value;
-          await this.plugin.saveSettings();
-        }));
+      .setName("Setting #1")
+      .setDesc("It's a secret")
+      .addText((text) =>
+        text
+          .setPlaceholder("Enter your secret")
+          .setValue(this.plugin.settings.mySetting)
+          .onChange(async (value) => {
+            this.plugin.settings.mySetting = value;
+            await this.plugin.saveSettings();
+          }),
+      );
   }
 }

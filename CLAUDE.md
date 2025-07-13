@@ -10,11 +10,12 @@ Sugar Rush is an Obsidian plugin that brings Vim Vinegar/Neovim Oil-style naviga
 
 ## MCPs
 
-* context7 (Use to get background context for obsidian)
+- context7 (Use to get background context for obsidian)
 
 ## Key Commands
 
 ### Development Environment
+
 This project uses Nix Flakes for reproducible development environments:
 
 ```bash
@@ -33,6 +34,7 @@ deadnix
 ```
 
 ### Building and Development
+
 ```bash
 # Development build with watching (recommended for active development)
 npm run dev
@@ -48,6 +50,7 @@ npm run version
 ```
 
 ### Plugin Testing
+
 ```bash
 # Copy built files to Obsidian vault plugins folder for testing
 # Example: cp main.js manifest.json ~/.obsidian/plugins/sugar-rush/
@@ -59,6 +62,7 @@ npm run dev  # Then reload in Obsidian settings
 ## Architecture Overview
 
 ### Core Concept
+
 The plugin implements two main navigation paradigms:
 
 1. **Vim Vinegar Style**: Press `-` to navigate to parent directory in a special buffer
@@ -67,6 +71,7 @@ The plugin implements two main navigation paradigms:
 ### Technical Architecture
 
 **Implemented Components**:
+
 - **SugarRushPlugin**: Main plugin class extending Obsidian's `Plugin` class (main.ts:582)
 - **DirectoryEditView**: Custom view extending `TextFileView` for buffer-based directory editing (main.ts:198)
 - **NavigationEngine**: Handles minus-key navigation and view state management (main.ts:85)
@@ -75,6 +80,7 @@ The plugin implements two main navigation paradigms:
 - **Logger**: Comprehensive logging system with file and console output (src/logger.ts)
 
 **Key Systems**:
+
 - **Buffer-based Editing**: Directory contents displayed as editable text with emoji icons (📁 folders, 📄 files)
 - **Vim Integration**: Custom CodeMirror vim commands for directory operations (Enter to open, '-' to navigate up)
 - **Debounced Auto-save**: File operations executed automatically after buffer changes with configurable delay
@@ -83,6 +89,7 @@ The plugin implements two main navigation paradigms:
 ### Current Implementation Status
 
 **✅ Completed**:
+
 - Minus key navigation for parent directory access
 - Directory view with buffer-based editing
 - File operations (rename, delete, create, move) via text editing
@@ -92,13 +99,15 @@ The plugin implements two main navigation paradigms:
 - Undo/redo support for file operations
 
 **🔄 In Progress/Needs Work**:
+
 - Cross-directory operations via vim registers
-- Performance optimization for large directories  
+- Performance optimization for large directories
 - Error handling and validation improvements
 - Integration with Obsidian's file explorer
 - Floating window mode for quick navigation
 
 **📋 Testing Required**:
+
 - Compatibility with different Obsidian versions
 - Vim mode behavior consistency
 - Large directory performance
@@ -107,6 +116,7 @@ The plugin implements two main navigation paradigms:
 ## Development Notes
 
 ### Technology Stack
+
 - **Language**: TypeScript with strict configuration (tsconfig.json)
 - **Build System**: esbuild for fast bundling (esbuild.config.mjs)
 - **Module System**: ESNext modules with CommonJS output for Obsidian
@@ -114,6 +124,7 @@ The plugin implements two main navigation paradigms:
 - **Package Manager**: npm with Node.js ecosystem
 
 ### Project Structure
+
 ```
 main.ts                 # Main plugin implementation (939 lines) - core logic
 manifest.json          # Obsidian plugin manifest
@@ -128,7 +139,9 @@ specs/                 # Technical specifications
 ```
 
 ### Key Specifications
+
 The `specs/plan-v1.md` contains extremely detailed technical specifications including:
+
 - Exact vim behavior patterns to replicate
 - CodeMirror integration strategies
 - Obsidian API usage patterns
@@ -137,17 +150,20 @@ The `specs/plan-v1.md` contains extremely detailed technical specifications incl
 
 ### Development Considerations
 
-**Build System**: 
+**Build System**:
+
 - esbuild provides fast bundling with watch mode for development
 - External dependencies properly configured for Obsidian environment
 - Source maps enabled in development, disabled in production
 
 **Plugin Registration**:
+
 - `manifest.json` properly configured for Obsidian plugin API
 - Main entry point builds to `main.js` in CommonJS format
 - All required Obsidian APIs properly imported and typed
 
 **File Operations**:
+
 - Buffer changes are debounced to prevent excessive file system operations
 - Undo history maintained for file operations (separate from text undo)
 - Validation prevents destructive operations from malformed buffer content
@@ -155,14 +171,16 @@ The `specs/plan-v1.md` contains extremely detailed technical specifications incl
 ### Key Vim Integration Features
 
 **Custom Keybindings** (main.ts:415-490):
+
 - `Enter`: Open file or navigate into folder
-- `-`: Navigate to parent directory  
+- `-`: Navigate to parent directory
 - `a`: Append new file (enter insert mode)
 - `i`: Insert new file at cursor
 - `:w`: Manual save of pending operations
 - `u`: Undo last file operations
 
 **Ex Commands** (when enabled in settings):
+
 - `:mkdir <name>`: Create new directory
 - `:touch <name>`: Create new file
 - `:rename <name>`: Rename current line's file/folder
@@ -170,18 +188,22 @@ The `specs/plan-v1.md` contains extremely detailed technical specifications incl
 ## Important Considerations
 
 ### Vim Behavior Accuracy
+
 The plugin must accurately replicate vim/neovim behaviors:
+
 - Exact key binding patterns from Vinegar and Oil
 - Proper vim register integration
 - Consistent buffer manipulation patterns
 
 ### Obsidian Integration
+
 - Maintain compatibility with existing Obsidian workflows
 - Preserve vault link integrity during file operations
 - Integration with Obsidian's file explorer and search
 - Proper handling of Obsidian's metadata and settings
 
 ### Performance
+
 - Efficient handling of large directories
 - Minimal impact on Obsidian's performance
 - Proper cleanup of resources and event listeners

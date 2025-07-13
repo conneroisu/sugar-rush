@@ -17,20 +17,22 @@ Based on the logs, the following sequence occurs:
 ## Root Cause Analysis
 
 ### Timing Issue
+
 The primary issue appears to be a race condition in the Obsidian view lifecycle. The sequence is:
 
 ```typescript
 // NavigationEngine.showDirectoryInPane() - main.ts:147-159
 await leaf.setViewState({
-  type: 'directory-edit',
-  state: { path: path }  // This sets the state
+  type: "directory-edit",
+  state: { path: path }, // This sets the state
 });
 
-// DirectoryEditView.onOpen() - main.ts:256-268  
-const state = this.leaf.getViewState().state as any;  // This may be called before state is fully set
+// DirectoryEditView.onOpen() - main.ts:256-268
+const state = this.leaf.getViewState().state as any; // This may be called before state is fully set
 ```
 
 ### View Lifecycle Race Condition
+
 1. `leaf.setViewState()` initiates the view change asynchronously
 2. `DirectoryEditView.onOpen()` may be called before the view state is fully committed
 3. `this.leaf.getViewState().state` returns undefined because the state hasn't been fully applied yet
@@ -38,6 +40,7 @@ const state = this.leaf.getViewState().state as any;  // This may be called befo
 ## Code Locations
 
 ### NavigationEngine.showDirectoryInPane() - main.ts:147-159
+
 ```typescript
 private async showDirectoryInPane(path: string, leaf: WorkspaceLeaf): Promise<void> {
   try {
@@ -55,11 +58,12 @@ private async showDirectoryInPane(path: string, leaf: WorkspaceLeaf): Promise<vo
 ```
 
 ### DirectoryEditView.onOpen() - main.ts:256-268
+
 ```typescript
 async onOpen(): Promise<void> {
   this.log.debug('DirectoryEditView opening');
   await super.onOpen();
-  
+
   const state = this.leaf.getViewState().state as any;
   if (state?.path) {
     this.directoryPath = state.path;
@@ -74,24 +78,25 @@ async onOpen(): Promise<void> {
 ## Potential Solutions
 
 ### Solution 1: Retry with Delay
+
 Add a retry mechanism in `onOpen()` to wait for the view state to be available:
 
 ```typescript
 async onOpen(): Promise<void> {
   this.log.debug('DirectoryEditView opening');
   await super.onOpen();
-  
+
   // Retry getting view state with exponential backoff
   let attempts = 0;
   const maxAttempts = 5;
   let state = this.leaf.getViewState().state as any;
-  
+
   while (!state?.path && attempts < maxAttempts) {
     await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempts) * 10)); // 10ms, 20ms, 40ms, 80ms, 160ms
     state = this.leaf.getViewState().state as any;
     attempts++;
   }
-  
+
   if (state?.path) {
     this.directoryPath = state.path;
     this.log.info('Loading directory contents', { path: this.directoryPath });
@@ -103,6 +108,7 @@ async onOpen(): Promise<void> {
 ```
 
 ### Solution 2: Pass State Through Constructor
+
 Modify the view registration to pass the path through the constructor:
 
 ```typescript
@@ -122,12 +128,13 @@ constructor(leaf: WorkspaceLeaf, app: App, navigationEngine: NavigationEngine, p
 ```
 
 ### Solution 3: Custom setState Method
+
 Override the view state handling to ensure proper initialization:
 
 ```typescript
 async setState(state: any, result: ViewStateResult): Promise<void> {
   await super.setState(state, result);
-  
+
   if (state?.path) {
     this.directoryPath = state.path;
     this.log.info('Setting directory path from setState', { path: this.directoryPath });

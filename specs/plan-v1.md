@@ -1,4 +1,5 @@
 # Sugar Rush v1 Specification: Vim Vinegar/Nvim Oil-like Navigation for Obsidian
+
 - Creating a specialized plugin for batch file operations using a vim-mode buffer in Obsidian
 
 ## Project Overview
@@ -14,11 +15,13 @@ This plugin uses the builtin vim-mode for text editing in Obsidian.
 ## Key Features Inspired by Vim Vinegar
 
 ### Quick Directory Navigation
+
 - **Rapid Parent Directory Access**: Press `-` in any note to instantly navigate to the folder containing that note
 - **Continuous Upward Navigation**: Keep pressing `-` to traverse up the folder hierarchy
 - **Return to Previous Context**: Use a hotkey (e.g., `Ctrl+^`) to return to the previous note from the folder view
 
 ### Minimal Interface Design
+
 - **Clean Folder Views**: Remove clutter from folder displays, showing only essential file listings
 - **Smart Sorting**: Apply sensible sorting with commonly used file types prioritized
 - **Hidden File Management**: Respect Obsidian's file hiding preferences and provide toggle options
@@ -26,6 +29,7 @@ This plugin uses the builtin vim-mode for text editing in Obsidian.
 ## Key Features Inspired by Oil.nvim
 
 ### Buffer-Based File Management
+
 - **Folder as Editable Buffer**: Treat folder contents as editable text where you can:
   - Rename files by editing their names inline
   - Move files by cutting/pasting file names to different locations
@@ -33,11 +37,13 @@ This plugin uses the builtin vim-mode for text editing in Obsidian.
   - Delete files by deleting their lines
 
 ### Advanced File Operations
+
 - **Cross-Folder Actions**: Enable moving files between folders through buffer operations
 - **Bulk Operations**: Perform multiple file operations simultaneously through text editing
 - **Undo/Redo Support**: Standard Obsidian undo/redo for file operations
 
 ### Floating Window Mode
+
 - **Quick File Browser**: Open a floating window file browser for rapid navigation
 - **Preview Integration**: Show note previews alongside folder contents
 - **Non-Disruptive Workflow**: Navigate files without losing current workspace context
@@ -45,15 +51,18 @@ This plugin uses the builtin vim-mode for text editing in Obsidian.
 ## Obsidian-Specific Adaptations
 
 ### Note Management
+
 - **Markdown Awareness**: Special handling for `.md` files with metadata display
 - **Link Integration**: Show backlinks and forward links in folder views
 - **Tag Navigation**: Navigate through folder structures using tag hierarchies
 
 ### Vault Operations
+
 - **Template Integration**: Quick access to note templates when creating new files
 - **Plugin Compatibility**: Ensure compatibility with popular Obsidian plugins
 
 ### Workspace Integration
+
 - **Split Compatibility**: Work seamlessly with Obsidian's split pane system
 - **Tab Management**: Integrate with Obsidian's tab system for multiple folder views
 - **Graph View Integration**: Connect folder navigation with graph view exploration
@@ -65,23 +74,29 @@ This plugin uses the builtin vim-mode for text editing in Obsidian.
 The plugin leverages Obsidian's extensive plugin API while working within the constraints of the Electron environment. Key architectural decisions include:
 
 **Plugin Structure**:
+
 ```typescript
 // main.ts - Plugin entry point
 export default class SugarRushPlugin extends Plugin {
   async onload() {
     // Register commands, event handlers, and UI components
-    this.registerDomEvent(document, 'keydown', this.handleGlobalKeydown.bind(this));
+    this.registerDomEvent(
+      document,
+      "keydown",
+      this.handleGlobalKeydown.bind(this),
+    );
     this.addCommand({
-      id: 'navigate-parent',
-      name: 'Navigate to parent directory',
-      hotkeys: [{ modifiers: [], key: '-' }],
-      callback: this.navigateParent.bind(this)
+      id: "navigate-parent",
+      name: "Navigate to parent directory",
+      hotkeys: [{ modifiers: [], key: "-" }],
+      callback: this.navigateParent.bind(this),
     });
   }
 }
 ```
 
 **Core Plugin APIs Used**:
+
 - `App.vault.adapter` - Direct filesystem operations
 - `App.workspace.getActiveViewOfType()` - Detect current view context
 - `App.metadataCache` - Access file metadata and link information
@@ -91,6 +106,7 @@ export default class SugarRushPlugin extends Plugin {
 ### Core Components
 
 #### 1. Navigation Engine
+
 Intercepts navigation triggers and manages view state transitions:
 
 ```typescript
@@ -99,50 +115,55 @@ class NavigationEngine {
     // Only trigger in markdown views, not in directory views
     const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
     if (!activeView) return;
-    
+
     // Get current file's parent directory
     const file = activeView.file;
-    const parentPath = file.parent?.path || '/';
-    
+    const parentPath = file.parent?.path || "/";
+
     // Transform current pane into directory view
     await this.showDirectoryInPane(parentPath, activeView.leaf);
   }
-  
+
   private async showDirectoryInPane(path: string, leaf: WorkspaceLeaf) {
     // Create custom directory view that replaces current content
     const directoryView = new DirectoryEditView(leaf, path);
     await leaf.setViewState({
-      type: 'directory-edit',
-      state: { path: path }
+      type: "directory-edit",
+      state: { path: path },
     });
   }
 }
 ```
 
 #### 2. Directory Edit View
+
 Custom view that presents folder contents as editable buffer:
 
 ```typescript
 class DirectoryEditView extends TextFileView {
-  getViewType(): string { return 'directory-edit'; }
-  
+  getViewType(): string {
+    return "directory-edit";
+  }
+
   async onOpen() {
     // Load directory contents and render as editable text
     const files = await this.loadDirectoryContents();
     this.setViewData(this.formatAsEditableBuffer(files), false);
-    
+
     // Enable vim-mode for this view
     this.enableVimMode();
   }
-  
+
   private formatAsEditableBuffer(files: TFile[]): string {
-    return files.map(file => {
-      const indent = '  '.repeat(this.getDepthLevel(file));
-      const icon = file instanceof TFolder ? '📁' : '📄';
-      return `${indent}${icon} ${file.name}`;
-    }).join('\n');
+    return files
+      .map((file) => {
+        const indent = "  ".repeat(this.getDepthLevel(file));
+        const icon = file instanceof TFolder ? "📁" : "📄";
+        return `${indent}${icon} ${file.name}`;
+      })
+      .join("\n");
   }
-  
+
   async save(): Promise<void> {
     // Parse edited buffer and execute file operations
     const operations = this.parseFileOperations();
@@ -152,36 +173,37 @@ class DirectoryEditView extends TextFileView {
 ```
 
 #### 3. Vim Mode Integration
+
 Leverages Obsidian's built-in vim mode through CodeMirror integration:
 
 ```typescript
 class VimModeIntegration {
   private enableVimModeForView(view: DirectoryEditView) {
     const editor = view.editor;
-    
+
     // Ensure vim mode is active for this editor instance
-    if (this.app.vault.getConfig('vimMode')) {
-      editor.cm.setOption('keyMap', 'vim');
-      
+    if (this.app.vault.getConfig("vimMode")) {
+      editor.cm.setOption("keyMap", "vim");
+
       // Add custom vim commands for directory operations
-      CodeMirror.Vim.defineAction('openFile', (cm: any) => {
+      CodeMirror.Vim.defineAction("openFile", (cm: any) => {
         const cursor = cm.getCursor();
         const line = cm.getLine(cursor.line);
         this.openFileFromLine(line);
       });
-      
+
       // Map Enter key to open file/folder
-      CodeMirror.Vim.map('<CR>', ':openFile<CR>', 'normal');
+      CodeMirror.Vim.map("<CR>", ":openFile<CR>", "normal");
     }
   }
-  
+
   private registerVimCommands() {
     // Register directory-specific vim commands
-    CodeMirror.Vim.defineEx('mkdir', 'mkdir', (cm: any, input: any) => {
+    CodeMirror.Vim.defineEx("mkdir", "mkdir", (cm: any, input: any) => {
       this.createDirectory(input.args[0]);
     });
-    
-    CodeMirror.Vim.defineEx('touch', 'touch', (cm: any, input: any) => {
+
+    CodeMirror.Vim.defineEx("touch", "touch", (cm: any, input: any) => {
       this.createFile(input.args[0]);
     });
   }
@@ -189,6 +211,7 @@ class VimModeIntegration {
 ```
 
 #### 4. File Operations Manager
+
 Handles translation from buffer edits to actual filesystem changes:
 
 ```typescript
@@ -196,28 +219,28 @@ class FileOperationsManager {
   async executeFileOperations(operations: FileOperation[]) {
     // Group operations by type for efficient execution
     const batches = this.groupOperationsByType(operations);
-    
+
     for (const batch of batches) {
       switch (batch.type) {
-        case 'rename':
+        case "rename":
           await this.executeBatchRename(batch.operations);
           break;
-        case 'move':
+        case "move":
           await this.executeBatchMove(batch.operations);
           break;
-        case 'delete':
+        case "delete":
           await this.executeBatchDelete(batch.operations);
           break;
-        case 'create':
+        case "create":
           await this.executeBatchCreate(batch.operations);
           break;
       }
     }
-    
+
     // Update Obsidian's metadata cache
-    await this.app.metadataCache.trigger('resolved');
+    await this.app.metadataCache.trigger("resolved");
   }
-  
+
   private async executeBatchRename(operations: RenameOperation[]) {
     for (const op of operations) {
       const file = this.app.vault.getAbstractFileByPath(op.oldPath);
@@ -231,37 +254,49 @@ class FileOperationsManager {
 ```
 
 #### 5. Buffer Parser
+
 Analyzes edited buffer content to determine required file operations:
 
 ```typescript
 class BufferParser {
-  parseFileOperations(originalContent: string, editedContent: string): FileOperation[] {
+  parseFileOperations(
+    originalContent: string,
+    editedContent: string,
+  ): FileOperation[] {
     const originalLines = this.parseDirectoryLines(originalContent);
     const editedLines = this.parseDirectoryLines(editedContent);
-    
+
     const operations: FileOperation[] = [];
-    
+
     // Detect deletions (lines removed)
-    const deletedFiles = originalLines.filter(orig => 
-      !editedLines.some(edited => edited.path === orig.path)
+    const deletedFiles = originalLines.filter(
+      (orig) => !editedLines.some((edited) => edited.path === orig.path),
     );
-    operations.push(...deletedFiles.map(file => ({ type: 'delete', path: file.path })));
-    
+    operations.push(
+      ...deletedFiles.map((file) => ({ type: "delete", path: file.path })),
+    );
+
     // Detect renames (path changed)
-    const renamedFiles = editedLines.filter(edited => {
-      const original = originalLines.find(orig => orig.lineNumber === edited.lineNumber);
+    const renamedFiles = editedLines.filter((edited) => {
+      const original = originalLines.find(
+        (orig) => orig.lineNumber === edited.lineNumber,
+      );
       return original && original.path !== edited.path;
     });
-    operations.push(...renamedFiles.map(file => ({ 
-      type: 'rename', 
-      oldPath: file.originalPath, 
-      newPath: file.path 
-    })));
-    
+    operations.push(
+      ...renamedFiles.map((file) => ({
+        type: "rename",
+        oldPath: file.originalPath,
+        newPath: file.path,
+      })),
+    );
+
     // Detect new files (new lines added)
-    const newFiles = editedLines.filter(edited => !edited.existsInOriginal);
-    operations.push(...newFiles.map(file => ({ type: 'create', path: file.path })));
-    
+    const newFiles = editedLines.filter((edited) => !edited.existsInOriginal);
+    operations.push(
+      ...newFiles.map((file) => ({ type: "create", path: file.path })),
+    );
+
     return operations;
   }
 }
@@ -270,6 +305,7 @@ class BufferParser {
 ### Advanced Implementation Considerations
 
 #### Working with Obsidian's Vim Mode
+
 Obsidian's vim mode is implemented through CodeMirror 5's vim keymap. The plugin must:
 
 1. **Detect Vim Mode State**: Check `this.app.vault.getConfig('vimMode')` to determine if vim mode is enabled
@@ -280,23 +316,27 @@ Obsidian's vim mode is implemented through CodeMirror 5's vim keymap. The plugin
 #### Performance Optimization Strategies
 
 **Lazy Loading**:
+
 ```typescript
 class PerformanceOptimizer {
-  private async loadDirectoryContents(path: string): Promise<DirectoryContents> {
+  private async loadDirectoryContents(
+    path: string,
+  ): Promise<DirectoryContents> {
     // Only load visible portion for large directories
     const config = this.getViewConfig();
     const files = await this.app.vault.adapter.list(path);
-    
+
     if (files.files.length > config.lazyLoadThreshold) {
       return this.createVirtualizedView(files);
     }
-    
+
     return this.createFullView(files);
   }
 }
 ```
 
 **Debounced Operations**:
+
 ```typescript
 private debouncedSave = debounce(async () => {
   await this.parseAndExecuteOperations();
@@ -306,29 +346,30 @@ private debouncedSave = debounce(async () => {
 #### Error Handling and Recovery
 
 **Operation Validation**:
+
 ```typescript
 class OperationValidator {
   validateOperation(operation: FileOperation): ValidationResult {
     switch (operation.type) {
-      case 'rename':
+      case "rename":
         return this.validateRename(operation);
-      case 'move':
+      case "move":
         return this.validateMove(operation);
       // ... other validations
     }
   }
-  
+
   private validateRename(op: RenameOperation): ValidationResult {
     // Check for naming conflicts
     if (this.app.vault.getAbstractFileByPath(op.newPath)) {
-      return { valid: false, error: 'File already exists' };
+      return { valid: false, error: "File already exists" };
     }
-    
+
     // Validate filename characters
     if (!/^[^<>:"/\\|?*]+$/.test(op.newName)) {
-      return { valid: false, error: 'Invalid filename characters' };
+      return { valid: false, error: "Invalid filename characters" };
     }
-    
+
     return { valid: true };
   }
 }
@@ -337,25 +378,27 @@ class OperationValidator {
 ### User Interface Implementation
 
 #### Custom View Registration
+
 ```typescript
 export class SugarRushPlugin extends Plugin {
   async onload() {
     this.registerView(
-      'directory-edit',
-      (leaf: WorkspaceLeaf) => new DirectoryEditView(leaf, this.app)
+      "directory-edit",
+      (leaf: WorkspaceLeaf) => new DirectoryEditView(leaf, this.app),
     );
-    
+
     // Register custom icons
-    addIcon('directory-edit', directoryEditIcon);
+    addIcon("directory-edit", directoryEditIcon);
   }
 }
 ```
 
 #### Status Bar Integration
+
 ```typescript
 class StatusBarManager {
   private statusBarItem: HTMLElement;
-  
+
   updateStatus(view: DirectoryEditView) {
     const pendingOps = view.getPendingOperations();
     this.statusBarItem.setText(`📁 ${pendingOps.length} pending operations`);
@@ -366,27 +409,28 @@ class StatusBarManager {
 ### Configuration and Settings
 
 #### Plugin Settings Schema
+
 ```typescript
 interface SugarRushSettings {
   // Navigation behavior
   enableMinusKeyNavigation: boolean;
   enableContinuousNavigation: boolean;
   returnToFileHotkey: string;
-  
+
   // Display options
   showFileExtensions: boolean;
   showHiddenFiles: boolean;
-  indentationStyle: 'spaces' | 'tabs';
+  indentationStyle: "spaces" | "tabs";
   indentationSize: number;
-  
+
   // Vim integration
   enableCustomVimCommands: boolean;
   customKeybindings: Record<string, string>;
-  
+
   // Performance
   lazyLoadThreshold: number;
   debounceDelay: number;
-  
+
   // Safety
   confirmDeletions: boolean;
   enableUndo: boolean;
@@ -401,9 +445,10 @@ interface SugarRushSettings {
 Obsidian uses CodeMirror 5 with the vim keymap for its vim mode functionality. Understanding this integration is crucial for extending vim capabilities to directory navigation:
 
 **CodeMirror Vim Extension Points**:
+
 ```typescript
 // Registering custom vim commands that work in directory edit mode
-CodeMirror.Vim.defineAction('sugar_rush_open', (cm: any, actionArgs: any) => {
+CodeMirror.Vim.defineAction("sugar_rush_open", (cm: any, actionArgs: any) => {
   const cursor = cm.getCursor();
   const line = cm.getLine(cursor.line);
   const directoryView = this.getDirectoryViewFromEditor(cm);
@@ -411,46 +456,57 @@ CodeMirror.Vim.defineAction('sugar_rush_open', (cm: any, actionArgs: any) => {
 });
 
 // Custom Ex commands for directory operations
-CodeMirror.Vim.defineEx('rename', 'ren', (cm: any, input: any) => {
-  const newName = input.args.join(' ');
+CodeMirror.Vim.defineEx("rename", "ren", (cm: any, input: any) => {
+  const newName = input.args.join(" ");
   const currentLine = cm.getCursor().line;
   this.renameFileAtLine(currentLine, newName);
 });
 
-CodeMirror.Vim.defineEx('mkdir', 'mkdir', (cm: any, input: any) => {
-  const dirName = input.args.join(' ');
+CodeMirror.Vim.defineEx("mkdir", "mkdir", (cm: any, input: any) => {
+  const dirName = input.args.join(" ");
   const currentPath = this.getCurrentDirectoryPath();
   this.createDirectory(path.join(currentPath, dirName));
 });
 ```
 
 **Vim Register Integration**:
+
 ```typescript
 class VimRegisterManager {
-  private storeFilePathsInRegister(filePaths: string[], register: string = '"') {
+  private storeFilePathsInRegister(
+    filePaths: string[],
+    register: string = '"',
+  ) {
     // Store file paths in vim register for cross-directory operations
-    const content = filePaths.join('\n');
+    const content = filePaths.join("\n");
     CodeMirror.Vim.getRegisterController().pushText(
-      register, 'line', content, true, true
+      register,
+      "line",
+      content,
+      true,
+      true,
     );
   }
-  
+
   private getFilePathsFromRegister(register: string = '"'): string[] {
-    const registerContent = CodeMirror.Vim.getRegisterController().getRegister(register);
-    return registerContent.text.split('\n').filter(line => line.trim());
+    const registerContent =
+      CodeMirror.Vim.getRegisterController().getRegister(register);
+    return registerContent.text.split("\n").filter((line) => line.trim());
   }
-  
+
   // Enable vim-style yank/paste for file operations
   setupFileOperationRegisters() {
     // Override default yank behavior in directory mode
-    CodeMirror.Vim.defineAction('yankFilePaths', (cm: any) => {
+    CodeMirror.Vim.defineAction("yankFilePaths", (cm: any) => {
       const selectedLines = this.getSelectedLines(cm);
-      const filePaths = selectedLines.map(line => this.extractFilePathFromLine(line));
+      const filePaths = selectedLines.map((line) =>
+        this.extractFilePathFromLine(line),
+      );
       this.storeFilePathsInRegister(filePaths);
     });
-    
+
     // Override paste to move/copy files
-    CodeMirror.Vim.defineAction('pasteFiles', (cm: any) => {
+    CodeMirror.Vim.defineAction("pasteFiles", (cm: any) => {
       const filePaths = this.getFilePathsFromRegister();
       const targetDirectory = this.getCurrentDirectoryPath();
       this.moveFilesToDirectory(filePaths, targetDirectory);
@@ -460,31 +516,32 @@ class VimRegisterManager {
 ```
 
 **Modal State Management**:
+
 ```typescript
 class VimModalManager {
-  private currentMode: 'normal' | 'insert' | 'visual' | 'directory';
-  
+  private currentMode: "normal" | "insert" | "visual" | "directory";
+
   // Extend vim mode detection to include directory-specific states
   private detectDirectoryMode(cm: any): boolean {
     const view = this.app.workspace.getActiveViewOfType(DirectoryEditView);
     return view !== null && view.isInEditMode();
   }
-  
+
   // Custom mode transitions for directory editing
   private setupDirectoryModeTransitions() {
     // Enter directory edit mode with 'a' (append)
-    CodeMirror.Vim.defineAction('appendNewFile', (cm: any) => {
+    CodeMirror.Vim.defineAction("appendNewFile", (cm: any) => {
       const cursor = cm.getCursor();
       const newLine = cursor.line + 1;
-      cm.replaceRange('\n📄 ', { line: newLine, ch: 0 });
+      cm.replaceRange("\n📄 ", { line: newLine, ch: 0 });
       cm.setCursor({ line: newLine, ch: 3 });
       CodeMirror.Vim.exitInsertMode(cm);
     });
-    
+
     // Directory-specific insert mode behavior
-    CodeMirror.Vim.defineAction('insertNewFile', (cm: any) => {
+    CodeMirror.Vim.defineAction("insertNewFile", (cm: any) => {
       const cursor = cm.getCursor();
-      cm.replaceRange('📄 ', cursor);
+      cm.replaceRange("📄 ", cursor);
       cm.setCursor({ line: cursor.line, ch: cursor.ch + 3 });
       CodeMirror.Vim.enterInsertMode(cm);
     });
@@ -495,52 +552,55 @@ class VimModalManager {
 ### Obsidian API Integration Patterns
 
 **Event System Integration**:
+
 ```typescript
 class VimEventIntegration {
   setupVimAwareEventHandlers() {
     // Monitor vim mode changes to adjust directory view behavior
     this.registerEvent(
-      this.app.workspace.on('vim-mode-change', (mode: string) => {
-        const directoryView = this.app.workspace.getActiveViewOfType(DirectoryEditView);
+      this.app.workspace.on("vim-mode-change", (mode: string) => {
+        const directoryView =
+          this.app.workspace.getActiveViewOfType(DirectoryEditView);
         if (directoryView) {
           directoryView.handleVimModeChange(mode);
         }
-      })
+      }),
     );
-    
+
     // Integrate with Obsidian's command system while preserving vim navigation
     this.addCommand({
-      id: 'vim-directory-up',
-      name: 'Navigate up directory (vim-style)',
-      hotkeys: [{ modifiers: [], key: '-' }],
+      id: "vim-directory-up",
+      name: "Navigate up directory (vim-style)",
+      hotkeys: [{ modifiers: [], key: "-" }],
       checkCallback: (checking: boolean) => {
         const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (checking) return !!activeView;
-        
+
         // Only trigger if vim mode is enabled and we're in normal mode
         if (this.isVimModeEnabled() && this.isInNormalMode()) {
           this.navigateToParentDirectory();
         }
         return true;
-      }
+      },
     });
   }
-  
+
   private isVimModeEnabled(): boolean {
-    return this.app.vault.getConfig('vimMode') === true;
+    return this.app.vault.getConfig("vimMode") === true;
   }
-  
+
   private isInNormalMode(): boolean {
     const activeLeaf = this.app.workspace.activeLeaf;
     if (!activeLeaf?.view?.editor?.cm) return false;
-    
+
     const cm = activeLeaf.view.editor.cm;
-    return cm.state.vim?.mode === 'normal';
+    return cm.state.vim?.mode === "normal";
   }
 }
 ```
 
 **Progressive Implementation Strategy**:
+
 ```typescript
 // Phase 1: Basic vim-aware navigation
 class Phase1Implementation {
@@ -574,102 +634,118 @@ class Phase3Implementation {
 ## Implementation Milestones and Progressive Development
 
 ### Phase 1: Foundation (Weeks 1-2)
+
 **Goal**: Establish basic vim-aware navigation within existing Obsidian structure
 
 **Deliverables**:
+
 - Plugin scaffolding with proper TypeScript setup
 - Basic `-` key interception for parent directory navigation
 - Simple directory view that respects vim mode state
 - Integration with Obsidian's workspace and view system
 
 **Success Criteria**:
+
 - Users can press `-` in any note to navigate to parent folder
 - Navigation preserves vim mode state and cursor position
 - View integrates seamlessly with Obsidian's interface
 
 **Code Example - Minimum Viable Navigation**:
+
 ```typescript
 export default class SugarRushPlugin extends Plugin {
   async onload() {
     this.addCommand({
-      id: 'navigate-parent',
-      name: 'Navigate to parent directory',
-      hotkeys: [{ modifiers: [], key: '-' }],
+      id: "navigate-parent",
+      name: "Navigate to parent directory",
+      hotkeys: [{ modifiers: [], key: "-" }],
       checkCallback: (checking: boolean) => {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (checking) return !!view && this.isVimNormalMode();
-        
+
         if (view) {
           this.navigateToParent(view);
         }
         return true;
-      }
+      },
     });
   }
-  
+
   private isVimNormalMode(): boolean {
-    if (!this.app.vault.getConfig('vimMode')) return true; // Always work if vim disabled
-    
+    if (!this.app.vault.getConfig("vimMode")) return true; // Always work if vim disabled
+
     const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
-    return activeView?.editor?.cm?.state?.vim?.mode === 'normal';
+    return activeView?.editor?.cm?.state?.vim?.mode === "normal";
   }
 }
 ```
 
 ### Phase 2: Buffer Integration (Weeks 3-4)
+
 **Goal**: Transform directory views into editable buffers with vim integration
 
 **Deliverables**:
+
 - Custom view type that presents directories as editable text
 - File operation parser that translates text edits to filesystem changes
 - Basic vim command integration (yank paths, create files)
 - Undo/redo support for file operations
 
 **Success Criteria**:
+
 - Users can edit directory contents as text and save changes
 - Common vim operations work (hjkl navigation, / search, dd delete)
 - File operations are atomic and can be undone
 
 ### Phase 3: Advanced Operations (Weeks 5-6)
+
 **Goal**: Implement cross-directory operations and advanced vim features
 
 **Deliverables**:
+
 - Vim register integration for cross-directory file operations
 - Visual mode support for batch file selections
 - Custom ex commands (:mkdir, :rename, :move)
 - Performance optimizations for large directories
 
 **Success Criteria**:
+
 - Users can yank files in one directory and paste in another
 - Visual selections enable bulk operations
 - Performance remains responsive in directories with 1000+ files
 
 ### Phase 4: Polish and Integration (Weeks 7-8)
+
 **Goal**: Obsidian-specific features and mobile compatibility
 
 **Deliverables**:
+
 - Link updating during file operations
 - Mobile-friendly fallback interface
 - Settings panel with customization options
 - Documentation and user onboarding
 
 **Success Criteria**:
+
 - File moves automatically update all backlinks
 - Plugin works on mobile with touch-friendly alternatives
 
 ## User Experience Goals
 
 ### Speed and Efficiency
+
 - **Instant Navigation**: Sub-100ms response time for folder navigation
 - **Minimal Keystrokes**: Reduce the number of actions needed for common file operations
 - **Muscle Memory**: Leverage existing Vim muscle memory for Obsidian users
 
 ### Discoverability
+
 - **Progressive Enhancement**: Work as standard Obsidian for users who don't know Vim patterns
 - **Visual Cues**: Provide subtle indicators for available actions
 - **Documentation Integration**: Include in-app help for vim-style navigation
 
 ### Compatibility
+
 - **Non-Intrusive**: Don't break existing Obsidian workflows
 - **Plugin Ecosystem**: Play well with other popular Obsidian plugins
 - **Platform Parity**: Consistent experience across desktop and mobile

@@ -66,6 +66,8 @@
             esbuild
             typescript-language-server
             eslint
+            biome
+            vscode-langservers-extracted
           ]
           ++ builtins.attrValues scriptPackages;
 
@@ -88,6 +90,7 @@
         projectRootFile = "flake.nix";
         programs = {
           alejandra.enable = true; # Nix formatter
+          prettier.enable = true; # Javascript formatter
         };
       };
     in
