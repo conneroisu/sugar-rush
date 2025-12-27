@@ -2,15 +2,38 @@
 
 ## ADDED Requirements
 
-### Requirement: Buffer-Based Directory Display
-The plugin SHALL display directory contents as editable text lines in a custom Obsidian view, where each line represents a file or folder.
+### Requirement: TextFileView-Based Directory Editor
+The plugin SHALL implement OilView by extending Obsidian's TextFileView class, providing a native CodeMirror editor experience for directory manipulation.
 
-#### Scenario: View displays directory contents
+#### Scenario: View uses native CodeMirror editor
+- GIVEN the oil view is opened for a directory
+- THEN the view SHALL use Obsidian's built-in CodeMirror editor
+- AND vim mode SHALL be supported if enabled in Obsidian settings
+- AND undo/redo (Mod+Z, Mod+Shift+Z) SHALL work automatically
+- AND search (Mod+F) SHALL work automatically
+- AND text selection and cursor movement SHALL work natively
+
+#### Scenario: View extends TextFileView
+- GIVEN the OilView class
+- THEN it SHALL extend TextFileView (not ItemView)
+- AND it SHALL register a custom view type for ".oil" virtual files
+- AND it SHALL handle the "oil" file extension
+
+### Requirement: Plain Text Directory Display
+The plugin SHALL display directory contents as plain text lines, where each line represents a file or folder using a simple text format.
+
+#### Scenario: View displays directory contents as plain text
 - GIVEN a directory with files and folders
 - WHEN the user opens the oil view for that directory
-- THEN each file and folder SHALL be displayed on its own line
-- AND folders SHALL be visually distinguished from files (icon and/or trailing /)
+- THEN each file and folder SHALL be displayed on its own line as plain text
+- AND folders SHALL be displayed as "folder-name/" (with trailing slash)
+- AND files SHALL be displayed as "filename.ext" (no trailing slash)
 - AND entries SHALL be sorted according to user settings
+
+#### Scenario: No icons in plain text mode
+- GIVEN the plain text editor format
+- THEN entries SHALL NOT include emoji or graphical icons
+- AND the trailing slash alone SHALL distinguish folders from files
 
 #### Scenario: Hidden files respect settings
 - GIVEN a directory containing hidden files (starting with .)
@@ -27,89 +50,70 @@ The plugin SHALL display directory contents as editable text lines in a custom O
 - AND if directoryFirst is true, folders SHALL appear before files
 
 ### Requirement: Pending Mutation Tracking
-The plugin SHALL track edits to the buffer as pending mutations WITHOUT immediately applying them to the filesystem. This prevents accidental changes since Obsidian auto-saves files.
+The plugin SHALL track edits to the buffer as pending mutations WITHOUT immediately applying them to the filesystem. Changes are only applied on explicit save.
 
 #### Scenario: Edits are staged, not applied
 - GIVEN the oil view is displaying a directory
 - WHEN the user edits a line (changes a filename)
 - THEN the edit SHALL be tracked as a pending "rename" mutation
 - AND the actual file on disk SHALL NOT be renamed yet
-- AND the line SHALL be visually highlighted as modified
+- AND the editor SHALL show the file as modified (dot in tab)
 
 #### Scenario: Line deletion is staged
 - GIVEN the oil view with file entries
 - WHEN the user removes a line from the buffer
 - THEN a pending "delete" mutation SHALL be tracked
 - AND the actual file SHALL NOT be deleted yet
-- AND the line SHALL be visually highlighted as deleted (strikethrough)
 
 #### Scenario: Line addition is staged
 - GIVEN the oil view displaying a directory
 - WHEN the user adds a new line with a filename
 - THEN a pending "create" mutation SHALL be tracked
 - AND no new file SHALL be created yet
-- AND the line SHALL be visually highlighted as added
 
-#### Scenario: Status bar shows pending count
+#### Scenario: Editor tracks modification state
 - GIVEN pending mutations exist
-- THEN the status bar SHALL display the count of pending changes
-- AND the status bar SHALL indicate how to confirm (Mod+Enter) or discard (Escape)
+- THEN the tab SHALL show a modification indicator (dot)
+- AND getViewData() SHALL return the modified buffer content
 
-### Requirement: Explicit Confirmation Required
-The plugin SHALL only apply mutations when the user explicitly confirms, using a command or keyboard shortcut.
+### Requirement: Save to Apply Changes (Mod+S)
+The plugin SHALL apply mutations when the user saves the file using Mod+S, leveraging Obsidian's native save behavior.
 
-#### Scenario: Confirm applies mutations
+#### Scenario: Save applies mutations
 - GIVEN pending mutations (renames, deletes, creates)
-- WHEN the user presses Mod+Enter (or triggers confirm command)
-- THEN all pending mutations SHALL be emitted for the file-mutations system to apply
+- WHEN the user presses Mod+S (or triggers save command)
+- THEN setViewData() SHALL be called by Obsidian
+- AND the plugin SHALL parse the buffer to detect mutations
+- AND all pending mutations SHALL be emitted for the file-mutations system to apply
 - AND on success, the view SHALL refresh to show the new state
 - AND pending mutations SHALL be cleared
 
-#### Scenario: Discard resets buffer
-- GIVEN pending mutations exist
-- WHEN the user presses Escape (or triggers discard command)
-- THEN all pending mutations SHALL be discarded
-- AND the buffer SHALL be reset to the original directory state
-- AND all highlighting SHALL be removed
+#### Scenario: Undo reverts changes in buffer
+- GIVEN pending mutations exist in the editor
+- WHEN the user presses Mod+Z
+- THEN the editor SHALL undo the last edit
+- AND the mutation tracking SHALL update accordingly
+- AND this is handled automatically by CodeMirror
 
-#### Scenario: No confirmation needed when no changes
+#### Scenario: No save needed when no changes
 - GIVEN no pending mutations
-- WHEN the user presses Mod+Enter
+- WHEN the user presses Mod+S
 - THEN nothing SHALL happen (no error, no action)
-
-### Requirement: Visual Mutation Indicators
-The plugin SHALL provide clear visual feedback for each type of pending mutation using highlighting and styling.
-
-#### Scenario: Modified line highlighting
-- GIVEN a line has been edited (rename mutation pending)
-- THEN the line SHALL have a warning-colored background
-- AND the line SHALL have a colored left border indicator
-
-#### Scenario: Deleted line highlighting
-- GIVEN a line has been removed (delete mutation pending)
-- THEN the line SHALL have an error-colored background
-- AND the line text SHALL have strikethrough styling
-- AND the line SHALL have reduced opacity
-
-#### Scenario: Added line highlighting
-- GIVEN a new line has been added (create mutation pending)
-- THEN the line SHALL have a success-colored background
-- AND the line SHALL have a colored left border indicator
 
 ### Requirement: Directory Navigation
 The plugin SHALL support navigating between directories using keyboard shortcuts and actions.
 
 #### Scenario: Navigate into subdirectory
-- GIVEN the cursor is on a folder line
+- GIVEN the cursor is on a folder line (ends with /)
 - WHEN the user presses Enter
 - THEN the view SHALL navigate to display that folder's contents
-- AND the previous directory SHALL be added to navigation history
+- AND any unsaved changes SHALL be handled (prompt or auto-apply based on settings)
 
 #### Scenario: Navigate to parent directory
 - GIVEN the view is displaying a subdirectory (not vault root)
 - WHEN the user presses the `-` key (or configured navigateUp key)
 - THEN the view SHALL navigate to the parent directory
-- AND any pending mutations SHALL be discarded (with warning if any exist)
+- AND any unsaved changes SHALL be handled (prompt or discard based on settings)
 
 #### Scenario: Navigate at vault root
 - GIVEN the view is displaying the vault root
@@ -117,7 +121,7 @@ The plugin SHALL support navigating between directories using keyboard shortcuts
 - THEN nothing SHALL happen (already at root)
 
 #### Scenario: Open file on Enter
-- GIVEN the cursor is on a file line (not a folder)
+- GIVEN the cursor is on a file line (not ending with /)
 - WHEN the user presses Enter
 - THEN the file SHALL be opened in a new leaf
 - AND the oil view SHALL remain open
@@ -149,36 +153,69 @@ The plugin SHALL integrate with Obsidian's view and workspace system, supporting
 - AND the view SHALL navigate to the requested directory
 
 ### Requirement: Line Format
-Each line in the oil view SHALL follow a consistent format for parsing and display.
+Each line in the oil view SHALL follow a simple plain text format for parsing and display.
 
 #### Scenario: Folder line format
 - GIVEN a folder entry
-- THEN the line SHALL display as: "[folder icon] folder-name/"
+- THEN the line SHALL display as: "folder-name/"
 - AND the trailing slash indicates it's a directory
+- AND no icons or prefixes SHALL be included
 
 #### Scenario: File line format
 - GIVEN a file entry
-- THEN the line SHALL display as: "[file icon] filename.ext"
-- AND optionally include file size if showFileSizes is enabled
-- AND optionally include modified date if showModifiedDate is enabled
+- THEN the line SHALL display as: "filename.ext"
+- AND no trailing slash SHALL be present
+- AND no icons or prefixes SHALL be included
 
-#### Scenario: Icons configurable
-- GIVEN showFileIcons setting
-- WHEN showFileIcons is false
-- THEN lines SHALL NOT include icons
-- WHEN showFileIcons is true
-- THEN lines SHALL include appropriate icons (📁 for folders, 📄 for files)
+#### Scenario: Whitespace handling
+- GIVEN lines in the buffer
+- THEN empty lines SHALL be ignored when parsing
+- AND leading/trailing whitespace on lines SHALL be trimmed
+- AND lines with only whitespace SHALL be treated as empty
 
 ### Requirement: Keyboard Handling
-The plugin SHALL handle keyboard events within the oil view for navigation and actions.
+The plugin SHALL handle keyboard events within the oil view, with most editing handled by CodeMirror.
 
-#### Scenario: Configurable keybindings
-- GIVEN the keybindings settings
-- THEN the navigateUp key SHALL trigger parent directory navigation
-- AND the confirmChanges key combination SHALL apply pending mutations
-- AND the discardChanges key SHALL reset the buffer
-
-#### Scenario: Standard editing keys work
+#### Scenario: Standard editing via CodeMirror
 - GIVEN the oil view is focused
-- THEN standard text editing keys (arrows, backspace, delete, typing) SHALL work normally
-- AND edits SHALL be tracked as pending mutations
+- THEN standard text editing keys SHALL be handled by CodeMirror
+- AND vim keybindings SHALL work if vim mode is enabled in Obsidian
+- AND undo/redo SHALL work via CodeMirror history
+
+#### Scenario: Custom navigation keys
+- GIVEN the oil view is focused
+- THEN the navigateUp key (`-`) SHALL trigger parent directory navigation
+- AND Enter on a folder SHALL navigate into it
+- AND Enter on a file SHALL open that file
+
+#### Scenario: Save triggers apply
+- GIVEN the oil view is focused with pending changes
+- WHEN the user presses Mod+S
+- THEN changes SHALL be applied to the filesystem
+- AND this uses Obsidian's native save mechanism via TextFileView
+
+### Requirement: CodeMirror Integration Benefits
+The plugin SHALL leverage built-in CodeMirror features provided by TextFileView.
+
+#### Scenario: Native undo/redo support
+- GIVEN the editor is active
+- THEN Mod+Z SHALL undo the last edit
+- AND Mod+Shift+Z (or Mod+Y) SHALL redo
+- AND full edit history SHALL be maintained
+
+#### Scenario: Native search support
+- GIVEN the editor is active
+- THEN Mod+F SHALL open the search dialog
+- AND search/replace functionality SHALL work
+
+#### Scenario: Native selection support
+- GIVEN the editor is active
+- THEN Shift+arrows SHALL select text
+- AND Mod+A SHALL select all
+- AND mouse selection SHALL work
+
+#### Scenario: Vim mode support
+- GIVEN vim mode is enabled in Obsidian settings
+- THEN vim keybindings SHALL work in the oil view
+- AND normal/insert/visual modes SHALL function correctly
+- AND :w SHALL trigger save (apply changes)

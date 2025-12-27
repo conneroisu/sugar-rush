@@ -4,18 +4,31 @@
 
 The preview feature enhances the oil view by showing file contents when the cursor is on a file line. This is a common pattern in file managers (Finder's Quick Look, Ranger, VS Code's file explorer) that improves browsing efficiency by letting users see content without fully opening files.
 
+**Oil View Architecture:**
+The oil view uses a TextFileView-based approach with Obsidian's native CodeMirror 6 editor:
+- Extends `TextFileView` (not `ItemView`)
+- Directory contents rendered as plain text: `folder-name/` for directories, `file.ext` for files
+- Uses Obsidian's native editor with full vim mode support
+- Access editor via `this.editor` property
+- Use `editor.getCursor()` to get current line position
+- Use `editor.getLine(lineNum)` to get line text
+- Use `OilBuffer.getEntryForLine(lineText)` to resolve line text to `OilEntry`
+
 **Constraints:**
-- Must integrate with existing oil view layout
+- Must integrate with TextFileView-based oil view layout
+- Must track cursor position via CodeMirror editor API
 - Must not block or slow down directory navigation
 - Must handle various file types gracefully
 - Must respect Obsidian's theming and styling
 - Must use Obsidian's caching APIs for performance
+- Must work with vim mode keybindings (j/k navigation, etc.)
 - Desktop-only (can use Electron APIs if needed)
 
 **Stakeholders:**
 - Users browsing directories looking for specific content
 - Users reviewing images in folders
 - Users exploring unfamiliar vault structures
+- Vim users navigating with j/k motions
 
 ## Goals / Non-Goals
 
@@ -400,33 +413,48 @@ export class PreviewPane extends Component {
 }
 ```
 
-### Decision 2: Oil View Integration
+### Decision 2: Oil View Integration (TextFileView + CodeMirror Editor)
 
-**What:** Extend OilView to manage preview pane and track cursor position
+**What:** Extend OilView to manage preview pane and track cursor position using Obsidian's native editor
 
 **Why:**
-- Preview needs to know which line is selected
+- OilView extends TextFileView, providing access to CodeMirror editor via `this.editor`
+- Preview needs to know which line is selected using editor cursor position
 - Preview pane lifecycle tied to oil view
-- Keyboard shortcuts need to be handled in oil view
+- Must integrate with vim mode and native editor keybindings
+
+**Key Architecture Points:**
+- OilView extends TextFileView (not ItemView)
+- Uses Obsidian's native CodeMirror 6 editor with vim mode support
+- Access editor via `this.editor` property
+- Content is plain text: `folder-name/` for directories, `file.ext` for files
+- Use `OilBuffer.getEntryForLine(lineText)` to resolve line text to OilEntry
 
 ```typescript
 // src/views/oil-view.ts (additions for preview support)
 
 import { PreviewPane } from './preview-pane';
+import { EditorView } from '@codemirror/view';
 
 // In OilView class, add these properties:
 private previewPane: PreviewPane | null = null;
-private currentLineIndex: number = 0;
+private currentPreviewLine: number = -1;
 
-// In onOpen(), after creating editorEl:
+// In onOpen(), after super.onOpen():
 async onOpen(): Promise<void> {
-  // ... existing setup code ...
+  await super.onOpen();
 
-  // Create flex container for editor and preview
-  const wrapperEl = this.containerEl.createDiv({ cls: 'oil-wrapper' });
+  // ... existing setup code (status bar, etc.) ...
 
-  // Move editor into wrapper
-  wrapperEl.appendChild(this.editorEl);
+  // Create wrapper for editor and preview layout
+  const wrapperEl = this.contentEl.createDiv({ cls: 'oil-wrapper' });
+
+  // The editor container is already created by TextFileView
+  // We need to reparent it into our wrapper
+  const editorContainer = this.contentEl.querySelector('.cm-editor')?.parentElement;
+  if (editorContainer) {
+    wrapperEl.appendChild(editorContainer);
+  }
 
   // Create preview pane if enabled
   if (this.plugin.settings.preview.enabled) {
@@ -441,61 +469,108 @@ async onOpen(): Promise<void> {
     this.addChild(this.previewPane);
   }
 
-  // Track cursor movement for preview updates
-  this.registerDomEvent(this.editorEl, 'click', this.handleCursorChange.bind(this));
-  this.registerDomEvent(this.editorEl, 'keyup', this.handleCursorChange.bind(this));
+  // Track cursor movement via CodeMirror editor events
+  this.registerEditorCursorEvents();
 }
 
 /**
- * Handle cursor position changes to update preview
+ * Register editor events to track cursor position for preview updates.
+ * Uses CodeMirror's updateListener to detect cursor changes.
  */
-private handleCursorChange(event: Event): void {
-  const selection = window.getSelection();
-  if (!selection || !selection.anchorNode) return;
+private registerEditorCursorEvents(): void {
+  if (!this.editor) return;
 
-  // Find which line element contains the cursor
-  let node: Node | null = selection.anchorNode;
-  while (node && !node.parentElement?.classList.contains(CSS_CLASSES.OIL_LINE)) {
-    node = node.parentNode;
+  // Get the underlying CodeMirror EditorView
+  // @ts-ignore - accessing internal CM6 view
+  const cmView: EditorView | undefined = this.editor.cm;
+
+  if (cmView) {
+    // Use CodeMirror's update listener for cursor changes
+    const extension = EditorView.updateListener.of((update) => {
+      if (update.selectionSet || update.docChanged) {
+        this.handleCursorChange();
+      }
+    });
+
+    // Note: In practice, we may need to dispatch this extension
+    // during editor initialization. Alternative approach below.
   }
 
-  if (!node) return;
+  // Alternative: Use DOM events on the editor container
+  // This works reliably with both mouse and keyboard navigation
+  const editorEl = this.contentEl.querySelector('.cm-editor');
+  if (editorEl) {
+    // Mouse clicks
+    this.registerDomEvent(editorEl as HTMLElement, 'mouseup', () => {
+      this.handleCursorChange();
+    });
 
-  // Get line index
-  const lineEl = node.parentElement;
-  const lines = Array.from(this.editorEl.querySelectorAll(`.${CSS_CLASSES.OIL_LINE}`));
-  const lineIndex = lines.indexOf(lineEl as Element);
-
-  if (lineIndex === -1 || lineIndex === this.currentLineIndex) return;
-
-  this.currentLineIndex = lineIndex;
-
-  // Update preview
-  const entry = this.buffer.getEntries()[lineIndex];
-  if (entry && this.previewPane) {
-    this.previewPane.showPreview(entry);
+    // Keyboard navigation (arrows, vim motions, etc.)
+    this.registerDomEvent(editorEl as HTMLElement, 'keyup', (e: KeyboardEvent) => {
+      // Update on navigation keys
+      const navKeys = ['ArrowUp', 'ArrowDown', 'j', 'k', 'g', 'G', 'Enter', 'Home', 'End', 'PageUp', 'PageDown'];
+      if (navKeys.includes(e.key)) {
+        this.handleCursorChange();
+      }
+    });
   }
 }
 
 /**
- * Get current line entry for preview
+ * Handle cursor position changes to update preview.
+ * Uses editor.getCursor() to get current line, then OilBuffer.getEntryForLine()
+ * to resolve the line text to an OilEntry.
+ */
+private handleCursorChange(): void {
+  if (!this.editor || !this.previewPane) return;
+
+  // Get current cursor position from editor
+  const cursor = this.editor.getCursor();
+  const currentLine = cursor.line;
+
+  // Skip if same line (avoid redundant updates)
+  if (currentLine === this.currentPreviewLine) return;
+  this.currentPreviewLine = currentLine;
+
+  // Get the text content of the current line
+  const lineText = this.editor.getLine(currentLine);
+
+  // Use OilBuffer to resolve line text to entry
+  const entry = this.buffer.getEntryForLine(lineText);
+
+  // Update preview with the entry (or null if line is empty/invalid)
+  this.previewPane.showPreview(entry);
+}
+
+/**
+ * Get current line entry for preview (public accessor)
  */
 getCurrentLineEntry(): OilEntry | null {
-  return this.buffer.getEntries()[this.currentLineIndex] ?? null;
+  if (!this.editor) return null;
+
+  const cursor = this.editor.getCursor();
+  const lineText = this.editor.getLine(cursor.line);
+  return this.buffer.getEntryForLine(lineText);
 }
 
-// In handleKeydown(), add preview toggle:
-private async handleKeydown(event: KeyboardEvent): Promise<void> {
-  const { navigateUp, confirmChanges, discardChanges, togglePreview } = this.plugin.settings.keybindings;
+// In registerEditorCommands(), add preview toggle alongside other keybindings:
+private registerEditorCommands(): void {
+  this.registerDomEvent(this.contentEl, 'keydown', (e: KeyboardEvent) => {
+    // ... existing Mod+S, Escape, -, Enter handlers ...
 
-  // Toggle preview with 'p' key (configurable)
-  if (event.key === togglePreview && !event.ctrlKey && !event.metaKey && !event.altKey) {
-    event.preventDefault();
-    this.togglePreview();
-    return;
-  }
-
-  // ... existing keyboard handlers ...
+    // Toggle preview with configured key (default: 'p')
+    const toggleKey = this.plugin.settings.keybindings.togglePreview ?? 'p';
+    if (e.key === toggleKey && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+      // Only toggle if not in insert mode or at start of line
+      const cursor = this.editor?.getCursor();
+      const lineText = this.editor?.getLine(cursor?.line ?? 0) ?? '';
+      if (cursor?.ch === 0 || lineText.trim() === '') {
+        e.preventDefault();
+        this.togglePreview();
+        return;
+      }
+    }
+  });
 }
 
 /**
@@ -513,25 +588,54 @@ togglePreview(): void {
   }
 }
 
-// After navigateTo() completes:
+// In navigateTo(), after setting editor content:
 async navigateTo(path: string): Promise<void> {
   // ... existing navigation code ...
 
-  // Reset cursor and update preview
-  this.currentLineIndex = 0;
-  const firstEntry = this.buffer.getEntries()[0];
-  if (this.previewPane && firstEntry) {
+  // Set the editor content
+  if (this.editor) {
+    this.editor.setValue(content);
+    this.editor.setCursor(0, 0);
+  }
+
+  // Reset preview line tracking and update preview with first entry
+  this.currentPreviewLine = 0;
+  if (this.previewPane) {
+    const firstLineText = this.editor?.getLine(0) ?? '';
+    const firstEntry = this.buffer.getEntryForLine(firstLineText);
     this.previewPane.showPreview(firstEntry);
   }
+
+  // ... rest of navigation code ...
 }
 
 // In onClose():
 async onClose(): Promise<void> {
-  // ... existing close code ...
-
   // Preview pane cleanup handled automatically by addChild()
+  await super.onClose();
 }
 ```
+
+**OilBuffer.getEntryForLine() Integration:**
+
+The OilBuffer already provides `getEntryForLine(lineText)` which parses the line text and matches it to the original entry:
+
+```typescript
+// From oil-buffer.ts (already exists)
+/**
+ * Get entry for a given line text
+ */
+getEntryForLine(lineText: string): OilEntry | null {
+  const name = lineText.trim().replace(/\/$/, '');
+  return this.originalEntries.find(e => e.displayName === name) ?? null;
+}
+```
+
+This method:
+1. Trims whitespace from the line
+2. Removes trailing `/` (directory indicator)
+3. Matches against original entries by display name
+4. Returns the OilEntry with full metadata (file/folder references, paths, etc.)
 
 ### Decision 3: CSS Styling for Preview Pane
 
@@ -928,12 +1032,15 @@ new Setting(containerEl)
 - Preview is read-only
 - Same sandbox as regular Obsidian notes
 
-### Risk 4: ContentEditable Cursor Tracking
-**Risk:** Cursor position detection in contenteditable is complex
+### Risk 4: Editor Cursor Tracking
+**Risk:** Cursor position detection needs to work reliably with vim mode and all editor keybindings
 **Mitigation:**
-- Use click and keyup events for cursor change detection
-- Fall back to first line if detection fails
-- Future: Consider using a more controlled input method
+- Use `editor.getCursor()` to get current line number (reliable API)
+- Use `editor.getLine(lineNum)` to get line text content
+- Track cursor via DOM events (mouseup, keyup) on `.cm-editor` element
+- Navigation keys list covers standard and vim motions: ArrowUp/Down, j/k, g/G, etc.
+- Fall back to first entry if line text doesn't match any entry
+- `OilBuffer.getEntryForLine()` handles edge cases (empty lines, whitespace)
 
 ### Risk 5: Layout Conflicts
 **Risk:** Preview pane might conflict with existing oil view styles

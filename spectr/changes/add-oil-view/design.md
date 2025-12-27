@@ -1,17 +1,26 @@
-# Design: Oil View (Buffer-Based Directory Display)
+# Design: Oil View (Virtual File with Native Editor)
 
 ## Context
 
 This is the core feature of Sugar Rush - a custom Obsidian view that displays directory contents as editable text, similar to oil.nvim. Users can rename files by editing line text, delete by removing lines, and create by adding new lines.
 
-**Critical Constraint:** Obsidian auto-saves files on edit. This means we CANNOT use a real Obsidian file/note as the buffer. Instead, we must:
-1. Use a custom view with a textarea/contenteditable element
-2. Track all edits as "pending mutations" in memory
-3. Only apply mutations when user explicitly confirms (Mod+Enter)
-4. Provide clear visual feedback that changes are pending
+**KEY DESIGN PRINCIPLE:** Use Obsidian's native text editor (CodeMirror 6) to leverage:
+- Built-in vim mode support (when user has vim mode enabled)
+- All existing keybindings and editor plugins
+- Familiar editing experience
+- Undo/redo for free
+- Syntax highlighting and cursor behavior
+
+**Virtual File Approach:**
+Instead of using a contenteditable div, we create a virtual file that:
+1. Exists only in memory (never saved to disk)
+2. Contains directory listing as plain text
+3. Is edited using Obsidian's native CodeMirror editor
+4. Changes are intercepted on "save" (Mod+S) and converted to file mutations
+5. The file path is a special internal path that Obsidian won't try to persist
 
 **Stakeholders:**
-- Users editing directory contents
+- Users editing directory contents (especially vim users!)
 - File mutation system (consumes pending mutations)
 - Split navigation (opens new oil views)
 - Preview system (reads current selection)
@@ -19,59 +28,66 @@ This is the core feature of Sugar Rush - a custom Obsidian view that displays di
 ## Goals / Non-Goals
 
 **Goals:**
-- Display directory contents as editable text lines
+- Display directory contents as editable text lines in Obsidian's native editor
+- **Full vim mode support when user has vim enabled**
+- All standard editor keybindings work (arrows, home/end, etc.)
 - Track edits without immediately modifying filesystem
 - Provide clear visual indicators for pending changes
-- Support keyboard-driven navigation (vim-like)
 - Integrate with Obsidian's view/tab system
 
 **Non-Goals:**
 - Actually performing file operations (separate proposal: add-file-mutations)
 - Split/pane management (separate proposal: add-split-navigation)
 - File preview (separate proposal: add-preview-support)
-- Undo/redo (defer to later enhancement)
 
 ## Decisions
 
-### Decision 1: Custom View with ContentEditable
+### Decision 1: Extend TextFileView with Virtual File
 
-**What:** Use Obsidian's `ItemView` with a contenteditable div, not a real markdown file
+**What:** Create a custom view extending `TextFileView` that operates on a virtual (in-memory) file
 
 **Why:**
-- Real files trigger Obsidian's auto-save → mutations would apply immediately
-- ContentEditable gives us full control over edit tracking
-- Can style individual lines with CSS classes
-- No interference with Obsidian's file system
+- `TextFileView` provides full access to Obsidian's CodeMirror 6 editor
+- Vim mode works automatically when enabled in Obsidian settings
+- All editor features (undo/redo, selection, search) work for free
+- No need to implement our own keyboard handling
 
-**Trade-offs:**
-- Must implement our own edit tracking
-- No native Obsidian editor features (but we don't need them)
-- Must handle keyboard events manually
+**How it works:**
+1. Create a virtual file adapter that provides file content without disk backing
+2. The "file content" is the rendered directory listing
+3. Override save behavior to intercept and apply mutations
+4. Use Obsidian's editor API to track changes
 
 ```typescript
 // src/views/oil-view.ts
 
-import { ItemView, WorkspaceLeaf, TFolder, TFile } from 'obsidian';
+import { TextFileView, WorkspaceLeaf, TFolder, TFile, Editor } from 'obsidian';
 import type SugarRushPlugin from '../main';
 import { OIL_VIEW_TYPE, CSS_CLASSES } from '../constants';
 import type { OilEntry, FileMutation, OilViewState } from '../types';
 import { OilBuffer } from './oil-buffer';
-import { OilRenderer } from './oil-renderer';
 
-export class OilView extends ItemView {
+/**
+ * OilView - Directory contents as editable text using Obsidian's native editor.
+ *
+ * ARCHITECTURE:
+ * 1. Extends TextFileView to get CodeMirror 6 editor with vim mode support
+ * 2. Uses a "virtual file" concept - content exists only in memory
+ * 3. Directory contents rendered as plain text lines
+ * 4. Save (Mod+S) intercepts and applies mutations instead of saving
+ * 5. Escape discards changes and reloads original content
+ */
+export class OilView extends TextFileView {
   plugin: SugarRushPlugin;
   private buffer: OilBuffer;
-  private renderer: OilRenderer;
   private state: OilViewState;
-  private containerEl: HTMLElement;
-  private editorEl: HTMLElement;
-  private statusEl: HTMLElement;
+  private statusEl!: HTMLElement;
+  private originalContent: string = '';
 
   constructor(leaf: WorkspaceLeaf, plugin: SugarRushPlugin) {
     super(leaf);
     this.plugin = plugin;
-    this.buffer = new OilBuffer(this);
-    this.renderer = new OilRenderer(this, plugin.settings);
+    this.buffer = new OilBuffer(this.app, plugin.settings);
     this.state = {
       currentPath: '',
       history: [],
@@ -85,44 +101,133 @@ export class OilView extends ItemView {
   }
 
   getDisplayText(): string {
-    return this.state.currentPath || 'Oil View';
+    return `Oil: ${this.state.currentPath || '/'}`;
   }
 
   getIcon(): string {
     return 'folder-open';
   }
 
+  /**
+   * Called when view opens. Set up the editor and load initial directory.
+   */
   async onOpen(): Promise<void> {
-    this.containerEl = this.contentEl;
-    this.containerEl.addClass(CSS_CLASSES.OIL_VIEW);
+    await super.onOpen();
 
-    // Create status bar at top
-    this.statusEl = this.containerEl.createDiv({ cls: 'oil-status-bar' });
+    // Add our CSS class to the view
+    this.contentEl.addClass(CSS_CLASSES.OIL_VIEW);
+
+    // Create status bar above the editor
+    this.statusEl = this.contentEl.createDiv({ cls: 'oil-status-bar' });
+    this.contentEl.prepend(this.statusEl);
     this.updateStatusBar();
 
-    // Create editable area
-    this.editorEl = this.containerEl.createDiv({
-      cls: 'oil-editor',
-      attr: { contenteditable: 'true', spellcheck: 'false' },
-    });
+    // Register our custom commands that work within the editor
+    this.registerEditorCommands();
 
-    // Register keyboard handlers
-    this.registerDomEvent(this.editorEl, 'keydown', this.handleKeydown.bind(this));
-    this.registerDomEvent(this.editorEl, 'input', this.handleInput.bind(this));
-    this.registerDomEvent(this.editorEl, 'blur', this.handleBlur.bind(this));
-
-    // Load initial directory (current file's parent or vault root)
+    // Load initial directory
     const activeFile = this.app.workspace.getActiveFile();
     const initialPath = activeFile?.parent?.path ?? '';
     await this.navigateTo(initialPath);
   }
 
-  async onClose(): Promise<void> {
-    // Warn if there are pending mutations
-    if (this.state.pendingMutations.length > 0) {
-      // Could show a notice, but don't block close
-      console.log(`Oil view closed with ${this.state.pendingMutations.length} pending changes`);
+  /**
+   * Register oil-specific editor commands and keybindings
+   */
+  private registerEditorCommands(): void {
+    // Register Mod+S to apply mutations (overrides normal save)
+    this.registerDomEvent(this.contentEl, 'keydown', (e: KeyboardEvent) => {
+      // Mod+S = Apply changes
+      if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.applyChanges();
+        return;
+      }
+
+      // Escape = Discard changes
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        this.discardChanges();
+        return;
+      }
+
+      // `-` at start of line = Navigate to parent (vim-like)
+      if (e.key === '-' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        // Only trigger if at beginning of line or line is empty
+        const editor = this.editor;
+        if (editor) {
+          const cursor = editor.getCursor();
+          const lineText = editor.getLine(cursor.line);
+          if (cursor.ch === 0 || lineText.trim() === '') {
+            e.preventDefault();
+            this.navigateUp();
+            return;
+          }
+        }
+      }
+
+      // Enter = Navigate into folder or open file
+      if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        const handled = this.handleEnterKey();
+        if (handled) {
+          e.preventDefault();
+        }
+      }
+    });
+
+    // Listen for editor changes to track mutations
+    this.registerEvent(
+      this.app.workspace.on('editor-change', (editor: Editor) => {
+        if (editor === this.editor) {
+          this.onEditorChange();
+        }
+      })
+    );
+  }
+
+  /**
+   * Handle Enter key - navigate into folder or open file
+   */
+  private handleEnterKey(): boolean {
+    const editor = this.editor;
+    if (!editor) return false;
+
+    const cursor = editor.getCursor();
+    const lineText = editor.getLine(cursor.line);
+    const entry = this.buffer.getEntryForLine(lineText);
+
+    if (!entry) return false;
+
+    if (entry.isDirectory) {
+      // Navigate into directory
+      const targetPath = this.state.currentPath
+        ? `${this.state.currentPath}/${entry.displayName}`
+        : entry.displayName;
+      this.navigateTo(targetPath);
+      return true;
     }
+
+    if (entry.file) {
+      // Open file in new leaf
+      const leaf = this.app.workspace.getLeaf(false);
+      leaf.openFile(entry.file);
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Called when editor content changes - track mutations
+   */
+  private onEditorChange(): void {
+    if (!this.editor) return;
+
+    const currentContent = this.editor.getValue();
+    const mutations = this.buffer.parseAndDiff(currentContent);
+    this.state.pendingMutations = mutations;
+    this.updateStatusBar();
   }
 
   /**
@@ -138,7 +243,6 @@ export class OilView extends ItemView {
 
     // Update history
     if (this.state.currentPath !== path) {
-      // Truncate forward history if we navigated from middle
       this.state.history = this.state.history.slice(0, this.state.historyIndex + 1);
       this.state.history.push(path);
       this.state.historyIndex = this.state.history.length - 1;
@@ -147,11 +251,18 @@ export class OilView extends ItemView {
     this.state.currentPath = path;
     this.state.pendingMutations = [];
 
-    // Load directory contents
+    // Load directory contents into buffer
     await this.buffer.loadDirectory(path);
 
-    // Render the buffer
-    this.renderer.render(this.editorEl, this.buffer.getEntries());
+    // Render to text and set in editor
+    const content = this.buffer.renderToText();
+    this.originalContent = content;
+
+    // Set the editor content
+    if (this.editor) {
+      this.editor.setValue(content);
+      this.editor.setCursor(0, 0);
+    }
 
     // Update UI
     this.updateStatusBar();
@@ -159,115 +270,31 @@ export class OilView extends ItemView {
   }
 
   /**
-   * Navigate to parent directory (oil.nvim's `-` key behavior)
+   * Navigate to parent directory
    */
   async navigateUp(): Promise<void> {
-    if (this.state.currentPath === '') {
-      // Already at vault root
-      return;
-    }
+    if (this.state.currentPath === '') return;
 
     const parentPath = this.state.currentPath.split('/').slice(0, -1).join('/');
     await this.navigateTo(parentPath);
   }
 
   /**
-   * Handle keyboard events in the editor
+   * Apply pending changes (called on Mod+S)
    */
-  private async handleKeydown(event: KeyboardEvent): Promise<void> {
-    const { navigateUp, confirmChanges, discardChanges } = this.plugin.settings.keybindings;
-
-    // Navigate up with `-` key (configurable)
-    if (event.key === navigateUp && !event.ctrlKey && !event.metaKey) {
-      event.preventDefault();
-      await this.navigateUp();
-      return;
-    }
-
-    // Confirm changes with Mod+Enter
-    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-      event.preventDefault();
-      await this.confirmChanges();
-      return;
-    }
-
-    // Discard changes with Escape
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      this.discardChanges();
-      return;
-    }
-
-    // Enter on a folder line → navigate into it
-    if (event.key === 'Enter' && !event.shiftKey) {
-      const currentLine = this.buffer.getCurrentLine();
-      if (currentLine?.isDirectory) {
-        event.preventDefault();
-        const targetPath = this.state.currentPath
-          ? `${this.state.currentPath}/${currentLine.displayName}`
-          : currentLine.displayName;
-        await this.navigateTo(targetPath);
-        return;
-      }
-    }
-
-    // Enter on a file → open it
-    if (event.key === 'Enter' && !event.shiftKey) {
-      const currentLine = this.buffer.getCurrentLine();
-      if (currentLine?.file) {
-        event.preventDefault();
-        // getLeaf(false) returns existing navigable leaf or creates new one
-        const leaf = this.app.workspace.getLeaf(false);
-        await leaf.openFile(currentLine.file);
-        return;
-      }
-    }
-  }
-
-  /**
-   * Handle input events to track mutations
-   */
-  private handleInput(event: Event): void {
-    // Parse the current buffer state and diff against original
-    const mutations = this.buffer.parseAndDiff(this.editorEl.innerText);
-    this.state.pendingMutations = mutations;
-
-    // Update visual indicators
-    this.renderer.updateHighlighting(this.editorEl, mutations);
-    this.updateStatusBar();
-  }
-
-  /**
-   * Handle blur to ensure we capture final state
-   */
-  private handleBlur(event: FocusEvent): void {
-    // Reparse on blur to ensure state is current
-    this.handleInput(event);
-  }
-
-  /**
-   * Confirm and apply all pending mutations
-   *
-   * IMPORTANT: File operations use these Obsidian APIs:
-   * - Rename: app.fileManager.renameFile(file, newPath) - updates links automatically
-   * - Delete: app.fileManager.trashFile(file) - moves to trash (safe)
-   * - Delete permanent: app.vault.delete(file, true) - permanent deletion
-   * - Create file: app.vault.create(path, content)
-   * - Create folder: app.vault.createFolder(path)
-   */
-  async confirmChanges(): Promise<void> {
+  async applyChanges(): Promise<void> {
     if (this.state.pendingMutations.length === 0) {
+      // No changes, just refresh
+      await this.navigateTo(this.state.currentPath);
       return;
     }
 
     // Emit event for file-mutations system to handle
-    // The file-mutations feature will listen for this and apply the changes
     this.app.workspace.trigger('sugar-rush:confirm-mutations', {
       mutations: this.state.pendingMutations,
       sourcePath: this.state.currentPath,
       onComplete: async (success: boolean) => {
         if (success) {
-          // Reload directory to reflect changes
           await this.navigateTo(this.state.currentPath);
         }
       },
@@ -275,23 +302,26 @@ export class OilView extends ItemView {
   }
 
   /**
-   * Discard all pending mutations and reset buffer
+   * Discard changes and reload original content
    */
   discardChanges(): void {
     this.state.pendingMutations = [];
-    this.renderer.render(this.editorEl, this.buffer.getEntries());
+    if (this.editor) {
+      this.editor.setValue(this.originalContent);
+      this.editor.setCursor(0, 0);
+    }
     this.updateStatusBar();
   }
 
   /**
-   * Update the status bar with current state
+   * Update status bar display
    */
   private updateStatusBar(): void {
     const pendingCount = this.state.pendingMutations.length;
     const pathDisplay = this.state.currentPath || '/';
 
     if (pendingCount > 0) {
-      this.statusEl.setText(`${pathDisplay} [${pendingCount} pending changes - Mod+Enter to apply, Escape to discard]`);
+      this.statusEl.setText(`${pathDisplay} [${pendingCount} pending - Mod+S to apply, Esc to discard]`);
       this.statusEl.addClass('has-pending');
     } else {
       this.statusEl.setText(pathDisplay);
@@ -300,75 +330,84 @@ export class OilView extends ItemView {
   }
 
   /**
-   * Get pending mutations for external systems
+   * TextFileView requires these methods - we stub them for virtual file
    */
-  getPendingMutations(): FileMutation[] {
-    return [...this.state.pendingMutations];
+  getViewData(): string {
+    return this.editor?.getValue() ?? '';
+  }
+
+  setViewData(data: string, clear: boolean): void {
+    if (this.editor) {
+      this.editor.setValue(data);
+    }
+  }
+
+  clear(): void {
+    if (this.editor) {
+      this.editor.setValue('');
+    }
   }
 }
 ```
 
-### Decision 2: Buffer Parsing and Diff Tracking
+### Decision 2: Buffer with Text Rendering
 
-**What:** Separate class to handle buffer text parsing and change detection
+**What:** OilBuffer generates plain text representation of directory contents
 
 **Why:**
-- Clean separation from view rendering
-- Testable in isolation
-- Can be reused if we add alternative input methods
+- Text format is what the editor displays
+- Easy to parse back to detect mutations
+- Each line = one file/folder entry
+
+**Line Format:**
+```
+folder-name/
+file-name.ext
+.hidden-file
+```
+
+Simple, parseable, no emojis (let CSS handle icons).
 
 ```typescript
 // src/views/oil-buffer.ts
 
-import { TFolder, TFile, TAbstractFile } from 'obsidian';
-import type { OilView } from './oil-view';
-import type { OilEntry, FileMutation } from '../types';
+import { App, TFolder, TFile, TAbstractFile } from 'obsidian';
+import type { OilEntry, FileMutation, SugarRushSettings } from '../types';
 
 export class OilBuffer {
-  private view: OilView;
+  private app: App;
+  private settings: SugarRushSettings;
   private originalEntries: OilEntry[] = [];
   private currentPath: string = '';
 
-  constructor(view: OilView) {
-    this.view = view;
+  constructor(app: App, settings: SugarRushSettings) {
+    this.app = app;
+    this.settings = settings;
   }
 
   /**
-   * Load directory contents into the buffer
+   * Load directory contents
    */
   async loadDirectory(path: string): Promise<void> {
     this.currentPath = path;
     this.originalEntries = [];
 
-    const vault = this.view.app.vault;
     let children: TAbstractFile[];
 
     if (path === '') {
-      // Vault root
-      children = vault.getRoot().children;
+      children = this.app.vault.getRoot().children;
     } else {
-      const folder = vault.getAbstractFileByPath(path);
-      if (folder instanceof TFolder) {
-        children = folder.children;
-      } else {
-        children = [];
-      }
+      const folder = this.app.vault.getAbstractFileByPath(path);
+      children = folder instanceof TFolder ? folder.children : [];
     }
 
-    // Sort children according to settings
-    const settings = this.view.plugin.settings.display;
-    children = this.sortChildren(children, settings);
-
-    // Filter hidden files if needed
-    if (!this.view.plugin.settings.showHiddenFiles) {
-      children = children.filter(child => !child.name.startsWith('.'));
-    }
+    // Sort and filter
+    children = this.sortAndFilter(children);
 
     // Build entries
     let lineNumber = 1;
     for (const child of children) {
       const isDirectory = child instanceof TFolder;
-
       this.originalEntries.push({
         originalPath: child.path,
         displayName: child.name,
@@ -381,98 +420,107 @@ export class OilBuffer {
   }
 
   /**
-   * Sort children according to display settings
+   * Sort and filter children
    */
-  private sortChildren(
-    children: TAbstractFile[],
-    settings: { sortOrder: string; sortDirection: string; directoryFirst: boolean }
-  ): TAbstractFile[] {
+  private sortAndFilter(children: TAbstractFile[]): TAbstractFile[] {
+    // Filter hidden files if needed
+    if (!this.settings.showHiddenFiles) {
+      children = children.filter(c => !c.name.startsWith('.'));
+    }
+
+    // Sort
+    const { sortOrder, directoryFirst } = this.settings.display;
+
     return [...children].sort((a, b) => {
-      // Directories first if enabled
-      if (settings.directoryFirst) {
-        const aIsDir = a instanceof TFolder;
-        const bIsDir = b instanceof TFolder;
-        if (aIsDir && !bIsDir) return -1;
-        if (!aIsDir && bIsDir) return 1;
+      if (directoryFirst) {
+        const aDir = a instanceof TFolder;
+        const bDir = b instanceof TFolder;
+        if (aDir && !bDir) return -1;
+        if (!aDir && bDir) return 1;
       }
 
-      // Sort by selected criteria
-      let comparison = 0;
-      switch (settings.sortOrder) {
+      switch (sortOrder) {
         case 'name':
-          comparison = a.name.localeCompare(b.name, undefined, { numeric: true });
-          break;
+          return a.name.localeCompare(b.name, undefined, { numeric: true });
         case 'modified':
           const aTime = a instanceof TFile ? a.stat.mtime : 0;
           const bTime = b instanceof TFile ? b.stat.mtime : 0;
-          comparison = bTime - aTime; // Newest first by default
-          break;
+          return bTime - aTime;
         case 'size':
           const aSize = a instanceof TFile ? a.stat.size : 0;
           const bSize = b instanceof TFile ? b.stat.size : 0;
-          comparison = bSize - aSize; // Largest first by default
-          break;
+          return bSize - aSize;
+        default:
+          return 0;
       }
-
-      return settings.sortDirection === 'desc' ? -comparison : comparison;
     });
   }
 
   /**
-   * Get original entries (before any edits)
+   * Render entries to plain text for editor
+   */
+  renderToText(): string {
+    const lines = this.originalEntries.map(entry => {
+      if (entry.isDirectory) {
+        return `${entry.displayName}/`;
+      }
+      return entry.displayName;
+    });
+    return lines.join('\n');
+  }
+
+  /**
+   * Get entry for a given line text
+   */
+  getEntryForLine(lineText: string): OilEntry | null {
+    const name = lineText.trim().replace(/\/$/, '');
+    return this.originalEntries.find(e => e.displayName === name) ?? null;
+  }
+
+  /**
+   * Get all original entries
    */
   getEntries(): OilEntry[] {
     return [...this.originalEntries];
   }
 
   /**
-   * Get current line based on cursor position
+   * Parse current editor content and diff against original
    */
-  getCurrentLine(): OilEntry | null {
-    // This would need to track cursor position
-    // Simplified: return first entry for now
-    return this.originalEntries[0] ?? null;
-  }
-
-  /**
-   * Parse buffer text and generate mutations by diffing against original
-   */
-  parseAndDiff(bufferText: string): FileMutation[] {
+  parseAndDiff(content: string): FileMutation[] {
     const mutations: FileMutation[] = [];
-    const lines = bufferText.split('\n').filter(line => line.trim() !== '');
-
-    // Track which original entries were seen
-    const seenOriginals = new Set<string>();
+    const lines = content.split('\n').filter(l => l.trim() !== '');
+    const seenPaths = new Set<string>();
 
     // Parse each line
-    const parsedNames = lines.map(line => this.parseLineName(line));
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      const isDir = line.endsWith('/');
+      const name = isDir ? line.slice(0, -1) : line;
 
-    // Check for renames and track seen entries
-    for (let i = 0; i < parsedNames.length; i++) {
-      const name = parsedNames[i];
       if (!name) continue;
 
-      // Find matching original entry by line position or name
-      const originalEntry = this.originalEntries[i];
+      // Find matching original
+      const original = this.originalEntries[i];
 
-      if (originalEntry) {
-        seenOriginals.add(originalEntry.originalPath);
+      if (original) {
+        seenPaths.add(original.originalPath);
 
         // Check if renamed
-        if (originalEntry.displayName !== name) {
+        if (original.displayName !== name) {
           const newPath = this.currentPath
             ? `${this.currentPath}/${name}`
             : name;
 
           mutations.push({
             type: 'rename',
-            originalPath: originalEntry.originalPath,
+            originalPath: original.originalPath,
             newPath,
-            entry: { ...originalEntry, displayName: name },
+            entry: { ...original, displayName: name },
           });
         }
       } else {
-        // New entry (line added)
+        // New entry
         const newPath = this.currentPath ? `${this.currentPath}/${name}` : name;
 
         mutations.push({
@@ -482,7 +530,7 @@ export class OilBuffer {
           entry: {
             originalPath: '',
             displayName: name,
-            isDirectory: name.endsWith('/'), // Convention: trailing slash = directory
+            isDirectory: isDir,
             file: null,
             folder: null,
             lineNumber: i + 1,
@@ -491,11 +539,16 @@ export class OilBuffer {
       }
     }
 
-    // Check for deletions (original entries not seen)
+    // Check for deletions
     for (const entry of this.originalEntries) {
-      if (!seenOriginals.has(entry.originalPath)) {
-        // Check if this name appears anywhere in parsed names
-        const stillExists = parsedNames.includes(entry.displayName);
+      if (!seenPaths.has(entry.originalPath)) {
+        // Check if name appears anywhere
+        const name = entry.displayName;
+        const stillExists = lines.some(l => {
+          const lineName = l.trim().replace(/\/$/, '');
+          return lineName === name;
+        });
+
         if (!stillExists) {
           mutations.push({
             type: 'delete',
@@ -508,164 +561,42 @@ export class OilBuffer {
 
     return mutations;
   }
-
-  /**
-   * Parse a single line to extract the file/folder name
-   * Strips icons and formatting
-   */
-  private parseLineName(line: string): string {
-    // Remove leading icon characters and whitespace
-    // Format: "📁 folder-name" or "📄 file-name.md"
-    const match = line.match(/^[\s\p{Emoji}\p{Symbol}]*\s*(.+)$/u);
-    return match?.[1]?.trim() ?? line.trim();
-  }
 }
 ```
 
-### Decision 3: Line Rendering with Visual Indicators
+### Decision 3: View Registration
 
-**What:** Separate renderer class for line display and mutation highlighting
-
-**Why:**
-- Rendering logic isolated from data logic
-- Easy to change visual style
-- Supports theming
+**What:** Register as a custom view type (not a file handler)
 
 ```typescript
-// src/views/oil-renderer.ts
+// src/main.ts
 
-import type { OilEntry, FileMutation, SugarRushSettings } from '../types';
-import { CSS_CLASSES } from '../constants';
+import { OilView } from './views/oil-view';
+import { OIL_VIEW_TYPE } from './constants';
 
-export class OilRenderer {
-  private view: any; // OilView
-  private settings: SugarRushSettings;
-
-  constructor(view: any, settings: SugarRushSettings) {
-    this.view = view;
-    this.settings = settings;
-  }
-
-  /**
-   * Render entries to the editor element
-   */
-  render(editorEl: HTMLElement, entries: OilEntry[]): void {
-    editorEl.empty();
-
-    for (const entry of entries) {
-      const lineEl = editorEl.createDiv({ cls: CSS_CLASSES.OIL_LINE });
-
-      // Add type-specific class
-      if (entry.isDirectory) {
-        lineEl.addClass(CSS_CLASSES.DIRECTORY);
-      } else {
-        lineEl.addClass(CSS_CLASSES.FILE);
-      }
-
-      // Build line content
-      let content = '';
-
-      // Icon
-      if (this.settings.display.showFileIcons) {
-        content += entry.isDirectory ? '📁 ' : '📄 ';
-      }
-
-      // Name
-      content += entry.displayName;
-
-      // Directory indicator (trailing /)
-      if (entry.isDirectory) {
-        content += '/';
-      }
-
-      // Optional: file size
-      if (this.settings.display.showFileSizes && entry.file) {
-        const size = this.formatFileSize(entry.file.stat.size);
-        content += `  ${size}`;
-      }
-
-      // Optional: modified date
-      if (this.settings.display.showModifiedDate && entry.file) {
-        const date = new Date(entry.file.stat.mtime).toLocaleDateString();
-        content += `  ${date}`;
-      }
-
-      lineEl.setText(content);
-    }
-
-    // Add trailing newline for easier adding of new entries
-    editorEl.createDiv({ cls: 'oil-line-placeholder', text: '' });
-  }
-
-  /**
-   * Update line highlighting based on pending mutations
-   */
-  updateHighlighting(editorEl: HTMLElement, mutations: FileMutation[]): void {
-    const lines = editorEl.querySelectorAll(`.${CSS_CLASSES.OIL_LINE}`);
-
-    // Reset all highlighting
-    lines.forEach(line => {
-      line.removeClass(CSS_CLASSES.OIL_LINE_MODIFIED);
-      line.removeClass(CSS_CLASSES.OIL_LINE_DELETED);
-      line.removeClass(CSS_CLASSES.OIL_LINE_ADDED);
-    });
-
-    // Apply highlighting based on mutations
-    for (const mutation of mutations) {
-      const lineIndex = mutation.entry.lineNumber - 1;
-      const lineEl = lines[lineIndex];
-
-      if (!lineEl) continue;
-
-      switch (mutation.type) {
-        case 'rename':
-        case 'move':
-          lineEl.addClass(CSS_CLASSES.OIL_LINE_MODIFIED);
-          break;
-        case 'delete':
-          lineEl.addClass(CSS_CLASSES.OIL_LINE_DELETED);
-          break;
-        case 'create':
-          lineEl.addClass(CSS_CLASSES.OIL_LINE_ADDED);
-          break;
-      }
-    }
-  }
-
-  /**
-   * Format file size for display
-   */
-  private formatFileSize(bytes: number): string {
-    if (bytes < 1024) return `${bytes}B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}KB`;
-    if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)}MB`;
-    return `${(bytes / 1024 / 1024 / 1024).toFixed(1)}GB`;
-  }
-}
+// In onload():
+this.registerView(OIL_VIEW_TYPE, (leaf) => new OilView(leaf, this));
 ```
 
-### Decision 4: CSS Styling for Oil View
+### Decision 4: CSS Styling
 
-**What:** Dedicated styles for the oil view with mutation state indicators
+**What:** Minimal CSS that doesn't interfere with editor
 
 ```css
 /* styles.css */
 
-/* Oil View Container */
 .sugar-rush-oil-view {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  font-family: var(--font-monospace);
 }
 
-/* Status Bar */
 .oil-status-bar {
   padding: 4px 8px;
   background: var(--background-secondary);
   border-bottom: 1px solid var(--background-modifier-border);
   font-size: var(--font-ui-smaller);
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 .oil-status-bar.has-pending {
@@ -673,169 +604,41 @@ export class OilRenderer {
   color: var(--text-warning);
 }
 
-/* Editor Area */
-.oil-editor {
-  flex: 1;
-  padding: 8px;
-  overflow-y: auto;
-  outline: none;
-  cursor: text;
-  line-height: 1.6;
-}
-
-/* Individual Lines */
-.sugar-rush-oil-line {
-  padding: 2px 4px;
-  border-radius: 3px;
-  white-space: nowrap;
-}
-
-.sugar-rush-oil-line:hover {
-  background: var(--background-modifier-hover);
-}
-
-/* Directory styling */
-.sugar-rush-directory {
+/* Directory lines styled via editor decorations */
+.sugar-rush-directory-line {
   font-weight: 500;
 }
 
-/* File styling */
-.sugar-rush-file {
-  color: var(--text-normal);
-}
-
-/* Mutation state highlighting */
-.sugar-rush-oil-line-modified {
-  background: var(--background-modifier-warning) !important;
-  border-left: 3px solid var(--text-warning);
-}
-
-.sugar-rush-oil-line-deleted {
-  background: var(--background-modifier-error) !important;
-  text-decoration: line-through;
-  opacity: 0.7;
-  border-left: 3px solid var(--text-error);
-}
-
-.sugar-rush-oil-line-added {
-  background: var(--background-modifier-success) !important;
-  border-left: 3px solid var(--text-success);
-}
-
-/* Placeholder for new entries */
-.oil-line-placeholder {
-  min-height: 1.6em;
-  opacity: 0.3;
-}
-
-.oil-line-placeholder::before {
-  content: '+ new file or folder...';
-  font-style: italic;
-}
+/* Let the editor's line styling handle mutations
+   We'll use editor decorations to mark changed lines */
 ```
 
-### Decision 5: View Registration and Commands
+## Why This Approach is Better
 
-**What:** Register view type and wire up commands in main plugin
-
-```typescript
-// src/main.ts (additions)
-
-import { OilView } from './views/oil-view';
-import { OIL_VIEW_TYPE } from './constants';
-
-// In onload():
-this.registerView(OIL_VIEW_TYPE, (leaf) => new OilView(leaf, this));
-
-// Update command registration to actually open views
-// src/commands/index.ts (updated)
-
-import { OIL_VIEW_TYPE } from '../constants';
-
-export function registerCommands(plugin: SugarRushPlugin): void {
-  // Open Oil view for current file's directory
-  plugin.addCommand({
-    id: COMMAND_IDS.OPEN_OIL_VIEW,
-    name: 'Open file explorer (current directory)',
-    callback: async () => {
-      const activeFile = plugin.app.workspace.getActiveFile();
-      const path = activeFile?.parent?.path ?? '';
-      await openOilView(plugin, path);
-    },
-  });
-
-  // Open Oil view at vault root
-  plugin.addCommand({
-    id: COMMAND_IDS.OPEN_OIL_VIEW_ROOT,
-    name: 'Open file explorer (vault root)',
-    callback: async () => {
-      await openOilView(plugin, '');
-    },
-  });
-
-  // Open Oil view for current file's parent
-  plugin.addCommand({
-    id: COMMAND_IDS.OPEN_OIL_VIEW_CURRENT,
-    name: 'Open file explorer (parent of current file)',
-    callback: async () => {
-      const activeFile = plugin.app.workspace.getActiveFile();
-      const path = activeFile?.parent?.path ?? '';
-      await openOilView(plugin, path);
-    },
-  });
-}
-
-async function openOilView(plugin: SugarRushPlugin, path: string): Promise<void> {
-  const { workspace } = plugin.app;
-
-  // Check if oil view already exists
-  const existing = workspace.getLeavesOfType(OIL_VIEW_TYPE);
-
-  if (existing.length > 0) {
-    // Focus existing and navigate to path
-    workspace.revealLeaf(existing[0]);
-    const view = existing[0].view as OilView;
-    await view.navigateTo(path);
-  } else {
-    // Create new view in right split
-    const leaf = workspace.getLeaf('split', 'vertical');
-    await leaf.setViewState({ type: OIL_VIEW_TYPE, active: true });
-    const view = leaf.view as OilView;
-    await view.navigateTo(path);
-  }
-}
-```
+| Feature | Old Approach (contenteditable) | New Approach (TextFileView) |
+|---------|-------------------------------|------------------------------|
+| Vim mode | ❌ Not supported | ✅ Works automatically |
+| Undo/redo | ❌ Must implement | ✅ Built-in |
+| Selection | ❌ Basic only | ✅ Full editor selection |
+| Search | ❌ Must implement | ✅ Cmd+F works |
+| Keybindings | ❌ Custom handling | ✅ All Obsidian keybindings |
+| Copy/paste | ⚠️ Basic | ✅ Full support |
+| Line numbers | ❌ Must implement | ✅ Available if enabled |
+| Accessibility | ⚠️ Poor | ✅ Editor is accessible |
 
 ## Risks / Trade-offs
 
-### Risk 1: ContentEditable Complexity
-**Risk:** ContentEditable is notoriously finicky across browsers
-**Mitigation:**
-- Keep formatting minimal (plain text lines)
-- Use CSS for visual styling rather than HTML elements
-- Test thoroughly in Electron (Obsidian's runtime)
-- Consider switching to textarea if issues arise
+### Risk 1: TextFileView Complexity
+**Risk:** TextFileView may have behaviors we need to suppress
+**Mitigation:** Override methods like `canAcceptExtension`, `getViewData`, etc.
 
-### Risk 2: Large Directory Performance
-**Risk:** Directories with 1000+ files may be slow to render/parse
-**Mitigation:**
-- Virtual scrolling can be added later if needed
-- Initial implementation targets typical vault sizes (<500 items per folder)
-- Defer pagination/virtualization to future enhancement
+### Risk 2: Save Interception
+**Risk:** User muscle memory of Mod+S might expect file save
+**Mitigation:** Clear status bar messaging that Mod+S applies changes
 
-### Risk 3: Lost Changes on View Close
-**Risk:** User closes view with pending mutations → changes lost
-**Mitigation:**
-- Status bar clearly shows pending change count
-- Could add confirmation dialog on close (defer to later)
-- Changes are intentionally ephemeral (like oil.nvim)
-
-### Risk 4: Concurrent Edits
-**Risk:** External changes to files while oil view is open
-**Mitigation:**
-- Listen for vault change events
-- Warn user if underlying files changed
-- Defer complex merge handling to later
+### Risk 3: Editor State
+**Risk:** Editor may try to persist state we don't want
+**Mitigation:** Override state methods, don't use file property
 
 ## Migration Plan
 
@@ -843,11 +646,8 @@ Not applicable - new feature implementation.
 
 ## Open Questions
 
-1. **Trailing slash convention:** Should new directories be indicated by trailing `/` in name?
-   - Decision: Yes, matches common shell conventions
+1. **Line decorations:** How do we highlight pending changes in the editor?
+   - Decision: Use CodeMirror decorations or Obsidian's editor API
 
-2. **Multi-selection:** Should we support selecting multiple lines for bulk operations?
-   - Decision: Defer to future enhancement
-
-3. **Cursor position tracking:** How precisely do we need to track cursor?
-   - Decision: Line-level granularity sufficient for MVP
+2. **Cursor position:** Should we track and restore cursor on navigation?
+   - Decision: Yes, use editor.getCursor() / setCursor()

@@ -4,6 +4,20 @@
 
 Split navigation is a core feature of oil.nvim that allows users to open directories in new splits/panes. This enables powerful workflows where users can view multiple directories simultaneously, compare contents, and navigate hierarchies while keeping context visible.
 
+**TextFileView-Based Oil View Architecture:**
+The oil view extends `TextFileView` to leverage Obsidian's native CodeMirror 6 editor:
+- `this.editor` property provides access to the CodeMirror editor instance
+- `editor.getCursor()` returns the current cursor position (`{line: number, ch: number}`)
+- `editor.getLine(lineNumber)` retrieves the text content of a specific line
+- `editor.getScrollInfo()` returns scroll state including `.top` for vertical position
+- `editor.scrollTo(x, y)` restores scroll position
+- `editor.setValue(content)` sets editor content
+- `editor.setCursor(line, ch)` sets cursor position
+
+The `OilBuffer` class provides:
+- `buffer.getEntryForLine(lineText)` - Maps a line of text to an `OilEntry` object
+- `buffer.renderToText()` - Renders directory contents as plain text for the editor
+
 **Critical Obsidian Workspace APIs:**
 - `workspace.getLeaf('split', 'vertical')` - Creates a new leaf split to the right
 - `workspace.getLeaf('split', 'horizontal')` - Creates a new leaf split below
@@ -13,6 +27,7 @@ Split navigation is a core feature of oil.nvim that allows users to open directo
 
 **Constraints:**
 - Must work with Obsidian's WorkspaceLeaf and view system
+- Must use TextFileView's editor API for cursor and scroll operations
 - Each oil view instance maintains independent state (directory, history, pending mutations)
 - Navigation history is per-view, not global
 - Must handle edge cases like vault root navigation
@@ -380,15 +395,24 @@ export class NavigationHistoryManager {
 - Ctrl+Enter / Ctrl+Shift+Enter matches common split conventions
 - Must integrate with existing keybinding system
 
+**Integration with TextFileView-based OilView:**
+The oil view now extends `TextFileView` which provides:
+- `this.editor` property for accessing the CodeMirror editor
+- `editor.getCursor()` for cursor position
+- `editor.getLine(lineNumber)` to get line content
+- `buffer.getEntryForLine(lineText)` to map line text to directory entry
+
 **Code Sample:**
 
 ```typescript
-// src/views/oil-view.ts - Updated keyboard handler
+// src/views/oil-view.ts - Updated keyboard handler for TextFileView-based oil view
 
+import { TextFileView, WorkspaceLeaf, TFolder, Editor } from 'obsidian';
 import { SplitManager } from './split-manager';
 import { NavigationHistoryManager } from './navigation-history';
+import { OilBuffer } from './oil-buffer';
 
-// Add to OilView class:
+// Add to OilView class (extends TextFileView):
 
 private splitManager: SplitManager;
 private historyManager: NavigationHistoryManager;
@@ -397,8 +421,7 @@ private historyManager: NavigationHistoryManager;
 constructor(leaf: WorkspaceLeaf, plugin: SugarRushPlugin) {
   super(leaf);
   this.plugin = plugin;
-  this.buffer = new OilBuffer(this);
-  this.renderer = new OilRenderer(this, plugin.settings);
+  this.buffer = new OilBuffer(this.app, plugin.settings);
   this.splitManager = new SplitManager(this.app);
   this.historyManager = new NavigationHistoryManager();
   this.state = {
@@ -409,94 +432,77 @@ constructor(leaf: WorkspaceLeaf, plugin: SugarRushPlugin) {
 }
 
 /**
- * Handle keyboard events in the editor - EXTENDED with split navigation
+ * Get the current entry under the cursor using the TextFileView editor.
+ * Uses editor.getCursor() and editor.getLine() to get cursor position,
+ * then buffer.getEntryForLine() to resolve to an OilEntry.
  */
-private async handleKeydown(event: KeyboardEvent): Promise<void> {
-  const { keybindings } = this.plugin.settings;
-  const currentLine = this.buffer.getCurrentLine();
+private getCurrentEntry(): OilEntry | null {
+  if (!this.editor) return null;
 
-  // === SPLIT NAVIGATION ===
+  const cursor = this.editor.getCursor();
+  const lineText = this.editor.getLine(cursor.line);
+  return this.buffer.getEntryForLine(lineText);
+}
 
-  // Ctrl+Enter on folder -> open in vertical split (right)
-  if (event.key === 'Enter' && event.ctrlKey && !event.shiftKey && !event.metaKey) {
-    if (currentLine?.isDirectory) {
-      event.preventDefault();
-      const targetPath = this.buildPath(currentLine.displayName);
-      await this.splitManager.openInSplit('vertical', targetPath);
+/**
+ * Get current cursor line number (0-indexed)
+ */
+private getCurrentLineNumber(): number {
+  if (!this.editor) return 0;
+  return this.editor.getCursor().line;
+}
+
+/**
+ * Register keyboard handlers in the editor - EXTENDED with split navigation.
+ * Called from registerEditorCommands() in onOpen().
+ */
+private registerSplitNavigationHandlers(): void {
+  this.registerDomEvent(this.contentEl, 'keydown', async (e: KeyboardEvent) => {
+    const { keybindings } = this.plugin.settings;
+
+    // Get current entry using editor cursor position
+    const currentEntry = this.getCurrentEntry();
+
+    // === SPLIT NAVIGATION ===
+
+    // Ctrl+Enter on folder -> open in vertical split (right)
+    if (e.key === 'Enter' && e.ctrlKey && !e.shiftKey && !e.metaKey) {
+      if (currentEntry?.isDirectory) {
+        e.preventDefault();
+        e.stopPropagation();
+        const targetPath = this.buildPath(currentEntry.displayName);
+        await this.splitManager.openInSplit('vertical', targetPath);
+        return;
+      }
+    }
+
+    // Ctrl+Shift+Enter on folder -> open in horizontal split (below)
+    if (e.key === 'Enter' && e.ctrlKey && e.shiftKey && !e.metaKey) {
+      if (currentEntry?.isDirectory) {
+        e.preventDefault();
+        e.stopPropagation();
+        const targetPath = this.buildPath(currentEntry.displayName);
+        await this.splitManager.openInSplit('horizontal', targetPath);
+        return;
+      }
+    }
+
+    // === HISTORY NAVIGATION ===
+
+    // Alt+Left -> go back in history
+    if (e.key === 'ArrowLeft' && e.altKey && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      await this.navigateBack();
       return;
     }
-  }
 
-  // Ctrl+Shift+Enter on folder -> open in horizontal split (below)
-  if (event.key === 'Enter' && event.ctrlKey && event.shiftKey && !event.metaKey) {
-    if (currentLine?.isDirectory) {
-      event.preventDefault();
-      const targetPath = this.buildPath(currentLine.displayName);
-      await this.splitManager.openInSplit('horizontal', targetPath);
+    // Alt+Right -> go forward in history
+    if (e.key === 'ArrowRight' && e.altKey && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      await this.navigateForward();
       return;
     }
-  }
-
-  // === PARENT NAVIGATION ===
-
-  // `-` key -> navigate to parent (reuse current leaf)
-  if (event.key === keybindings.navigateUp && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
-    event.preventDefault();
-    await this.navigateUp();
-    return;
-  }
-
-  // === HISTORY NAVIGATION ===
-
-  // Alt+Left -> go back in history
-  if (event.key === 'ArrowLeft' && event.altKey && !event.ctrlKey && !event.metaKey) {
-    event.preventDefault();
-    await this.navigateBack();
-    return;
-  }
-
-  // Alt+Right -> go forward in history
-  if (event.key === 'ArrowRight' && event.altKey && !event.ctrlKey && !event.metaKey) {
-    event.preventDefault();
-    await this.navigateForward();
-    return;
-  }
-
-  // === EXISTING HANDLERS ===
-
-  // Mod+Enter -> confirm changes (existing)
-  if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && !event.shiftKey) {
-    // Only handle if not on a directory (split takes precedence)
-    if (!currentLine?.isDirectory) {
-      event.preventDefault();
-      await this.confirmChanges();
-      return;
-    }
-  }
-
-  // Escape -> discard changes (existing)
-  if (event.key === 'Escape') {
-    event.preventDefault();
-    this.discardChanges();
-    return;
-  }
-
-  // Enter on folder -> navigate into it (existing, but now also adds to history)
-  if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey && !event.metaKey) {
-    if (currentLine?.isDirectory) {
-      event.preventDefault();
-      const targetPath = this.buildPath(currentLine.displayName);
-      await this.navigateTo(targetPath);
-      return;
-    }
-    // Enter on file -> open it (existing)
-    if (currentLine?.file) {
-      event.preventDefault();
-      const leaf = this.app.workspace.getLeaf(false);
-      await leaf.openFile(currentLine.file);
-      return;
-    }
-  }
+  });
 }
 
 /**
@@ -509,7 +515,8 @@ private buildPath(name: string): string {
 }
 
 /**
- * Navigate to a directory - UPDATED with history tracking
+ * Navigate to a directory - UPDATED with history tracking.
+ * Uses the TextFileView editor for content management.
  */
 async navigateTo(path: string): Promise<void> {
   const folder = this.app.vault.getAbstractFileByPath(path);
@@ -519,11 +526,12 @@ async navigateTo(path: string): Promise<void> {
     return;
   }
 
-  // Save scroll position of current view before navigating
-  if (this.state.currentPath !== path) {
+  // Save scroll/cursor position before navigating
+  if (this.state.currentPath !== path && this.editor) {
+    const cursor = this.editor.getCursor();
     this.historyManager.updateCurrentScroll(
-      this.editorEl?.scrollTop ?? 0,
-      this.buffer.getCurrentLineIndex()
+      this.editor.getScrollInfo().top,
+      cursor.line
     );
   }
 
@@ -535,11 +543,17 @@ async navigateTo(path: string): Promise<void> {
   this.state.currentPath = path;
   this.state.pendingMutations = [];
 
-  // Load directory contents
+  // Load directory contents into buffer
   await this.buffer.loadDirectory(path);
 
-  // Render the buffer
-  this.renderer.render(this.editorEl, this.buffer.getEntries());
+  // Render to text and set in editor (TextFileView approach)
+  const content = this.buffer.renderToText();
+  this.originalContent = content;
+
+  if (this.editor) {
+    this.editor.setValue(content);
+    this.editor.setCursor(0, 0);
+  }
 
   // Update UI
   this.updateStatusBar();
@@ -557,7 +571,6 @@ async navigateUp(): Promise<void> {
 
   // Warn if pending mutations exist
   if (this.state.pendingMutations.length > 0) {
-    // Could show notice or auto-discard
     console.log('Discarding pending changes on parent navigation');
     this.state.pendingMutations = [];
   }
@@ -567,7 +580,8 @@ async navigateUp(): Promise<void> {
 }
 
 /**
- * Navigate back in history
+ * Navigate back in history.
+ * Restores cursor position and scroll using editor API.
  */
 async navigateBack(): Promise<void> {
   const entry = this.historyManager.goBack();
@@ -577,11 +591,23 @@ async navigateBack(): Promise<void> {
     this.state.pendingMutations = [];
 
     await this.buffer.loadDirectory(entry.path);
-    this.renderer.render(this.editorEl, this.buffer.getEntries());
 
-    // Restore scroll position
-    if (entry.scrollTop !== undefined && this.editorEl) {
-      this.editorEl.scrollTop = entry.scrollTop;
+    // Set content in editor (TextFileView approach)
+    const content = this.buffer.renderToText();
+    this.originalContent = content;
+
+    if (this.editor) {
+      this.editor.setValue(content);
+
+      // Restore cursor position
+      if (entry.selectedLine !== undefined) {
+        this.editor.setCursor(entry.selectedLine, 0);
+      }
+
+      // Restore scroll position
+      if (entry.scrollTop !== undefined) {
+        this.editor.scrollTo(null, entry.scrollTop);
+      }
     }
 
     this.updateStatusBar();
@@ -590,7 +616,8 @@ async navigateBack(): Promise<void> {
 }
 
 /**
- * Navigate forward in history
+ * Navigate forward in history.
+ * Restores cursor position and scroll using editor API.
  */
 async navigateForward(): Promise<void> {
   const entry = this.historyManager.goForward();
@@ -599,10 +626,23 @@ async navigateForward(): Promise<void> {
     this.state.pendingMutations = [];
 
     await this.buffer.loadDirectory(entry.path);
-    this.renderer.render(this.editorEl, this.buffer.getEntries());
 
-    if (entry.scrollTop !== undefined && this.editorEl) {
-      this.editorEl.scrollTop = entry.scrollTop;
+    // Set content in editor (TextFileView approach)
+    const content = this.buffer.renderToText();
+    this.originalContent = content;
+
+    if (this.editor) {
+      this.editor.setValue(content);
+
+      // Restore cursor position
+      if (entry.selectedLine !== undefined) {
+        this.editor.setCursor(entry.selectedLine, 0);
+      }
+
+      // Restore scroll position
+      if (entry.scrollTop !== undefined) {
+        this.editor.scrollTo(null, entry.scrollTop);
+      }
     }
 
     this.updateStatusBar();
@@ -744,6 +784,7 @@ export const COMMAND_IDS = {
 
 ```typescript
 // src/commands/index.ts - Add split navigation commands
+// Updated to work with TextFileView-based oil view
 
 import type SugarRushPlugin from '../main';
 import { COMMAND_IDS } from '../constants';
@@ -778,12 +819,13 @@ export function registerCommands(plugin: SugarRushPlugin): void {
     checkCallback: (checking: boolean) => {
       const view = getActiveOilView(plugin);
       if (view) {
-        const currentLine = view.buffer.getCurrentLine();
-        if (currentLine?.isDirectory) {
+        // Use editor.getCursor() and editor.getLine() to get current entry
+        const currentEntry = view.getCurrentEntry();
+        if (currentEntry?.isDirectory) {
           if (!checking) {
             const targetPath = view.state.currentPath
-              ? `${view.state.currentPath}/${currentLine.displayName}`
-              : currentLine.displayName;
+              ? `${view.state.currentPath}/${currentEntry.displayName}`
+              : currentEntry.displayName;
             view.splitManager.openInSplit('vertical', targetPath);
           }
           return true;
@@ -800,12 +842,13 @@ export function registerCommands(plugin: SugarRushPlugin): void {
     checkCallback: (checking: boolean) => {
       const view = getActiveOilView(plugin);
       if (view) {
-        const currentLine = view.buffer.getCurrentLine();
-        if (currentLine?.isDirectory) {
+        // Use editor.getCursor() and editor.getLine() to get current entry
+        const currentEntry = view.getCurrentEntry();
+        if (currentEntry?.isDirectory) {
           if (!checking) {
             const targetPath = view.state.currentPath
-              ? `${view.state.currentPath}/${currentLine.displayName}`
-              : currentLine.displayName;
+              ? `${view.state.currentPath}/${currentEntry.displayName}`
+              : currentEntry.displayName;
             view.splitManager.openInSplit('horizontal', targetPath);
           }
           return true;
@@ -849,7 +892,8 @@ export function registerCommands(plugin: SugarRushPlugin): void {
 }
 
 /**
- * Helper to get the active oil view, if any
+ * Helper to get the active oil view, if any.
+ * Returns the OilView which extends TextFileView.
  */
 function getActiveOilView(plugin: SugarRushPlugin): OilView | null {
   const leaf = plugin.app.workspace.activeLeaf;
