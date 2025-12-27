@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
-	"isDesktopOnly": false
+	"id": "sugar-rush",
+	"name": "Sugar Rush",
+	"version": "0.1.0",
+	"minAppVersion": "1.0.0",
+	"description": "Oil.nvim-like file explorer for Obsidian. Edit directory contents as a buffer - rename, delete, and create files by editing text.",
+	"author": "Conner Ohnesorge",
+	"authorUrl": "",
+	"fundingUrl": "",
+	"isDesktopOnly": true
 }
