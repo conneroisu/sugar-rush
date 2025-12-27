@@ -913,27 +913,42 @@ function getActiveOilView(plugin: SugarRushPlugin): OilView | null {
 - Users expect to return to where they left off
 - Can be enabled/disabled via setting
 
+**Integration with TextFileView:**
+Since OilView extends TextFileView, we override the state methods to persist
+the current directory path. The editor content is regenerated on restore.
+
 **Code Sample:**
 
 ```typescript
-// src/views/oil-view.ts - View state serialization
+// src/views/oil-view.ts - View state serialization for TextFileView-based oil view
 
 /**
- * Get state for serialization (called by Obsidian on workspace save)
+ * Get state for serialization (called by Obsidian on workspace save).
+ * TextFileView uses this for workspace persistence.
  */
 getState(): Record<string, unknown> {
+  // Persist cursor position using editor API
+  const cursorLine = this.editor ? this.editor.getCursor().line : 0;
+
   return {
     path: this.state.currentPath,
-    // Don't persist full history - just current path
+    cursorLine,
+    // Don't persist full history - just current path and cursor
   };
 }
 
 /**
- * Set state from serialization (called by Obsidian on workspace restore)
+ * Set state from serialization (called by Obsidian on workspace restore).
+ * Navigates to the saved directory and restores cursor position.
  */
 async setState(state: Record<string, unknown>, result: ViewStateResult): Promise<void> {
   if (state && typeof state.path === 'string') {
     await this.navigateTo(state.path);
+
+    // Restore cursor position if available
+    if (typeof state.cursorLine === 'number' && this.editor) {
+      this.editor.setCursor(state.cursorLine, 0);
+    }
   }
 }
 ```
