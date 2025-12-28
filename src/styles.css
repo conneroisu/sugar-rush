@@ -1,0 +1,280 @@
+/* Sugar Rush - Oil View Styles */
+
+.sugar-rush-oil-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.oil-status-bar {
+  padding: 4px 8px;
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.oil-status-bar.has-pending {
+  background: var(--background-modifier-warning);
+  color: var(--text-warning);
+}
+
+/* Let the editor's line styling handle most formatting.
+   Directory lines can be styled via editor decorations if needed */
+.sugar-rush-directory-line {
+  font-weight: 500;
+}
+
+/* Delete confirmation modal */
+.sugar-rush-delete-warning {
+  background: var(--background-modifier-error);
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.sugar-rush-delete-list {
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--background-secondary);
+  padding: 8px 8px 8px 24px;
+  border-radius: 4px;
+  margin: 8px 0;
+}
+
+.sugar-rush-delete-list li {
+  padding: 4px 0;
+}
+
+.sugar-rush-delete-list code {
+  font-size: var(--font-ui-small);
+}
+
+.sugar-rush-folder-indicator {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-left: 8px;
+}
+
+.sugar-rush-more-indicator {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.sugar-rush-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.sugar-rush-modal-buttons button.mod-destructive {
+  background: var(--background-modifier-error);
+  color: var(--text-on-accent);
+}
+
+.sugar-rush-modal-buttons button.mod-destructive:hover {
+  background: var(--background-modifier-error-hover);
+}
+
+/* ============================================
+   Preview Pane Styles
+   ============================================ */
+
+/* Flex wrapper for editor + preview layout */
+.oil-wrapper {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.oil-wrapper.preview-right {
+  flex-direction: row;
+}
+
+.oil-wrapper.preview-bottom {
+  flex-direction: column;
+}
+
+.oil-editor-container {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.oil-editor-container .cm-editor {
+  height: 100%;
+}
+
+/* Preview pane base styles */
+.sugar-rush-preview-pane {
+  background: var(--background-primary);
+  border-left: 1px solid var(--background-modifier-border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.2s ease, height 0.2s ease;
+}
+
+.sugar-rush-preview-pane.preview-right {
+  border-left: 1px solid var(--background-modifier-border);
+  border-top: none;
+}
+
+.sugar-rush-preview-pane.preview-bottom {
+  border-left: none;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+/* Preview content area - scrollable */
+.preview-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px;
+}
+
+/* Preview header */
+.preview-header {
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.preview-header h3 {
+  margin: 0;
+  font-size: var(--font-ui-medium);
+  color: var(--text-normal);
+  word-break: break-word;
+}
+
+/* Preview stats (for folders) */
+.preview-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* Preview recent items list (for folders) */
+.preview-recent h4 {
+  margin: 0 0 8px 0;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.preview-recent ul {
+  margin: 0;
+  padding-left: 16px;
+  font-size: var(--font-ui-small);
+}
+
+.preview-recent li {
+  padding: 2px 0;
+  color: var(--text-normal);
+}
+
+/* Preview image container */
+.preview-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+/* Preview info box (metadata) */
+.preview-info {
+  background: var(--background-secondary);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.preview-info > div {
+  padding: 2px 0;
+}
+
+/* Preview markdown content */
+.preview-markdown {
+  font-size: var(--font-ui-small);
+  line-height: 1.5;
+}
+
+.preview-markdown h1,
+.preview-markdown h2,
+.preview-markdown h3,
+.preview-markdown h4,
+.preview-markdown h5,
+.preview-markdown h6 {
+  margin-top: 12px;
+  margin-bottom: 8px;
+}
+
+.preview-markdown p {
+  margin: 8px 0;
+}
+
+.preview-markdown ul,
+.preview-markdown ol {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+/* Preview text (preformatted) */
+.preview-text {
+  background: var(--background-secondary);
+  padding: 8px 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+.preview-text code {
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+  white-space: pre;
+  color: var(--text-normal);
+}
+
+/* Preview placeholder (empty state) */
+.preview-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: var(--font-ui-small);
+}
+
+/* Preview error message */
+.preview-error {
+  background: var(--background-modifier-error);
+  color: var(--text-on-accent);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: var(--font-ui-small);
+  text-align: center;
+}
+
+/* Preview "more" truncation indicator */
+.preview-more {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: var(--font-ui-smaller);
+}

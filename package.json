@@ -1,0 +1,28 @@
+{
+  "name": "sugar-rush",
+  "version": "0.1.0",
+  "description": "Oil.nvim-like file explorer for Obsidian",
+  "module": "src/main.ts",
+  "main": "main.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "bun run src/build.ts",
+    "dev": "bun run src/build.ts --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "esbuild": "^0.24.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@types/node": "^24.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
+    "obsidian": "^1.10.3",
+    "tslib": "^2.8.1"
+  }
+}

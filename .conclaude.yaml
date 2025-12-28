@@ -1,0 +1,164 @@
+# yaml-language-server: $schema=https://github.com/connerohnesorge/conclaude/releases/latest/download/conclaude-schema.json
+# Conclaude Configuration Template
+#
+# This is a minimal example configuration file.
+# For full documentation of all options, run: conclaude config --docs
+# Or see the generated documentation from `cargo doc --open`
+
+# Stop hook - runs when Claude is about to stop
+stop:
+    commands:
+        - run: "spectr validate --all"
+          showStdout: true
+          showStderr: true
+          showCommand: true
+          message: "Spectr validation failed"
+    # Example:
+    # - run: "npm test"
+    #   showStdout: true
+    #   showStderr: true
+    #   showCommand: true  # Show "Executing command X/Y: npm test" (default: true)
+    #   message: "Tests failed"
+    #   maxOutputLines: 100
+    #   timeout: 300
+
+    infinite: false
+    infiniteMessage: "continue working on the task"
+
+# Subagent stop hook - runs when subagents finish
+subagentStop:
+    commands: {}
+    # Example:
+    # coder:
+    #   - run: "npm run lint"
+    #     showStdout: true
+    #     showCommand: true  # Show "Executing command X/Y: npm run lint" (default: true)
+    #     message: "Linting failed"
+    # test*:
+    #   - run: "npm test"
+    #     showStderr: true
+    #     showCommand: false  # Hide the "Executing command..." line
+
+# Pre-tool-use hook - file protection and tool validation
+preToolUse:
+    # Prevent files at repository root
+    preventRootAdditions: true
+    # Custom message for root additions block (supports {file_path} and {tool} placeholders)
+    # Example: "Files must go in src/. Cannot create {file_path} using {tool}."
+    preventRootAdditionsMessage: null
+
+    # Protected files (glob patterns)
+    uneditableFiles:
+        - ".conclaude.yml"
+        - ".conclaude.yaml"
+        - "flake.nix"
+    # Examples:
+    # - "*.lock"
+    # - pattern: ".env*"
+    #   message: "Environment files contain secrets"
+    #
+    # Agent-specific protection examples (blocks specific subagents):
+    # - pattern: "spectr/changes/**/tasks.jsonc"
+    #   message: "Task files managed by orchestrator"
+    #   agent: "coder"  # Only blocks coder subagent
+    #
+    # - pattern: "src/**/*.test.ts"
+    #   message: "Test files managed by tester agent"
+    #   agent: "code*"  # Blocks coder, coder-v2, etc.
+    #
+    # - pattern: "docs/**"
+    #   agent: "*"  # Blocks all agents (same as omitting agent field)
+
+    # Prevent editing git-ignored files
+    preventUpdateGitIgnored: false
+
+    # Tool usage rules
+    toolUsageValidation: []
+    # Example:
+    # - tool: "Write"
+    #   pattern: "**/*.js"
+    #   action: "allow"
+    # - tool: "Bash"
+    #   commandPattern: "git push --force*"
+    #   action: "block"
+    #   message: "Force push not allowed"
+    #
+    # Agent-scoped rules (only apply to specific agents):
+    # - tool: "Bash"
+    #   pattern: ""
+    #   commandPattern: "rm -rf *"
+    #   action: "block"
+    #   agent: "coder"
+    #   message: "Coder agent cannot run destructive rm commands"
+    # - tool: "Write"
+    #   pattern: "**/*.test.ts"
+    #   action: "block"
+    #   agent: "coder"
+    #   message: "Coder agent should not modify test files"
+    # - tool: "*"
+    #   pattern: "src/**"
+    #   action: "block"
+    #   agent: "test*"
+    #   message: "Test agents cannot modify source files"
+    #
+    # Agent pattern examples:
+    #   - agent: "coder"    # Exact match - only "coder" subagent
+    #   - agent: "test*"    # Glob pattern - matches "tester", "test-runner"
+    #   - agent: "*"        # Wildcard - matches all agents (default if omitted)
+
+    # Directories where additions are prevented
+    preventAdditions: []
+    # Example: ["dist", "build"]
+
+# System notifications
+notifications:
+    enabled: false
+    hooks: [] # ["*"] for all, or ["Stop", "PreToolUse"]
+    showErrors: false
+    showSuccess: false
+    showSystemEvents: true
+# Permission request hook - auto-approve/deny tools
+# Uncomment to enable:
+#
+# permissionRequest:
+#   default: deny  # "allow" or "deny"
+#   allow:
+#     - "Read"
+#     - "Glob"
+#     - "Grep"
+#     - "Edit"
+#     - "Write"
+#   deny:
+#     - "BashOutput"
+#     - "KillShell"
+
+# User prompt submit hook - context injection based on prompt patterns
+# Automatically prepends context when prompts match patterns
+# Uncomment to enable:
+#
+# userPromptSubmit:
+#   contextRules:
+#     # Pattern-based context injection
+#     - pattern: "sidebar"
+#       prompt: |
+#         Make sure to read @.claude/contexts/sidebar.md before proceeding.
+#
+#     # Multiple patterns with regex alternation
+#     - pattern: "auth|login|authentication"
+#       prompt: |
+#         Review the authentication patterns in @.claude/contexts/auth.md
+#
+#     # Case-insensitive matching (using regex flag)
+#     - pattern: "(?i)database|sql|query"
+#       prompt: |
+#         Follow the database conventions in @.claude/contexts/database.md
+#
+#     # Disable a rule temporarily
+#     - pattern: "test"
+#       prompt: "Run tests before proceeding"
+#       enabled: false
+#
+#     # Explicit case-insensitive flag
+#     - pattern: "api"
+#       prompt: "Check API documentation first"
+#       caseInsensitive: true
